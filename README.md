@@ -1,7 +1,7 @@
-# KAREN-V1
+# KAREN AI P.A
 
-> Asistente personal IA de Nicolás Agüero — estilo JARVIS (Tony Stark) + FRIDAY (Spider-Man).
-> Aislada de Cliender. Aislada por dominios. Memoria persistente con Graphify.
+> Personal AI Assistant — estilo JARVIS (Tony Stark) + FRIDAY (Spider-Man).
+> Aislada por dominios. Memoria persistente con Graphify.
 
 ---
 

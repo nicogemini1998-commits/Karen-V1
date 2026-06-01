@@ -6,7 +6,7 @@
 
 ## Datos base
 
-- **Nombre:** Nicolás Agüero
+- **Nombre:** Nico (nombre completo en memoria local privada, no repo)
 - **Alias online:** nicogemini1998-commits (GitHub)
 - **Ubicación:** Sagunto, Valencia, España
 - **Idioma:** Español nativo, inglés técnico fluido

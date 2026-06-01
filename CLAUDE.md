@@ -1,9 +1,9 @@
-# CLAUDE.md — KAREN PERSONAL (Nico)
+# CLAUDE.md — KAREN AI P.A
 
 > **Este archivo es lo PRIMERO que Claude Code lee al abrir el proyecto.**
 > Versión: v1.0 · 2026-06-01
-> Owner: Nicolás Agüero
-> Cuenta: PERSONAL. Aislada total de Cliender.
+> Owner: Nico
+> Cuenta: PERSONAL. Aislada total de cuenta empresa.
 
 ---
 
@@ -46,7 +46,7 @@ Cuando Nico abra el proyecto por primera vez, ejecutas en este orden:
 
 > Detalle completo: [`docs/01-quien-soy/PERFIL_NICO.md`](./docs/01-quien-soy/PERFIL_NICO.md)
 
-- **Nombre:** Nicolás Agüero
+- **Nombre:** Nico
 - **Rol pro (NO aplica aquí):** Head of Systems / Full Stack en Cliender, Sagunto. Alias trabajo: KAREN-Cliender.
 - **Ubicación:** Sagunto, Valencia, España.
 - **Stack dev dominio:** TypeScript, Next.js, React, Python (FastAPI), PowerShell, Docker, N8N, Supabase/Postgres.
