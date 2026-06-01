@@ -38,9 +38,9 @@ SECRET_PATTERNS=(
 )
 
 for pattern in "${SECRET_PATTERNS[@]}"; do
-  if echo "$CONTENT" | grep -Eq "$pattern"; then
+  if echo "$CONTENT" | grep -Eq -- "$pattern"; then
     echo "SECRETS_GUARD_BLOCK: secret detectado en escritura a '$FILE_PATH'." >&2
-    echo "Patrón coincidente (parcial): $(echo "$CONTENT" | grep -Eo "$pattern" | head -1 | head -c 20)..." >&2
+    echo "Patrón coincidente (parcial): $(echo "$CONTENT" | grep -Eo -- "$pattern" | head -1 | head -c 20)..." >&2
     echo "Mueve secret a .env (gitignored) y referencia con \$VAR_NAME." >&2
     exit 2
   fi

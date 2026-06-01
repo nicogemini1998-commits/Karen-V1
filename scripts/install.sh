@@ -176,7 +176,11 @@ fi
 # ────────────────────────────────────────────────────────────
 phase "Fase 3/9: Configurando ~/.claude/"
 
-mkdir -p "$CLAUDE_DIR/agents" "$CLAUDE_DIR/commands" "$KAREN_CONFIG_DIR/hooks" "$KAREN_CONFIG_DIR/firewall"
+mkdir -p "$CLAUDE_DIR/agents" "$CLAUDE_DIR/commands" \
+         "$KAREN_CONFIG_DIR/hooks" "$KAREN_CONFIG_DIR/firewall" \
+         "$KAREN_CONFIG_DIR/lib" "$KAREN_CONFIG_DIR/policy" \
+         "$KAREN_CONFIG_DIR/integrity" "$KAREN_CONFIG_DIR/backups" \
+         "$KAREN_CONFIG_DIR/redteam" "$KAREN_CONFIG_DIR/quarantine"
 
 # Settings.json
 if [ -f "templates/.claude/settings.json" ]; then
@@ -245,16 +249,31 @@ if [ -f "templates/.claude/karen/profile.json" ] && [ ! -f "$KAREN_CONFIG_DIR/pr
   ok "profile.json template copiado."
 fi
 
-# Trust log inicial
+# Libraries Python (spotlight, mem_filter, cost_optimizer)
+if [ -d "templates/.claude/lib" ]; then
+  cp -r templates/.claude/lib/* "$KAREN_CONFIG_DIR/lib/"
+  ok "Libraries Python copiadas (spotlight.py, mem_filter.py, cost_optimizer.py)."
+fi
+
+# Policy (Rule of Two)
+if [ -d "templates/.claude/policy" ]; then
+  cp -r templates/.claude/policy/* "$KAREN_CONFIG_DIR/policy/"
+  ok "Policy karen-rot.yaml (Rule of Two) copiada."
+fi
+
+# Trust log + grants + security events inicial
 touch "$KAREN_CONFIG_DIR/trust-log.jsonl"
 touch "$KAREN_CONFIG_DIR/grants.jsonl"
+touch "$KAREN_CONFIG_DIR/security-events.jsonl"
+touch "$KAREN_CONFIG_DIR/audit-log.jsonl"
+touch "$KAREN_CONFIG_DIR/cost-log.jsonl"
 
 # ────────────────────────────────────────────────────────────
 # FASE 4 — Pre-requisitos
 # ────────────────────────────────────────────────────────────
 phase "Fase 4/9: Verificando pre-requisitos"
 
-declare -A MISSING_DEPS
+MISSING_DEPS=""
 
 check_cmd() {
   local cmd="$1"
@@ -264,31 +283,31 @@ check_cmd() {
     return 0
   else
     warn "$cmd FALTA. Instala: $install_hint"
-    MISSING_DEPS[$cmd]="$install_hint"
+    MISSING_DEPS="$MISSING_DEPS $cmd"
     return 1
   fi
 }
 
-check_cmd "node"    "https://nodejs.org/ (v20+)"
-check_cmd "npm"     "viene con node"
-check_cmd "git"     "https://git-scm.com/"
-check_cmd "docker"  "https://docker.com/products/docker-desktop/"
-check_cmd "python3" "https://python.org/"
-check_cmd "jq"      "brew install jq (mac) / apt install jq (linux)"
+check_cmd "node"    "https://nodejs.org/ (v20+)" || true
+check_cmd "npm"     "viene con node" || true
+check_cmd "git"     "https://git-scm.com/" || true
+check_cmd "docker"  "https://docker.com/products/docker-desktop/" || true
+check_cmd "python3" "https://python.org/" || true
+check_cmd "jq"      "brew install jq (mac) / apt install jq (linux)" || true
 
 if [ "$PLATFORM" = "mac" ]; then
-  check_cmd "brew" "https://brew.sh/"
+  check_cmd "brew" "https://brew.sh/" || true
 fi
 
 # ────────────────────────────────────────────────────────────
 # FASE 5 — Auto-install opcional deps (mac)
 # ────────────────────────────────────────────────────────────
-if [ ${#MISSING_DEPS[@]} -gt 0 ] && [ "$PLATFORM" = "mac" ] && command -v brew >/dev/null 2>&1; then
+if [ -n "$MISSING_DEPS" ] && [ "$PLATFORM" = "mac" ] && command -v brew >/dev/null 2>&1; then
   phase "Fase 5/9: Auto-instalar deps faltantes (opcional)"
   ask "¿Instalar deps faltantes con brew? (y/n)"
-  read -r REPLY
+  read -r REPLY || REPLY="n"
   if [[ "$REPLY" =~ ^[Yy]$ ]]; then
-    for cmd in "${!MISSING_DEPS[@]}"; do
+    for cmd in $MISSING_DEPS; do
       case "$cmd" in
         node)    brew install node ;;
         jq)      brew install jq ;;
@@ -323,7 +342,7 @@ if command -v docker >/dev/null 2>&1; then
     fi
 
     ask "¿Levantar Mem0 + Neo4j ahora? (y/n) — necesita Docker running"
-    read -r REPLY
+    read -r REPLY || REPLY="n"
     if [[ "$REPLY" =~ ^[Yy]$ ]]; then
       (cd "$KAREN_ROOT/10-GRAPHIFY" && docker compose up -d) && ok "Mem0 (8888) + Neo4j (7474/7687) corriendo." || warn "Docker compose falló. Revisa .env y arranca manual."
     else
@@ -358,7 +377,7 @@ NPMGLOBAL
 phase "Fase 8/9: Validación post-instalación"
 
 if [ -f "scripts/verify-install.sh" ]; then
-  bash scripts/verify-install.sh
+  bash scripts/verify-install.sh || warn "verify-install reportó issues. Revisa output arriba."
 else
   warn "verify-install.sh no encontrado, skip validación."
 fi

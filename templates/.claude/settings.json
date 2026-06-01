@@ -1,6 +1,6 @@
 {
-  "_comentario": "Karen-V1 settings.json — instalado por install.sh. Hooks v2.0 enforcement activos.",
-  "_version": "2.0",
+  "_comentario": "Karen-V1 settings.json v2.2 — security + cost optimization + computer control hooks",
+  "_version": "2.2",
 
   "model": "claude-opus-4-7",
   "language": "español",
@@ -20,15 +20,18 @@
 
   "permissions": {
     "allow": [
-      "Bash(npm install:*)",
+      "Bash(npm install:* --ignore-scripts)",
+      "Bash(npm ci:* --ignore-scripts)",
       "Bash(npm run:*)",
       "Bash(npm exec:*)",
+      "Bash(pnpm install:* --ignore-scripts)",
+      "Bash(pnpm install --frozen-lockfile:*)",
       "Bash(pnpm:*)",
       "Bash(yarn:*)",
       "Bash(npx:*)",
       "Bash(node:*)",
       "Bash(python3:*)",
-      "Bash(pip3:*)",
+      "Bash(pip3 install:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
@@ -52,6 +55,8 @@
       "Bash(echo:*)",
       "Bash(touch:*)",
       "Bash(date:*)",
+      "Bash(markitdown:*)",
+      "Bash(osascript:*)",
       "mcp__hex-line__*",
       "mcp__memory__*",
       "mcp__firecrawl__*",
@@ -61,6 +66,16 @@
       "mcp__bigdata-com__*",
       "mcp__brightdata__*",
       "mcp__circleback__*"
+    ],
+    "deny": [
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~*)",
+      "Bash(rm -rf $HOME*)",
+      "Bash(sudo:*)",
+      "Bash(chmod 777 /*)",
+      "Bash(chown:* /)",
+      "Bash(:(){:|:&};:)",
+      "Bash(dd if=* of=/dev/*)"
     ]
   },
 
@@ -69,9 +84,20 @@
       {
         "command": "bash ~/.claude/karen/hooks/load-rules.sh",
         "timeout": 3000,
-        "description": "Carga rules-learned.md + profile.json al boot"
+        "description": "Carga rules-learned.md + profile.json"
+      },
+      {
+        "command": "bash ~/.claude/karen/hooks/integrity-ledger.sh",
+        "timeout": 5000,
+        "description": "Verifica SHA256 ledger config Karen (defeats T1.7)"
+      },
+      {
+        "command": "bash ~/.claude/karen/hooks/mcp-pin-verify.sh",
+        "timeout": 10000,
+        "description": "Verifica MCP server pins vs npm registry (defeats T1.3 rug-pull)"
       }
     ],
+
     "UserPromptSubmit": [
       {
         "command": "bash ~/.claude/karen/hooks/capture-correction.sh",
@@ -81,9 +107,10 @@
       {
         "command": "bash ~/.claude/karen/hooks/cliender-isolation-guard.sh",
         "timeout": 1000,
-        "description": "Alerta si Cliender mencionado en cuenta personal"
+        "description": "Alerta menciones Cliender en cuenta personal"
       }
     ],
+
     "PreToolUse": [
       {
         "matcher": "Write|Edit|mcp__hex-line__write_file|mcp__hex-line__edit_file",
@@ -95,13 +122,34 @@
         "matcher": "Write|Edit|mcp__hex-line__write_file|mcp__hex-line__edit_file",
         "command": "bash ~/.claude/karen/hooks/secrets-guard.sh",
         "timeout": 1500,
-        "description": "Bloquea escritura secretos fuera de .env"
+        "description": "Bloquea escritura secrets fuera de .env"
       },
       {
         "matcher": "Read|Edit|Write|Glob|Grep|mcp__hex-line__*",
         "command": "bash ~/.claude/karen/hooks/domain-firewall.sh",
         "timeout": 1500,
         "description": "Aislamiento dominios por subagent"
+      },
+      {
+        "matcher": "Bash",
+        "command": "bash ~/.claude/karen/hooks/npm-supply-chain-guard.sh",
+        "timeout": 2000,
+        "description": "Enforces --ignore-scripts + lockfile en npm/pnpm install (defeats T1.2)"
+      }
+    ],
+
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|mcp__hex-line__write_file|mcp__hex-line__edit_file",
+        "command": "bash ~/.claude/karen/hooks/codegen-scanner.sh",
+        "timeout": 5000,
+        "description": "SAST sobre código generado (semgrep/bandit/shellcheck si disponibles)"
+      },
+      {
+        "matcher": "Bash",
+        "command": "bash ~/.claude/karen/hooks/post-bash-secret-scan.sh",
+        "timeout": 2000,
+        "description": "Detecta secrets en output Bash (warning)"
       }
     ]
   }

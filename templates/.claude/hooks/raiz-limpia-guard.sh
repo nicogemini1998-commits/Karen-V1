@@ -21,7 +21,7 @@ KAREN_ROOT="${KAREN_ROOT:-$HOME/karen-personal}"
 case "$FILE_PATH" in
   "$KAREN_ROOT"/*)
     REL="${FILE_PATH#$KAREN_ROOT/}"
-    DEPTH=$(echo "$REL" | tr -cd '/' | wc -c)
+    DEPTH=$(echo -n "$REL" | tr -cd '/' | wc -c | tr -d ' ')
 
     # Si está en raíz (depth=0)
     if [ "$DEPTH" = "0" ]; then

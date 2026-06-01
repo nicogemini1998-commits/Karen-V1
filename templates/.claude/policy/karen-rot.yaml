@@ -1,0 +1,167 @@
+# ============================================================
+# Karen — Rule of Two (RoT) Policy
+# ============================================================
+# Meta Rule of Two (Apr 2026):
+# "An agent should possess at most TWO of three properties — processing
+# untrusted inputs, accessing sensitive systems, and changing state
+# externally — in any single operation."
+#
+# Karen enforce esto por subagent.
+# ============================================================
+
+version: "1.0"
+last_review: "2026-06-01"
+
+# ─── Tier configuration ────────────────────────────────────
+tiers:
+  T0_sandbox:
+    description: "Experimental, untrusted. Read-only. Network=none."
+    untrusted_input: true
+    sensitive_read: false
+    external_write: false
+    network_egress: []
+    rule_of_two_violated: false
+
+  T1_daily:
+    description: "Dev, research, learn. RW project, allowlist net."
+    untrusted_input: false  # interaction directa con Nico
+    sensitive_read: false   # no toca finanzas/salud/relaciones
+    external_write: true    # puede escribir code en proyecto
+    network_egress:
+      - github.com
+      - api.github.com
+      - npmjs.com
+      - registry.npmjs.org
+      - pypi.org
+      - docs.anthropic.com
+      - docs.python.org
+      - context7.com
+    rule_of_two_violated: false
+
+  T2_sensitive:
+    description: "Finanzas, salud, relaciones. Vault privado encrypted."
+    untrusted_input: false  # solo Nico directo
+    sensitive_read: true    # ACCEDE datos sensibles
+    external_write: false   # NO escribe a externo
+    network_egress: []      # zero egress por defecto
+    rule_of_two_violated: false
+
+  T3_operational:
+    description: "Side projects deploy, APIs externas."
+    untrusted_input: false  # NO procesa untrusted directamente
+    sensitive_read: false
+    external_write: true    # deploy, push, API calls
+    network_egress:
+      - github.com
+      - api.github.com
+      - "*.vercel.app"
+      - "*.fly.io"
+      - "*.hetzner.cloud"
+    rule_of_two_violated: false
+
+  T4_privileged:
+    description: "One-shot crítico. Rotación secrets, billing, legal."
+    untrusted_input: false
+    sensitive_read: true
+    external_write: true    # ⚠ 2 of 3 — requires human confirm cada acción
+    network_egress: []      # explicit allowlist per session
+    rule_of_two_violated: false
+    requires_human_confirm: true
+
+# ─── PELIGRO: subagents que combinarían 3-of-3 ─────────────
+forbidden_combinations:
+  # Si un subagent intentara estas combos, install.sh debe FAIL.
+  - name: "untrusted_email_to_github_write"
+    forbidden_set: [untrusted_input, sensitive_read, external_write]
+    reason: "Gmail untrusted + GitHub creds + push to repo = data exfil vector"
+
+  - name: "web_scrape_to_finance_write"
+    forbidden_set: [untrusted_input, sensitive_read, external_write]
+    reason: "Web scrape untrusted + finanzas read + write somewhere = poisoning + leak"
+
+# ─── Subagent assignments ──────────────────────────────────
+subagents:
+  karen-orchestrator:
+    tier: T1_daily
+    properties: [external_write_minimal]  # solo writes a logs propios
+
+  karen-dev:
+    tier: T1_daily
+    properties: [external_write]
+
+  karen-finance:
+    tier: T2_sensitive
+    properties: [sensitive_read]
+
+  karen-health:
+    tier: T2_sensitive
+    properties: [sensitive_read]
+
+  karen-relationships:
+    tier: T2_sensitive
+    properties: [sensitive_read]
+
+  karen-research:
+    tier: T1_daily
+    properties: [untrusted_input, external_write_minimal]  # web scrape + write notas
+
+  karen-learn:
+    tier: T1_daily
+    properties: [untrusted_input, external_write_minimal]
+
+  karen-email-triage:
+    tier: T0_sandbox
+    properties: [untrusted_input]
+    description: "Lee email, NUNCA escribe ni accede dominios sensibles. Bridge a través de orchestrator."
+
+  karen-secrets-rotation:
+    tier: T4_privileged
+    properties: [sensitive_read, external_write]
+    requires_human_confirm: true
+
+# ─── Bridge pattern para violaciones inevitables ───────────
+# Cuando workflow genuinamente requiere 3-of-3, debe bridgear vía judge LLM.
+bridge_patterns:
+  email_to_action:
+    description: "Email untrusted → análisis → posible acción sensitive write"
+    steps:
+      - karen-email-triage processes email (T0, read-only, network=none)
+      - email content passed through spotlight() with raise_on_inject=True
+      - judge_llm reviews summary + proposed action
+      - if judge approves → human confirm → karen-orchestrator executes write
+    enforced_by: ["spotlight.py", "judge_llm pre-write", "human_confirm hook"]
+
+  research_to_decision:
+    description: "Web research untrusted → decisión finanzas (T2 sensitive)"
+    steps:
+      - karen-research scrapes (T1, untrusted_input, write notas only)
+      - notes passed through spotlight() before storage
+      - karen-finance reads notes (NOT web direct), applies sparring socratic
+      - decision logged with full provenance chain
+    enforced_by: ["spotlight.py", "mem_filter provenance required", "sparring_socratico_always"]
+
+# ─── Egress allowlist enforcement ──────────────────────────
+egress_enforcement:
+  method: "iptables OUTPUT per docker network OR pf rules en macOS"
+  default: "DROP"
+  log_path: "~/.claude/karen/egress.log"
+  alert_on_unknown_destination: true
+
+# ─── Audit ─────────────────────────────────────────────────
+audit:
+  log_path: "~/.claude/karen/audit-log.jsonl"
+  events_logged:
+    - tool_call
+    - tier_upgrade
+    - tier_downgrade
+    - grant_issued
+    - grant_revoked
+    - rule_of_two_check
+    - egress_attempt
+    - integrity_drift
+    - mem_filter_block
+    - secret_detected
+    - codegen_danger
+    - cliender_mention_in_personal
+  retention_days: 90
+  forensic_export: "~/.claude/karen/audit-export-AAAA-MM-DD.jsonl"
