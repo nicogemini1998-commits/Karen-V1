@@ -4,6 +4,60 @@
 
 ---
 
+## [v2.1] — 2026-06-01 (Ready-to-Deploy)
+
+> Karen 100% lista. Clone + install.sh → ordenador nuevo operativo turno 1.
+
+### Added — Instalador inteligente
+- `scripts/install.sh` v2 — 9 fases: estructura + memoria + ~/.claude config + pre-reqs + auto-install brew (mac) + Docker stack opcional + verify final.
+- `scripts/verify-install.sh` — validación post-install (50+ checks: estructura, dominios, hooks, subagents, MCPs, Docker, gitignore).
+
+### Added — Hooks bash ejecutables reales (6)
+- `load-rules.sh` (SessionStart) — inyecta rules-learned + profile al boot.
+- `capture-correction.sh` (UserPromptSubmit) — detecta correcciones Nico, append a rules-learned.
+- `domain-firewall.sh` (PreToolUse) — bloquea cross-domain según reglas YAML por subagent.
+- `raiz-limpia-guard.sh` (PreToolUse Write) — bloquea archivos sueltos raíz proyecto.
+- `secrets-guard.sh` (PreToolUse Write) — bloquea escritura secrets fuera .env (patrones AWS/Anthropic/OpenAI/GitHub/Slack/Google/private keys).
+- `cliender-isolation-guard.sh` (UserPromptSubmit) — alerta menciones Cliender en cuenta personal.
+
+### Added — Subagents config JSON (6)
+- `karen-orchestrator.json` (T1) — distribuidor, sin acceso dominios directos.
+- `karen-dev.json` (T1) — RW dev paths, GitHub MCP, full Bash dev.
+- `karen-finance.json` (T2 SENSITIVE) — sparring socrático obligatorio, citation required, 4 preguntas pre-research.
+- `karen-health.json` (T2 SENSITIVE) — disclaimer no-médico, stop triggers diagnóstico/medicación.
+- `karen-research.json` (T1) — research multi-fuente verificada, citation verbatim.
+- `karen-learn.json` (T1) — Feynman + spaced repetition + active recall.
+
+### Added — Firewall rules txt (6)
+- Por subagent: `~/.claude/karen/firewall/<subagent>.txt` con DENY/ALLOW paths.
+- Aplicado por hook `domain-firewall.sh` automático.
+
+### Added — Memory stack Docker
+- `templates/docker-compose.memory.yml` — Mem0 (8888) + Neo4j (7474/7687) listos.
+- Inline FastAPI Mem0 server (add/search/health endpoints).
+- Healthchecks + auto-restart.
+- Network localhost-only.
+
+### Added — Config templates
+- `templates/.claude/karen/profile.json` — hot facts completos.
+- `templates/.env.example` — placeholders Anthropic, Neo4j, GitHub PAT, OAuth.
+- `templates/.claude/settings.json` v2 — hooks Karen wired, plugins, permissions.
+
+### Added — Guías
+- `docs/FIRST-RUN.md` — protocolo exacto Karen turno 1 con ejemplo transcript completo.
+- `.gitattributes` — preserva permisos executable + LF line endings.
+
+### Changed
+- `scripts/install.sh` re-escrito completo (16KB, 9 fases).
+- `README.md` quickstart 60s.
+
+### Privacy
+- Cero datos personales en repo público.
+- Templates con placeholders.
+- `.gitignore` exhaustivo.
+
+---
+
 ## [v2.0-spec] — 2026-06-01 (Neural Backbone — SPEC)
 
 > Research SOTA personal AI assistants 2026 aplicado. Specs implementación listos. Pendiente código wrappers MCP + hooks.

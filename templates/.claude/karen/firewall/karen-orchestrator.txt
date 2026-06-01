@@ -1,0 +1,19 @@
+# Firewall rules — karen-orchestrator (T1)
+# Solo lectura docs + delegación. Cero acceso dominios directos.
+
+DENY  /01-MEMORIA/
+DENY  /02-DEV/
+DENY  /03-FINANZAS/
+DENY  /04-SALUD-FITNESS/
+DENY  /05-PRODUCTIVIDAD/
+DENY  /06-APRENDIZAJE/
+DENY  /07-RELACIONES/
+DENY  /08-HOBBIES/
+DENY  /09-COMPRAS-RESEARCH/
+DENY  /10-GRAPHIFY/
+
+ALLOW /CLAUDE.md
+ALLOW /_ATAJOS.md
+ALLOW /README.md
+ALLOW /docs/
+ALLOW /CHANGELOG.md

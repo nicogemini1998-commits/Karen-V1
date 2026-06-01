@@ -5,23 +5,51 @@
 
 ---
 
-## 🚀 Instalación en ordenador nuevo (1 comando)
+## 🚀 Quickstart 60 segundos (ordenador nuevo)
 
 ```bash
-git clone https://github.com/nicogemini1998-commits/KAREN-V1.git ~/karen-personal
+# 1. Clonar
+git clone git@github.com:nicogemini1998-commits/Karen-V1.git ~/karen-personal
+
+# 2. Instalar (auto: estructura + .claude config + hooks + subagents + opcional Docker)
 cd ~/karen-personal
 bash scripts/install.sh
+
+# 3. Validar instalación
+bash scripts/verify-install.sh
+
+# 4. Abrir Claude Code Desktop apuntando a ~/karen-personal/
+#    Karen lee CLAUDE.md + docs/FIRST-RUN.md automático.
+#    Saluda Jarvis/Friday + ejecuta onboarding turno 1.
+
+# 5. Cuando Karen te lo pida:
+#    /karen-learn-me   ← 5 preguntas max para completar perfil
+#    /morning-brief    ← empieza a trabajar
 ```
 
-Eso descarga el repo, crea la estructura, instala plugins/MCPs sugeridos y deja a Karen lista para arrancar.
+### Qué hace `install.sh` automático
 
-### Después de instalar
+- ✅ Crea 33 carpetas dominios numerados.
+- ✅ Copia `CLAUDE.md`, `_ATAJOS.md`, docs a sitio.
+- ✅ Instala `~/.claude/settings.json` con hooks Karen activos.
+- ✅ Instala `~/.claude/.mcp.json` con tu user.
+- ✅ Copia 6 subagents (`karen-dev`, `karen-finance`, `karen-health`, `karen-research`, `karen-learn`, `karen-orchestrator`) con tier + allowedTools + firewall.
+- ✅ Copia 10 slash commands (`/sparring`, `/morning-brief`, `/karen-learn-me`, etc.).
+- ✅ Instala 6 hooks bash ejecutables (`load-rules`, `capture-correction`, `domain-firewall`, `raiz-limpia-guard`, `secrets-guard`, `cliender-isolation`).
+- ✅ Copia 15 reglas seed a `~/.claude/karen/rules-learned.md`.
+- ✅ Copia `profile.json` template (cargado SessionStart).
+- ✅ Verifica node, docker, python3, git, jq.
+- ✅ (Opcional) Levanta Mem0 + Neo4j docker stack.
+- ✅ Ejecuta `verify-install.sh` final.
 
-1. Abre Claude Code Desktop.
-2. Apunta a `~/karen-personal/`.
-3. Karen lee `CLAUDE.md` automáticamente y ejecuta onboarding.
-4. Te pide los datos faltantes (broker, GitHub, Notion, etc.).
-5. Listo.
+### Después de install — Karen YA SABE
+
+- Quién eres (Nico, Sagunto, stack TS+Next+Python+Docker).
+- Cómo trabajas (ejecución directa, mejora-no-sustituyas, raíz limpia).
+- 15 reglas inviolables (no Cliender, no datos inventados, sparring, etc.).
+- 8 dominios aislados con firewall (salud ≠ dev ≠ finanzas).
+- Tu tono preferido (Friday default, Jarvis crítico, no pleasantries).
+- Cómo decides (sparring socrático en finanzas/salud/compras grandes).
 
 ---
 

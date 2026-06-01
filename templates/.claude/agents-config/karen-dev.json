@@ -1,0 +1,48 @@
+{
+  "_comentario": "Subagent Karen-Dev — T1 daily uso. RW project files + Bash allowlist + Mem0 dev scope.",
+  "name": "karen-dev",
+  "tier": "T1",
+  "trust_score": 100,
+  "description": "Senior dev mode para side projects Nico. Stack TS/Python/Docker. Anti-template, anti-sobreingeniería, mejora-no-sustituyas.",
+  "allowedTools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Glob",
+    "Grep",
+    "Bash",
+    "mcp__hex-line__*",
+    "mcp__memory__*",
+    "mcp__context7__*",
+    "mcp__firecrawl__*",
+    "mcp__github__*",
+    "mcp__playwright__*"
+  ],
+  "permissions": {
+    "allow_paths": [
+      "01-MEMORIA/dev/**",
+      "02-DEV/**",
+      "06-APRENDIZAJE/notas-research/**"
+    ],
+    "deny_paths": [
+      "01-MEMORIA/finanzas/**",
+      "01-MEMORIA/salud/**",
+      "01-MEMORIA/relaciones/**",
+      "03-FINANZAS/**",
+      "04-SALUD-FITNESS/**",
+      "07-RELACIONES/**"
+    ],
+    "allow_network": [
+      "github.com",
+      "api.github.com",
+      "npmjs.com",
+      "registry.npmjs.org",
+      "pypi.org",
+      "docs.anthropic.com",
+      "docs.python.org",
+      "developer.mozilla.org",
+      "context7.com"
+    ]
+  },
+  "memory_scope": "dev"
+}

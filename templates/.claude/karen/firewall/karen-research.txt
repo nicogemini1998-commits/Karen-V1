@@ -1,0 +1,16 @@
+# Firewall rules — karen-research (T1)
+# Research puede leer cross-domain salud/finanzas SOLO si Nico pide explícito.
+# Default: deny privacidad alta.
+
+DENY  /01-MEMORIA/finanzas/
+DENY  /01-MEMORIA/salud/
+DENY  /01-MEMORIA/relaciones/
+DENY  /03-FINANZAS/
+DENY  /04-SALUD-FITNESS/
+DENY  /07-RELACIONES/
+
+ALLOW /06-APRENDIZAJE/
+ALLOW /09-COMPRAS-RESEARCH/
+ALLOW /02-DEV/research-tecnica/
+ALLOW /01-MEMORIA/aprendizaje/
+ALLOW /01-MEMORIA/compras-research/

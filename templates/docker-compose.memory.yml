@@ -1,0 +1,97 @@
+# Karen Memory Stack — Mem0 + Neo4j (Graphiti backend)
+# Uso: docker compose -f docker-compose.memory.yml up -d
+# Requiere .env en directorio padre con NEO4J_PASSWORD + MEM0_USER_ID
+
+services:
+  # ─── Neo4j (backend para Graphiti knowledge graph) ────────
+  neo4j:
+    image: neo4j:5.20-community
+    container_name: karen-neo4j
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:7474:7474"  # HTTP browser
+      - "127.0.0.1:7687:7687"  # Bolt
+    environment:
+      - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD:-changeme}
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_dbms_memory_heap_initial__size=512m
+      - NEO4J_dbms_memory_heap_max__size=1G
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+    volumes:
+      - ./neo4j-data:/data
+      - ./neo4j-logs:/logs
+      - ./neo4j-import:/var/lib/neo4j/import
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p ${NEO4J_PASSWORD:-changeme} 'RETURN 1' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ─── Mem0 (semantic vector memory) ────────────────────────
+  # Self-hosted Mem0 con SQLite + Qdrant embebido vía Python
+  mem0:
+    image: python:3.12-slim
+    container_name: karen-mem0
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8888:8888"
+    working_dir: /app
+    volumes:
+      - ./mem0-data:/data
+      - ./mem0-app:/app
+    environment:
+      - MEM0_USER_ID=${MEM0_USER_ID:-nico}
+      - MEM0_DATA_DIR=/data
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+    command: >
+      sh -c "
+        pip install --no-cache-dir 'mem0ai>=0.1.20' fastapi uvicorn &&
+        if [ ! -f /app/server.py ]; then
+          cat > /app/server.py <<'PYEOF'
+        from fastapi import FastAPI
+        from pydantic import BaseModel
+        from mem0 import Memory
+        import os
+
+        app = FastAPI()
+        m = Memory()
+
+        class AddReq(BaseModel):
+            text: str
+            user_id: str = os.getenv('MEM0_USER_ID', 'nico')
+            metadata: dict = {}
+
+        class SearchReq(BaseModel):
+            query: str
+            user_id: str = os.getenv('MEM0_USER_ID', 'nico')
+            limit: int = 10
+            filter: dict = {}
+
+        @app.post('/add')
+        def add(req: AddReq):
+            return m.add(req.text, user_id=req.user_id, metadata=req.metadata)
+
+        @app.post('/search')
+        def search(req: SearchReq):
+            return m.search(req.query, user_id=req.user_id, limit=req.limit)
+
+        @app.get('/health')
+        def health():
+            return {'status': 'ok'}
+        PYEOF
+        fi &&
+        uvicorn server:app --host 0.0.0.0 --port 8888
+      "
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8888/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      neo4j:
+        condition: service_healthy
+
+# ─── Networks ────────────────────────────────────────────────
+networks:
+  default:
+    name: karen-memory-net

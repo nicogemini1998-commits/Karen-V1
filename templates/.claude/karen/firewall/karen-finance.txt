@@ -1,0 +1,12 @@
+# Firewall rules — karen-finance (T2 SENSITIVE)
+
+DENY  /01-MEMORIA/dev/
+DENY  /01-MEMORIA/salud/
+DENY  /01-MEMORIA/relaciones/
+DENY  /01-MEMORIA/productividad/
+DENY  /02-DEV/
+DENY  /04-SALUD-FITNESS/
+DENY  /07-RELACIONES/
+
+ALLOW /01-MEMORIA/finanzas/
+ALLOW /03-FINANZAS/

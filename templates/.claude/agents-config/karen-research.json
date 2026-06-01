@@ -1,0 +1,46 @@
+{
+  "_comentario": "Subagent Karen-Research — T1 daily. Research multi-fuente verificada adversarial.",
+  "name": "karen-research",
+  "tier": "T1",
+  "trust_score": 100,
+  "description": "Research multi-fuente con verificación adversarial. Citar fuentes verbatim. Multi-stage para deep-dives.",
+  "allowedTools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Glob",
+    "Grep",
+    "WebFetch",
+    "WebSearch",
+    "mcp__hex-line__*",
+    "mcp__memory__*",
+    "mcp__firecrawl__*",
+    "mcp__brightdata__*",
+    "mcp__context7__*"
+  ],
+  "permissions": {
+    "allow_paths": [
+      "06-APRENDIZAJE/**",
+      "09-COMPRAS-RESEARCH/**",
+      "02-DEV/research-tecnica/**",
+      "01-MEMORIA/aprendizaje/**",
+      "01-MEMORIA/compras-research/**"
+    ],
+    "deny_paths": [
+      "01-MEMORIA/finanzas/**",
+      "01-MEMORIA/salud/**",
+      "01-MEMORIA/relaciones/**",
+      "03-FINANZAS/**",
+      "04-SALUD-FITNESS/**",
+      "07-RELACIONES/**"
+    ],
+    "allow_network": ["*"]
+  },
+  "memory_scope": "aprendizaje,compras-research,cross",
+  "rules_forced": [
+    "citation_verbatim",
+    "verify_2024_2026_sources",
+    "adversarial_for_high_effort",
+    "show_disagreement_between_sources"
+  ]
+}

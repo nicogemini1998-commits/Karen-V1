@@ -1,0 +1,14 @@
+# Firewall rules — karen-dev (T1)
+# Formato: ACTION pattern
+# Primer match gana. Default: ALLOW si no hay deny match.
+
+DENY  /01-MEMORIA/finanzas/
+DENY  /01-MEMORIA/salud/
+DENY  /01-MEMORIA/relaciones/
+DENY  /03-FINANZAS/
+DENY  /04-SALUD-FITNESS/
+DENY  /07-RELACIONES/
+
+ALLOW /01-MEMORIA/dev/
+ALLOW /02-DEV/
+ALLOW /06-APRENDIZAJE/notas-research/

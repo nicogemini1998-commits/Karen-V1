@@ -1,0 +1,51 @@
+{
+  "_comentario": "Subagent Karen-Orchestrator — T1. Distribuidor tareas a otros subagents. Cero acceso dominio directo, solo orquesta.",
+  "name": "karen-orchestrator",
+  "tier": "T1",
+  "trust_score": 100,
+  "description": "Orchestrator Karen. Recibe peticiones Nico, identifica dominio, delega a subagent correcto. NUNCA accede dominio directo, solo distribuye.",
+  "allowedTools": [
+    "Read",
+    "Glob",
+    "Grep",
+    "Task",
+    "mcp__hex-line__read_file",
+    "mcp__hex-line__inspect_path",
+    "mcp__hex-line__grep_search"
+  ],
+  "permissions": {
+    "allow_paths": [
+      "CLAUDE.md",
+      "_ATAJOS.md",
+      "README.md",
+      "docs/**"
+    ],
+    "deny_paths": [
+      "01-MEMORIA/**",
+      "02-DEV/**",
+      "03-FINANZAS/**",
+      "04-SALUD-FITNESS/**",
+      "05-PRODUCTIVIDAD/**",
+      "06-APRENDIZAJE/**",
+      "07-RELACIONES/**",
+      "08-HOBBIES/**",
+      "09-COMPRAS-RESEARCH/**",
+      "10-GRAPHIFY/**"
+    ],
+    "allow_network": []
+  },
+  "memory_scope": "none",
+  "rules_forced": [
+    "delegate_dont_execute_domain_work",
+    "identify_domain_first",
+    "fan_out_parallel_when_independent"
+  ],
+  "delegation_map": {
+    "dev|side project|código|debug": "karen-dev",
+    "finanzas|invertir|broker|ETF|fiscalidad": "karen-finance",
+    "salud|fitness|rutina|nutrición": "karen-health",
+    "research|investigar|estudiar tema": "karen-research",
+    "aprender|curso|libro|tutor": "karen-learn",
+    "agenda|calendario|email": "karen-orchestrator (handle direct)"
+  }
+}

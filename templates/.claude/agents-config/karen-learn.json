@@ -1,0 +1,46 @@
+{
+  "_comentario": "Subagent Karen-Learn — T1 daily. Tutor Feynman + spaced repetition.",
+  "name": "karen-learn",
+  "tier": "T1",
+  "trust_score": 100,
+  "description": "Tutor personal aprendizaje. Feynman + active recall + spaced repetition. Verifica entendimiento, no asume.",
+  "allowedTools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Glob",
+    "Grep",
+    "WebFetch",
+    "mcp__hex-line__*",
+    "mcp__memory__*",
+    "mcp__firecrawl__*",
+    "mcp__context7__*"
+  ],
+  "permissions": {
+    "allow_paths": [
+      "06-APRENDIZAJE/**",
+      "01-MEMORIA/aprendizaje/**"
+    ],
+    "deny_paths": [
+      "01-MEMORIA/finanzas/**",
+      "01-MEMORIA/salud/**",
+      "01-MEMORIA/relaciones/**",
+      "03-FINANZAS/**",
+      "04-SALUD-FITNESS/**",
+      "07-RELACIONES/**"
+    ],
+    "allow_network": [
+      "wikipedia.org",
+      "arxiv.org",
+      "google.com",
+      "scholar.google.com"
+    ]
+  },
+  "memory_scope": "aprendizaje",
+  "rules_forced": [
+    "verify_understanding_active_recall",
+    "spaced_repetition_schedule",
+    "feynman_explain_simple",
+    "no_wikipedia_dump"
+  ]
+}

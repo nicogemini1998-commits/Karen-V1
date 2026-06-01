@@ -1,0 +1,99 @@
+{
+  "_comentario": "Karen profile.json — hot facts cargados SessionStart. Editable directo o via /karen-learn-me.",
+  "version": "2.0",
+  "user": {
+    "alias": "Nico",
+    "github": "nicogemini1998-commits",
+    "location": "Sagunto, Valencia, España",
+    "timezone": "Europe/Madrid",
+    "languages": ["es", "en"]
+  },
+  "preferences": {
+    "tone_default": "friday",
+    "tone_critical": "jarvis",
+    "code_comments": "minimal",
+    "naming_format": "AAAA-MM-DD_TIPO_slug_vN.ext",
+    "decision_mode_finance": "socratic_sparring",
+    "decision_mode_health": "options_with_no_medical_disclaimer",
+    "decision_mode_purchases_big": "research_then_sparring",
+    "output_style": "terse_technical",
+    "no_emojis_default": true,
+    "no_pleasantries": true,
+    "no_hedging": true
+  },
+  "stack_dev": {
+    "frontend": ["typescript", "nextjs", "tailwindcss", "framer-motion", "gsap", "zustand", "tanstack-query", "radix-ui"],
+    "backend": ["fastapi", "nodejs", "powershell"],
+    "data": ["supabase", "postgres", "redis"],
+    "infra": ["docker", "nginx", "vps-hetzner", "vercel"]
+  },
+  "active_domains": [
+    "dev",
+    "finanzas",
+    "salud",
+    "productividad",
+    "aprendizaje",
+    "relaciones",
+    "hobbies",
+    "compras-research"
+  ],
+  "domain_status": {
+    "dev": "active",
+    "finanzas": "active",
+    "salud": "active",
+    "productividad": "pending-notion-setup",
+    "aprendizaje": "active",
+    "relaciones": "active",
+    "hobbies": "pending-definition",
+    "compras-research": "active"
+  },
+  "current_focus": {
+    "this_week_priorities": [],
+    "blocked_on": [],
+    "topics_watch": {
+      "dev": ["Claude Code", "Next.js 15", "Anthropic API", "MCP servers"],
+      "finanzas": ["uranium ETFs", "AI semis", "EUR/USD", "fiscalidad ES 2026"],
+      "aprendizaje": ["GraphRAG", "Mem0", "agent harness engineering"]
+    }
+  },
+  "isolation_rules": {
+    "cliender_account_separate": true,
+    "cliender_keywords_alert": [
+      "Cliender", "HBD Revolution", "hbdrevolution", "hbdeuropa",
+      "LeadUp", "Studio Cliender", "RStudio", "Sala Limpia", "GHL.*cliente"
+    ]
+  },
+  "subagents": {
+    "available": [
+      "karen-orchestrator",
+      "karen-dev",
+      "karen-finance",
+      "karen-health",
+      "karen-research",
+      "karen-learn"
+    ],
+    "default": "karen-orchestrator"
+  },
+  "memory_backend": {
+    "hot_facts": "~/.claude/karen/profile.json",
+    "semantic": "mem0 (docker localhost:8888)",
+    "graph": "graphiti+neo4j (docker localhost:7687)",
+    "markdown_index": "01-MEMORIA/MEMORY.md"
+  },
+  "onboarding": {
+    "completed": false,
+    "pending_questions": [
+      "broker_actual",
+      "github_pat_scope",
+      "topics_watch_finance_personalizado",
+      "notion_workspace_url",
+      "tabues_off_limits"
+    ]
+  },
+  "metrics": {
+    "trust_scores_path": "~/.claude/karen/trust-log.jsonl",
+    "sycophancy_target_min_disagreement_rate": 0.05,
+    "last_audit": null
+  },
+  "last_updated": "2026-06-01T00:00:00Z"
+}

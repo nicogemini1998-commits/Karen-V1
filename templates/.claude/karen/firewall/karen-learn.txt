@@ -1,0 +1,11 @@
+# Firewall rules — karen-learn (T1)
+
+DENY  /01-MEMORIA/finanzas/
+DENY  /01-MEMORIA/salud/
+DENY  /01-MEMORIA/relaciones/
+DENY  /03-FINANZAS/
+DENY  /04-SALUD-FITNESS/
+DENY  /07-RELACIONES/
+
+ALLOW /06-APRENDIZAJE/
+ALLOW /01-MEMORIA/aprendizaje/

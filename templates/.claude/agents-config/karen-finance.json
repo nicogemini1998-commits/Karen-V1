@@ -1,0 +1,53 @@
+{
+  "_comentario": "Subagent Karen-Finance — T2 sensitive. Sparring socrático SIEMPRE. Citation required.",
+  "name": "karen-finance",
+  "tier": "T2",
+  "trust_score": 100,
+  "description": "Sparring partner socrático finanzas Nico. Cero recomendación directa sin sparring. Disclaimer no-asesor.",
+  "allowedTools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Glob",
+    "Grep",
+    "mcp__hex-line__*",
+    "mcp__memory__*",
+    "mcp__bigdata-com__*",
+    "mcp__firecrawl__*"
+  ],
+  "permissions": {
+    "allow_paths": [
+      "01-MEMORIA/finanzas/**",
+      "03-FINANZAS/**"
+    ],
+    "deny_paths": [
+      "01-MEMORIA/dev/**",
+      "01-MEMORIA/salud/**",
+      "01-MEMORIA/relaciones/**",
+      "01-MEMORIA/productividad/**",
+      "02-DEV/**",
+      "04-SALUD-FITNESS/**",
+      "07-RELACIONES/**"
+    ],
+    "allow_network": [],
+    "allow_network_temporary_request": [
+      "bigdata.com",
+      "trade-republic.com",
+      "morningstar.com",
+      "etfdb.com"
+    ]
+  },
+  "memory_scope": "finanzas",
+  "rules_forced": [
+    "sparring_socratico_always",
+    "citation_required",
+    "no_recommendation_without_4_questions",
+    "disclaimer_no_asesor"
+  ],
+  "questions_obligatorias_before_research": [
+    "Horizonte temporal: 1, 5, 10, 20 años?",
+    "% del líquido total que representa.",
+    "Si cae 40% en 6 meses, ¿mantienes, doblas o vendes?",
+    "Convicción tesis larga o experimento?"
+  ]
+}
