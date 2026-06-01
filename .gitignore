@@ -1,0 +1,152 @@
+# ============================================================
+# KAREN-V1 .gitignore
+# Privacidad TOTAL — cero info personal sensible al repo público
+# ============================================================
+
+# === Credenciales y secretos ===
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.cert
+*.p12
+secrets/
+credentials/
+**/api-keys.json
+**/tokens.json
+
+# === Claude Code config local (NUNCA al repo compartido) ===
+.claude/settings.local.json*
+.claude/credentials/
+.claude/secrets/
+.claude/cache/
+.claude/session-data/
+.claude/file-history/
+.claude/debug/
+.claude/metrics/
+.claude/projects/
+.claude/backups/
+
+# === Dominios con datos PERSONALES SENSIBLES (memoria, salud, finanzas, relaciones) ===
+01-MEMORIA/dev/*
+01-MEMORIA/finanzas/*
+01-MEMORIA/salud/*
+01-MEMORIA/productividad/*
+01-MEMORIA/aprendizaje/*
+01-MEMORIA/relaciones/*
+01-MEMORIA/hobbies/*
+01-MEMORIA/compras-research/*
+!01-MEMORIA/**/.gitkeep
+!01-MEMORIA/MEMORY.md
+
+03-FINANZAS/portafolio.md
+03-FINANZAS/research-ETFs/*
+03-FINANZAS/fiscalidad-ES/*
+03-FINANZAS/broker-notas/*
+!03-FINANZAS/.gitkeep
+!03-FINANZAS/**/.gitkeep
+
+04-SALUD-FITNESS/rutinas/*
+04-SALUD-FITNESS/nutricion/*
+04-SALUD-FITNESS/tracking/*
+!04-SALUD-FITNESS/.gitkeep
+!04-SALUD-FITNESS/**/.gitkeep
+
+07-RELACIONES/drafts/*
+!07-RELACIONES/.gitkeep
+!07-RELACIONES/**/.gitkeep
+
+# === Graphify graph files (datos personales serializados) ===
+10-GRAPHIFY/graph.json
+10-GRAPHIFY/corpus/*
+10-GRAPHIFY/exports/*
+!10-GRAPHIFY/.gitkeep
+!10-GRAPHIFY/**/.gitkeep
+
+# === Side projects (código personal — no al repo Karen) ===
+02-DEV/proyectos-activos/*
+!02-DEV/proyectos-activos/.gitkeep
+02-DEV/snippets/*
+!02-DEV/snippets/.gitkeep
+
+# === Calendarios sync (datos privados) ===
+05-PRODUCTIVIDAD/calendario-outlook/*
+05-PRODUCTIVIDAD/calendario-gmail/*
+05-PRODUCTIVIDAD/notion-sync/*
+!05-PRODUCTIVIDAD/**/.gitkeep
+
+# === Notas personales aprendizaje/hobbies/compras ===
+06-APRENDIZAJE/libros/*
+06-APRENDIZAJE/cursos/*
+06-APRENDIZAJE/idiomas/*
+06-APRENDIZAJE/notas-research/*
+!06-APRENDIZAJE/**/.gitkeep
+
+08-HOBBIES/*
+!08-HOBBIES/.gitkeep
+
+09-COMPRAS-RESEARCH/*
+!09-COMPRAS-RESEARCH/.gitkeep
+
+# === Sistema operativo ===
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# === Editor / IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.vs/
+
+# === Node ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+!templates/**/package-lock.json
+!templates/**/pnpm-lock.yaml
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+env/
+.python-version
+*.egg-info/
+dist/
+build/
+
+# === Docker ===
+.docker/
+docker-compose.override.yml
+
+# === Logs y temporales ===
+*.log
+*.tmp
+*.bak
+*.old
+*.orig
+.cache/
+tmp/
+
+# === Backups ===
+99-BACKUPS/
+backup-*/
+*.backup

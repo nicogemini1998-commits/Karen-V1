@@ -1,0 +1,73 @@
+{
+  "_comentario": "Karen Personal — settings.json template. Copia a ~/.claude/settings.json y ajusta. NO incluyas secretos aquí; van en settings.local.json (gitignored).",
+
+  "model": "claude-opus-4-7",
+  "language": "español",
+  "theme": "light",
+  "outputStyle": "default",
+
+  "alwaysThinkingEnabled": true,
+
+  "enabledPlugins": {
+    "caveman@caveman": true,
+    "claude-mem@thedotmack": true,
+    "everything-claude-code@everything-claude-code": true,
+    "firecrawl@claude-plugins-official": true,
+    "brightdata-plugin@claude-plugins-official": true,
+    "bigdata-com@claude-plugins-official": true,
+    "circleback@claude-plugins-official": true
+  },
+
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(pnpm:*)",
+      "Bash(yarn:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(python3:*)",
+      "Bash(pip:*)",
+      "Bash(pip3:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git checkout:*)",
+      "Bash(git branch:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(docker:*)",
+      "Bash(docker-compose:*)",
+      "Bash(curl:*)",
+      "Bash(jq:*)",
+      "mcp__hex-line__*",
+      "mcp__memory__*",
+      "mcp__firecrawl__*",
+      "mcp__context7__*",
+      "mcp__playwright__*",
+      "mcp__github__*",
+      "mcp__bigdata-com__*",
+      "mcp__brightdata__*",
+      "mcp__circleback__*"
+    ]
+  },
+
+  "hooks": {
+    "_comentario": "Hooks opcionales. Descomenta los que quieras activar. Para hex-line necesitas instalar el output style + hook por separado.",
+
+    "PostToolUse_DISABLED": [
+      {
+        "matcher": "Write|Edit",
+        "command": "prettier --write \"$FILE_PATH\" 2>/dev/null || true",
+        "description": "Auto-format archivos editados"
+      }
+    ]
+  }
+}

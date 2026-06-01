@@ -1,0 +1,19 @@
+{
+  "_comentario": "PRIVADO. NUNCA al repo. Permisos extra por máquina, env vars, overrides. Renombra a settings.local.json en ~/.claude/",
+  "_user": "Nico (personal)",
+  "_machine": "MAC-PERSONAL",
+
+  "permissions": {
+    "allow": [
+      "Bash(rm -rf node_modules:*)",
+      "Bash(rm -rf .next:*)",
+      "Bash(rm -rf dist:*)",
+      "Bash(open:*)"
+    ]
+  },
+
+  "env": {
+    "EDITOR": "code",
+    "GIT_EDITOR": "code --wait"
+  }
+}
