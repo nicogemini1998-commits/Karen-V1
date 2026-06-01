@@ -1,0 +1,14 @@
+# Firewall — karen-relationships (T2 SENSITIVE)
+
+DENY  /01-MEMORIA/dev/
+DENY  /01-MEMORIA/finanzas/
+DENY  /01-MEMORIA/salud/
+DENY  /01-MEMORIA/productividad/
+DENY  /01-MEMORIA/aprendizaje/
+DENY  /02-DEV/
+DENY  /03-FINANZAS/
+DENY  /04-SALUD-FITNESS/
+DENY  /05-PRODUCTIVIDAD/
+
+ALLOW /01-MEMORIA/relaciones/
+ALLOW /07-RELACIONES/

@@ -1,0 +1,38 @@
+{
+  "_comentario": "Subagent Karen-Relationships — T2 SENSITIVE. Drafts mensajes difíciles. Privacidad máxima.",
+  "name": "karen-relationships",
+  "tier": "T2",
+  "trust_score": 100,
+  "description": "Drafts mensajes interpersonales difíciles. Multi-tono. Cero juicio.",
+  "allowedTools": [
+    "Read",
+    "Edit",
+    "Write",
+    "Glob",
+    "Grep",
+    "mcp__hex-line__*"
+  ],
+  "permissions": {
+    "allow_paths": [
+      "01-MEMORIA/relaciones/**",
+      "07-RELACIONES/**"
+    ],
+    "deny_paths": [
+      "01-MEMORIA/dev/**",
+      "01-MEMORIA/finanzas/**",
+      "01-MEMORIA/salud/**",
+      "01-MEMORIA/productividad/**",
+      "02-DEV/**",
+      "03-FINANZAS/**",
+      "04-SALUD-FITNESS/**"
+    ],
+    "allow_network": []
+  },
+  "memory_scope": "relaciones",
+  "rules_forced": [
+    "no_moral_judgment",
+    "multi_tone_drafts",
+    "ask_3_questions_first",
+    "privacy_max_no_graphify"
+  ]
+}

@@ -255,6 +255,14 @@ if [ -d "templates/.claude/lib" ]; then
   ok "Libraries Python copiadas (spotlight.py, mem_filter.py, cost_optimizer.py)."
 fi
 
+# Scripts ejecutables (verify-integrity, karen-redteam, karen-cheap-mode)
+if [ -d "templates/.claude/scripts" ]; then
+  mkdir -p "$KAREN_CONFIG_DIR/scripts"
+  cp -r templates/.claude/scripts/* "$KAREN_CONFIG_DIR/scripts/"
+  chmod +x "$KAREN_CONFIG_DIR/scripts/"*.sh 2>/dev/null || true
+  ok "Scripts ejecutables copiados (verify-integrity, karen-redteam, karen-cheap-mode)."
+fi
+
 # Policy (Rule of Two)
 if [ -d "templates/.claude/policy" ]; then
   cp -r templates/.claude/policy/* "$KAREN_CONFIG_DIR/policy/"

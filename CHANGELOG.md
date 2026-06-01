@@ -4,6 +4,79 @@
 
 ---
 
+## [v2.2] — 2026-06-01 (Security + Cost + Computer Control + Bugs Fixed)
+
+> Karen blindada contra ataques 2025-2026 + cost optimization + computer control specs.
+> Probado localmente: 65/69 pass, 0 fail, 4 warn (Docker opcional).
+
+### Added — Security threat model (OWASP LLM Top 10 + MITRE ATLAS)
+- `docs/06-seguridad/THREAT-MODEL.md` — 8 threats T1, 6 T2, 5 T3 con mitigación por capa.
+- `docs/06-seguridad/COST-OPTIMIZATION.md` — prompt caching + Haiku routing + MD convert + memory-first.
+- `docs/06-seguridad/COMPUTER-CONTROL.md` — Computer Use API + Playwright + AppleScript + iOS Shortcuts safety.
+
+### Added — 5 hooks security ejecutables
+- `integrity-ledger.sh` (SessionStart) — SHA256 ledger contra T1.7 hook rewrite.
+- `mcp-pin-verify.sh` (SessionStart) — npm integrity pin contra T1.3 rug-pull.
+- `npm-supply-chain-guard.sh` (PreToolUse Bash) — enforce `--ignore-scripts` + lockfile contra T1.2 axios.
+- `codegen-scanner.sh` (PostToolUse Write) — SAST patrones peligrosos + semgrep/bandit/shellcheck si disponibles.
+- `post-bash-secret-scan.sh` (PostToolUse Bash) — detecta secrets en outputs Bash.
+
+### Added — 3 libraries Python
+- `lib/spotlight.py` — IPI defense Microsoft Spotlighting (ZWSP strip + homoglyph + datamarking + DANGEROUS regex).
+- `lib/mem_filter.py` — memory poisoning defense (AgentPoison/EchoLeak/A-MemGuard) + provenance required + secret check.
+- `lib/cost_optimizer.py` — model routing Haiku/Sonnet/Opus + prompt cache + budget caps + memory routing.
+
+### Added — Rule of Two policy
+- `policy/karen-rot.yaml` — 5 tiers + capability matrix + forbidden 3-of-3 combinations + bridge patterns.
+
+### Added — 3 commands
+- `/verify-integrity` — verifica + restaura integrity ledger + MCP pins.
+- `/karen-redteam` — garak + PyRIT + 10 tests quick contra IPI/jailbreak/memory poisoning.
+- `/karen-cheap-mode` — agresivo Haiku routing + caching + MD convert + budget hard cap.
+
+### Changed — settings.json + install.sh + verify-install.sh
+- `settings.json` v2.2 wired con 11 hooks (6 base + 5 security).
+- `install.sh` copia lib/, policy/, integrity/, redteam/, quarantine/ dirs.
+- `verify-install.sh` +20 checks nuevos (hooks security, libs, policy, audit dirs).
+
+### Bugs fixed durante testing local
+1. **install.sh:** `declare -A` no funciona bash 3.2 mac → sustituido por string concat.
+2. **install.sh:** `check_cmd` con `set -e` mataba script si dep faltaba → `|| true` en cada call.
+3. **install.sh:** `read -r REPLY` fallía con stdin redirigido → fallback `|| REPLY="n"`.
+4. **verify-install.sh:** check agents buscaba `karen-*.md` pero archivos son `<name>.md` → cambio glob.
+5. **secrets-guard.sh + post-bash-secret-scan.sh:** `grep -E` con pattern starting `-----` lo interpretaba como flag → fix con `--` separator.
+6. **raiz-limpia-guard.sh:** `wc -c` macOS pad spaces — comparison `"0" = " 0"` fallía → fix con `tr -d ' '` + `echo -n`.
+7. **cost_optimizer.py:** regex `should_use_memory_instead` no matchea "¿qué broker es mi favorito?" → amplié patrones con `[^?]*\bmi(s)?\b`.
+
+### Verified working en sandbox local
+- spotlight.py: bloquea IPI EN/ES, strip ZWSP, normalize homoglyphs Cyrillic.
+- mem_filter.py: bloquea missing metadata, IPI, secret-shaped strings.
+- cost_optimizer.py: routing Haiku/Sonnet/Opus correcto, savings 75% PDF→MD.
+- secrets-guard: detecta sk-ant-*, exit 2.
+- raiz-limpia-guard: bloquea archivos sueltos raíz, permite carpetas numeradas.
+- domain-firewall: bloquea cross-domain karen-dev → finanzas, permite dev paths.
+- integrity-ledger: detect drift tras tampering settings.json.
+- npm-supply-chain: bloquea sin lockfile, permite con --ignore-scripts.
+- install.sh full ciclo: EXIT 0, 65 pass / 0 fail.
+
+### Research SOTA aplicado
+- [Help Net Security: IPI in the wild Apr 2026](https://www.helpnetsecurity.com/2026/04/24/indirect-prompt-injection-in-the-wild/)
+- [Authzed: MCP breaches timeline](https://authzed.com/blog/timeline-mcp-breaches)
+- [Snyk: TanStack npm Shai-Hulud](https://snyk.io/blog/tanstack-npm-packages-compromised/)
+- [arXiv 2512.16962: MemoryGraft persistent compromise](https://arxiv.org/pdf/2512.16962)
+- [OWASP LLM Top 10 2025](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+- [Microsoft Agent Governance Toolkit](https://opensource.microsoft.com/blog/2026/04/02/introducing-the-agent-governance-toolkit-open-source-runtime-security-for-ai-agents/)
+- [Meta Rule of Two](https://www.helpnetsecurity.com/2026/04/24/indirect-prompt-injection-in-the-wild/)
+- [PromptArmor: Hijacking Claude Code via plugins](https://www.promptarmor.com/resources/hijacking-claude-code-via-injected-marketplace-plugins)
+- [Anthropic Computer Use API docs](https://docs.anthropic.com/en/docs/build-with-claude/computer-use)
+- [Microsoft markitdown (PDF → MD)](https://github.com/microsoft/markitdown)
+
+---
+
+
+
+---
+
 ## [v2.1] — 2026-06-01 (Ready-to-Deploy)
 
 > Karen 100% lista. Clone + install.sh → ordenador nuevo operativo turno 1.

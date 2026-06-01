@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KAREN AI P.A · Personal Assistant Premium</title>
+<style>
+  /* ─── Reset + tokens ─────────────────────────────────────── */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#050507;
+    --bg-soft:#0a0a10;
+    --surface:#10101a;
+    --surface-2:#16162a;
+    --border:rgba(255,255,255,0.08);
+    --border-glow:rgba(120,160,255,0.3);
+    --text:#ededf0;
+    --text-dim:#8a8a95;
+    --text-faint:#55555f;
+    --accent:#7aa2ff;
+    --accent-2:#c4a3ff;
+    --accent-3:#5eead4;
+    --danger:#ff6b8e;
+    --warning:#ffb547;
+    --success:#5eead4;
+    --grad-1:linear-gradient(135deg,#7aa2ff 0%,#c4a3ff 50%,#5eead4 100%);
+    --grad-2:linear-gradient(135deg,#ff6b8e 0%,#c4a3ff 100%);
+    --grad-glow:radial-gradient(circle at 50% 0%,rgba(122,162,255,0.15) 0%,transparent 60%);
+    --font-display:'Inter Display','SF Pro Display',-apple-system,system-ui,sans-serif;
+    --font-body:'Inter','SF Pro Text',-apple-system,system-ui,sans-serif;
+    --font-mono:'JetBrains Mono','SF Mono',Menlo,monospace;
+    --radius:20px;
+    --radius-sm:10px;
+    --shadow-glow:0 0 80px -20px rgba(122,162,255,0.4);
+    --shadow-card:0 30px 60px -20px rgba(0,0,0,0.5),0 0 0 1px var(--border);
+  }
+  html{scroll-behavior:smooth;font-size:16px}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    line-height:1.5;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ─── Cursor glow ────────────────────────────────────────── */
+  .cursor-glow{
+    position:fixed;
+    width:600px;height:600px;
+    border-radius:50%;
+    background:radial-gradient(circle,rgba(122,162,255,0.08) 0%,transparent 70%);
+    pointer-events:none;
+    transform:translate(-50%,-50%);
+    z-index:1;
+    transition:opacity 0.3s;
+    mix-blend-mode:screen;
+  }
+
+  /* ─── Grid background ─────────────────────────────────────── */
+  .grid-bg{
+    position:fixed;inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
+    background-size:80px 80px;
+    mask-image:radial-gradient(ellipse at center,black 40%,transparent 75%);
+    z-index:0;
+    pointer-events:none;
+  }
+
+  /* ─── Layout ─────────────────────────────────────────────── */
+  .container{
+    max-width:1200px;
+    margin:0 auto;
+    padding:0 32px;
+    position:relative;
+    z-index:2;
+  }
+
+  /* ─── Nav ────────────────────────────────────────────────── */
+  nav{
+    position:fixed;top:0;left:0;right:0;
+    z-index:100;
+    backdrop-filter:blur(20px) saturate(180%);
+    -webkit-backdrop-filter:blur(20px) saturate(180%);
+    background:rgba(5,5,7,0.6);
+    border-bottom:1px solid var(--border);
+    padding:14px 0;
+    transition:all 0.3s;
+  }
+  nav .nav-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    max-width:1200px;margin:0 auto;padding:0 32px;
+  }
+  .logo{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:18px;
+    letter-spacing:-0.02em;
+    display:flex;align-items:center;gap:10px;
+  }
+  .logo-dot{
+    width:10px;height:10px;
+    border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 12px var(--accent);
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{transform:scale(1);opacity:1}
+    50%{transform:scale(1.3);opacity:0.7}
+  }
+  .nav-links{display:flex;gap:32px;font-size:14px}
+  .nav-links a{
+    color:var(--text-dim);
+    text-decoration:none;
+    transition:color 0.2s;
+  }
+  .nav-links a:hover{color:var(--text)}
+  .cta-nav{
+    background:var(--text);
+    color:var(--bg);
+    padding:8px 16px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:600;
+    border:none;
+    cursor:pointer;
+    transition:transform 0.2s;
+  }
+  .cta-nav:hover{transform:scale(1.05)}
+
+  /* ─── Hero ────────────────────────────────────────────────── */
+  .hero{
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    position:relative;
+    padding:140px 0 80px;
+    background:var(--grad-glow);
+  }
+  .hero-content{
+    text-align:center;
+    max-width:900px;
+    margin:0 auto;
+  }
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:6px 14px;
+    background:rgba(122,162,255,0.1);
+    border:1px solid rgba(122,162,255,0.3);
+    border-radius:100px;
+    font-size:13px;
+    color:var(--accent);
+    margin-bottom:32px;
+    font-weight:500;
+    animation:slideUp 0.8s ease-out;
+  }
+  .badge::before{
+    content:'';
+    width:6px;height:6px;
+    border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 8px var(--accent);
+  }
+  .hero h1{
+    font-family:var(--font-display);
+    font-size:clamp(48px,9vw,120px);
+    font-weight:800;
+    letter-spacing:-0.04em;
+    line-height:0.95;
+    margin-bottom:24px;
+    animation:slideUp 1s ease-out 0.1s backwards;
+  }
+  .hero h1 .grad{
+    background:var(--grad-1);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    display:inline-block;
+  }
+  .hero p.lead{
+    font-size:clamp(16px,2vw,22px);
+    color:var(--text-dim);
+    max-width:720px;
+    margin:0 auto 48px;
+    line-height:1.5;
+    animation:slideUp 1s ease-out 0.2s backwards;
+  }
+  @keyframes slideUp{
+    from{opacity:0;transform:translateY(20px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  .hero-cta{
+    display:flex;gap:16px;justify-content:center;flex-wrap:wrap;
+    animation:slideUp 1s ease-out 0.3s backwards;
+  }
+  .btn{
+    padding:14px 28px;
+    border-radius:12px;
+    font-size:15px;
+    font-weight:600;
+    border:none;
+    cursor:pointer;
+    transition:all 0.3s;
+    display:inline-flex;align-items:center;gap:10px;
+    text-decoration:none;
+  }
+  .btn-primary{
+    background:var(--text);
+    color:var(--bg);
+    box-shadow:var(--shadow-glow);
+  }
+  .btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 0 100px -10px rgba(122,162,255,0.6);
+  }
+  .btn-secondary{
+    background:rgba(255,255,255,0.05);
+    color:var(--text);
+    border:1px solid var(--border);
+  }
+  .btn-secondary:hover{
+    background:rgba(255,255,255,0.1);
+    border-color:rgba(255,255,255,0.2);
+  }
+
+  /* ─── Hero orbit visual ──────────────────────────────────── */
+  .hero-orbit{
+    position:relative;
+    width:100%;max-width:600px;
+    margin:80px auto 0;
+    aspect-ratio:1;
+    animation:slideUp 1.2s ease-out 0.5s backwards;
+  }
+  .orbit-ring{
+    position:absolute;
+    inset:50%;
+    width:100%;height:100%;
+    transform:translate(-50%,-50%);
+    border:1px solid var(--border);
+    border-radius:50%;
+    animation:rotate 60s linear infinite;
+  }
+  .orbit-ring:nth-child(1){
+    inset:50% 50% 50% 50%;
+    width:30%;height:30%;
+    border-color:rgba(122,162,255,0.3);
+  }
+  .orbit-ring:nth-child(2){
+    inset:50% 50% 50% 50%;
+    width:55%;height:55%;
+    border-color:rgba(196,163,255,0.2);
+    animation-duration:80s;
+    animation-direction:reverse;
+  }
+  .orbit-ring:nth-child(3){
+    inset:50% 50% 50% 50%;
+    width:80%;height:80%;
+    border-color:rgba(94,234,212,0.15);
+    animation-duration:120s;
+  }
+  @keyframes rotate{
+    from{transform:translate(-50%,-50%) rotate(0deg)}
+    to{transform:translate(-50%,-50%) rotate(360deg)}
+  }
+  .orbit-core{
+    position:absolute;
+    top:50%;left:50%;
+    transform:translate(-50%,-50%);
+    width:15%;aspect-ratio:1;
+    background:var(--grad-1);
+    border-radius:50%;
+    box-shadow:0 0 80px rgba(122,162,255,0.6);
+    animation:corepulse 3s ease-in-out infinite;
+  }
+  @keyframes corepulse{
+    0%,100%{box-shadow:0 0 80px rgba(122,162,255,0.6),0 0 120px rgba(122,162,255,0.3)}
+    50%{box-shadow:0 0 100px rgba(196,163,255,0.8),0 0 160px rgba(196,163,255,0.4)}
+  }
+  .orbit-node{
+    position:absolute;
+    width:48px;height:48px;
+    background:var(--surface);
+    border:1px solid var(--border-glow);
+    border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;
+    box-shadow:0 0 20px rgba(122,162,255,0.2);
+    transition:transform 0.3s;
+    cursor:pointer;
+  }
+  .orbit-node:hover{
+    transform:scale(1.2);
+    border-color:var(--accent);
+    box-shadow:0 0 30px rgba(122,162,255,0.5);
+  }
+
+  /* ─── Section ────────────────────────────────────────────── */
+  section{padding:120px 0;position:relative}
+  .section-header{
+    text-align:center;
+    max-width:720px;
+    margin:0 auto 80px;
+  }
+  .section-label{
+    display:inline-block;
+    color:var(--accent);
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:0.15em;
+    text-transform:uppercase;
+    margin-bottom:16px;
+  }
+  .section-header h2{
+    font-family:var(--font-display);
+    font-size:clamp(36px,6vw,68px);
+    font-weight:800;
+    letter-spacing:-0.03em;
+    line-height:1.05;
+    margin-bottom:20px;
+  }
+  .section-header h2 .grad{
+    background:var(--grad-1);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .section-header p{
+    color:var(--text-dim);
+    font-size:18px;
+    line-height:1.5;
+  }
+
+  /* ─── Bento grid capacidades ─────────────────────────────── */
+  .bento{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    gap:20px;
+  }
+  .bento-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:40px;
+    position:relative;
+    overflow:hidden;
+    transition:all 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+  .bento-card::before{
+    content:'';
+    position:absolute;inset:0;
+    background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(122,162,255,0.08) 0%,transparent 50%);
+    opacity:0;
+    transition:opacity 0.3s;
+    pointer-events:none;
+  }
+  .bento-card:hover{
+    transform:translateY(-4px);
+    border-color:rgba(122,162,255,0.3);
+  }
+  .bento-card:hover::before{opacity:1}
+  .bento-card.large{grid-column:span 8;min-height:380px}
+  .bento-card.medium{grid-column:span 4;min-height:380px}
+  .bento-card.small{grid-column:span 4;min-height:280px}
+  .bento-card.wide{grid-column:span 6;min-height:280px}
+
+  .bento-icon{
+    width:56px;height:56px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:14px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:28px;
+    margin-bottom:24px;
+    position:relative;
+    overflow:hidden;
+  }
+  .bento-icon::after{
+    content:'';
+    position:absolute;inset:0;
+    background:var(--grad-1);
+    opacity:0.1;
+  }
+  .bento-card h3{
+    font-family:var(--font-display);
+    font-size:24px;
+    font-weight:700;
+    letter-spacing:-0.02em;
+    margin-bottom:12px;
+    line-height:1.2;
+  }
+  .bento-card p{
+    color:var(--text-dim);
+    font-size:15px;
+    line-height:1.5;
+    margin-bottom:20px;
+  }
+  .bento-stats{
+    display:flex;gap:24px;margin-top:auto;
+    padding-top:24px;
+    border-top:1px solid var(--border);
+  }
+  .bento-stat{
+    display:flex;flex-direction:column;gap:4px;
+  }
+  .bento-stat-value{
+    font-family:var(--font-display);
+    font-size:24px;font-weight:700;
+    color:var(--accent);
+  }
+  .bento-stat-label{
+    font-size:12px;
+    color:var(--text-faint);
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+  }
+
+  /* ─── Tags ──────────────────────────────────────────────── */
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+  .tag{
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--border);
+    padding:4px 10px;
+    border-radius:6px;
+    font-size:12px;
+    color:var(--text-dim);
+    font-family:var(--font-mono);
+  }
+
+  /* ─── Architecture diagram ───────────────────────────────── */
+  .arch-diagram{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:60px;
+    position:relative;
+    overflow:hidden;
+  }
+  .arch-layers{
+    display:flex;flex-direction:column;gap:12px;
+  }
+  .arch-layer{
+    display:flex;align-items:center;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    padding:18px 24px;
+    transition:all 0.3s;
+    position:relative;
+    cursor:pointer;
+  }
+  .arch-layer:hover{
+    background:rgba(122,162,255,0.05);
+    border-color:rgba(122,162,255,0.3);
+    transform:translateX(8px);
+  }
+  .arch-layer-id{
+    font-family:var(--font-mono);
+    font-size:12px;
+    font-weight:700;
+    color:var(--accent);
+    width:48px;
+  }
+  .arch-layer-title{
+    font-weight:600;
+    font-size:15px;
+    width:280px;
+  }
+  .arch-layer-desc{
+    color:var(--text-dim);
+    font-size:13px;
+    flex:1;
+  }
+  .arch-arrow{
+    position:absolute;
+    left:50%;
+    bottom:-12px;
+    transform:translateX(-50%);
+    color:var(--text-faint);
+    font-size:12px;
+  }
+
+  /* ─── Domain firewall ───────────────────────────────────── */
+  .domains-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:16px;
+  }
+  .domain-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    padding:24px;
+    text-align:center;
+    transition:all 0.3s;
+    cursor:pointer;
+  }
+  .domain-card:hover{
+    transform:translateY(-4px);
+    border-color:var(--accent);
+    box-shadow:0 20px 40px -20px rgba(122,162,255,0.3);
+  }
+  .domain-emoji{
+    font-size:40px;
+    margin-bottom:12px;
+    display:block;
+  }
+  .domain-name{
+    font-weight:600;
+    font-size:14px;
+    margin-bottom:4px;
+  }
+  .domain-meta{
+    font-size:11px;
+    color:var(--text-faint);
+    font-family:var(--font-mono);
+  }
+
+  /* ─── Security threats ───────────────────────────────────── */
+  .threats-list{display:flex;flex-direction:column;gap:12px}
+  .threat-item{
+    display:flex;align-items:center;gap:20px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    padding:20px 24px;
+    transition:all 0.3s;
+  }
+  .threat-item:hover{
+    background:rgba(255,107,142,0.03);
+    border-color:rgba(255,107,142,0.2);
+  }
+  .threat-tier{
+    width:50px;height:50px;
+    border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;
+    font-family:var(--font-mono);
+    font-size:13px;
+    flex-shrink:0;
+  }
+  .tier-1{background:rgba(255,107,142,0.15);color:var(--danger);border:1px solid rgba(255,107,142,0.3)}
+  .tier-2{background:rgba(255,181,71,0.12);color:var(--warning);border:1px solid rgba(255,181,71,0.3)}
+  .threat-info{flex:1}
+  .threat-name{font-weight:600;font-size:15px;margin-bottom:4px}
+  .threat-desc{color:var(--text-dim);font-size:13px}
+  .threat-status{
+    padding:6px 12px;
+    border-radius:8px;
+    font-size:12px;
+    font-weight:600;
+    background:rgba(94,234,212,0.1);
+    color:var(--success);
+    border:1px solid rgba(94,234,212,0.2);
+    font-family:var(--font-mono);
+  }
+
+  /* ─── Cost comparison ───────────────────────────────────── */
+  .cost-compare{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+  }
+  .cost-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:36px;
+    position:relative;
+  }
+  .cost-card.naive{opacity:0.7}
+  .cost-card.optimized{
+    border-color:rgba(94,234,212,0.3);
+    background:linear-gradient(135deg,rgba(94,234,212,0.05) 0%,transparent 100%);
+  }
+  .cost-card-label{
+    font-size:12px;
+    color:var(--text-faint);
+    text-transform:uppercase;
+    letter-spacing:0.15em;
+    margin-bottom:12px;
+  }
+  .cost-card-value{
+    font-family:var(--font-display);
+    font-size:48px;
+    font-weight:800;
+    margin-bottom:8px;
+  }
+  .cost-card.optimized .cost-card-value{
+    background:linear-gradient(135deg,#5eead4 0%,#7aa2ff 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .cost-card-period{
+    color:var(--text-dim);
+    font-size:14px;
+    margin-bottom:24px;
+  }
+  .cost-savings-arrow{
+    position:absolute;
+    top:50%;right:-20px;
+    transform:translateY(-50%);
+    width:40px;height:40px;
+    background:var(--success);
+    color:var(--bg);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;
+    z-index:10;
+    font-size:18px;
+  }
+  .cost-tactics{display:flex;flex-direction:column;gap:8px;margin-top:24px}
+  .cost-tactic{
+    display:flex;align-items:center;gap:10px;
+    font-size:13px;
+    color:var(--text-dim);
+  }
+  .cost-tactic::before{
+    content:'✓';
+    color:var(--success);
+    font-weight:700;
+  }
+
+  /* ─── Workflow ───────────────────────────────────────────── */
+  .workflow{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:24px;
+  }
+  .workflow-step{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:32px;
+    position:relative;
+    transition:all 0.3s;
+  }
+  .workflow-step:hover{
+    transform:translateY(-4px);
+    border-color:rgba(122,162,255,0.3);
+  }
+  .workflow-num{
+    font-family:var(--font-display);
+    font-size:48px;
+    font-weight:800;
+    background:var(--grad-1);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    line-height:1;
+    margin-bottom:16px;
+  }
+  .workflow-title{
+    font-family:var(--font-display);
+    font-size:20px;
+    font-weight:700;
+    margin-bottom:12px;
+  }
+  .workflow-desc{
+    color:var(--text-dim);
+    font-size:14px;
+    line-height:1.5;
+  }
+  .workflow-code{
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    padding:14px 18px;
+    margin-top:20px;
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--accent-3);
+  }
+
+  /* ─── Personality ────────────────────────────────────────── */
+  .personality{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:32px;
+    align-items:start;
+  }
+  .pers-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:40px;
+  }
+  .pers-header{
+    display:flex;align-items:center;gap:16px;
+    margin-bottom:24px;
+  }
+  .pers-avatar{
+    width:60px;height:60px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:32px;
+    background:var(--grad-1);
+  }
+  .pers-name{
+    font-family:var(--font-display);
+    font-size:22px;
+    font-weight:700;
+  }
+  .pers-role{
+    color:var(--text-dim);
+    font-size:13px;
+    font-family:var(--font-mono);
+  }
+  .pers-traits{display:flex;flex-direction:column;gap:12px;margin-top:24px}
+  .pers-trait{
+    display:flex;align-items:center;gap:12px;
+    font-size:14px;
+    color:var(--text-dim);
+  }
+  .pers-trait-icon{
+    width:32px;height:32px;
+    background:var(--surface-2);
+    border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;
+  }
+
+  /* ─── Comparison table ───────────────────────────────────── */
+  .compare-table{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .compare-row{
+    display:grid;
+    grid-template-columns:1.5fr 1fr 1fr;
+    padding:18px 28px;
+    border-bottom:1px solid var(--border);
+    align-items:center;
+    transition:background 0.2s;
+  }
+  .compare-row:hover{background:rgba(255,255,255,0.02)}
+  .compare-row:last-child{border-bottom:none}
+  .compare-row.header{
+    background:var(--surface-2);
+    font-weight:600;
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color:var(--text-dim);
+  }
+  .compare-row.header .col-feature{color:var(--text)}
+  .compare-row.header .col-karen{color:var(--accent)}
+  .col-feature{font-size:14px}
+  .col-other{color:var(--text-dim);font-size:14px}
+  .col-karen{color:var(--text);font-weight:600;font-size:14px}
+  .check{color:var(--success);font-size:18px}
+  .cross{color:var(--danger);font-size:18px}
+
+  /* ─── CTA ────────────────────────────────────────────────── */
+  .cta-final{
+    background:linear-gradient(135deg,var(--surface) 0%,var(--surface-2) 100%);
+    border:1px solid var(--border-glow);
+    border-radius:32px;
+    padding:80px 60px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .cta-final::before{
+    content:'';
+    position:absolute;
+    top:-50%;left:-50%;
+    width:200%;height:200%;
+    background:radial-gradient(circle,rgba(122,162,255,0.15) 0%,transparent 50%);
+    animation:slowRotate 30s linear infinite;
+  }
+  @keyframes slowRotate{
+    from{transform:rotate(0deg)}
+    to{transform:rotate(360deg)}
+  }
+  .cta-final-inner{position:relative;z-index:1}
+  .cta-final h2{
+    font-family:var(--font-display);
+    font-size:clamp(36px,6vw,64px);
+    font-weight:800;
+    letter-spacing:-0.03em;
+    margin-bottom:20px;
+  }
+  .cta-final p{
+    color:var(--text-dim);
+    font-size:18px;
+    margin-bottom:40px;
+    max-width:600px;
+    margin-left:auto;margin-right:auto;
+  }
+
+  /* ─── Footer ─────────────────────────────────────────────── */
+  footer{
+    border-top:1px solid var(--border);
+    padding:60px 0 40px;
+    margin-top:80px;
+  }
+  .footer-inner{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:20px;
+  }
+  .footer-meta{
+    color:var(--text-faint);
+    font-size:13px;
+    font-family:var(--font-mono);
+  }
+
+  /* ─── Responsive ─────────────────────────────────────────── */
+  @media (max-width:900px){
+    .bento-card.large,.bento-card.medium,.bento-card.small,.bento-card.wide{grid-column:span 12}
+    .cost-compare,.personality,.workflow{grid-template-columns:1fr}
+    .nav-links{display:none}
+    .compare-row{grid-template-columns:1.5fr 1fr 1fr;font-size:12px;padding:14px 16px}
+    .arch-layer{flex-direction:column;align-items:flex-start;gap:8px}
+    .arch-layer-title{width:auto}
+    .cta-final{padding:60px 30px}
+  }
+
+  /* ─── Reveal on scroll ───────────────────────────────────── */
+  .reveal{
+    opacity:0;
+    transform:translateY(40px);
+    transition:opacity 0.8s cubic-bezier(0.16,1,0.3,1),transform 0.8s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- Cursor glow -->
+<div class="cursor-glow"></div>
+
+<!-- Grid bg -->
+<div class="grid-bg"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo"><span class="logo-dot"></span> KAREN <span style="color:var(--text-faint);font-weight:400">AI P.A</span></div>
+    <div class="nav-links">
+      <a href="#capacidades">Capacidades</a>
+      <a href="#arquitectura">Arquitectura</a>
+      <a href="#dominios">Dominios</a>
+      <a href="#seguridad">Seguridad</a>
+      <a href="#precio">Precio</a>
+    </div>
+    <button class="cta-nav">Instalar Karen</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="badge">v2.2 · Production Ready · Open Source</div>
+      <h1>Tu asistente personal con<br><span class="grad">cerebro real.</span></h1>
+      <p class="lead">
+        Karen no es un chatbot más. Es un sistema operativo personal con <strong>memoria persistente</strong>, <strong>8 dominios aislados</strong>, <strong>blindaje militar</strong> contra ataques IA 2025-2026, y <strong>98% más barata</strong> que cualquier asistente naïve.
+      </p>
+      <div class="hero-cta">
+        <a href="#capacidades" class="btn btn-primary">
+          Ver capacidades →
+        </a>
+        <a href="#arquitectura" class="btn btn-secondary">
+          Cómo funciona
+        </a>
+      </div>
+
+      <div class="hero-orbit">
+        <div class="orbit-ring"></div>
+        <div class="orbit-ring"></div>
+        <div class="orbit-ring"></div>
+        <div class="orbit-core"></div>
+        <div class="orbit-node" style="top:8%;left:50%;transform:translateX(-50%)" title="Dev">💻</div>
+        <div class="orbit-node" style="top:30%;right:10%" title="Finanzas">💰</div>
+        <div class="orbit-node" style="bottom:30%;right:10%" title="Salud">🫀</div>
+        <div class="orbit-node" style="bottom:8%;left:50%;transform:translateX(-50%)" title="Productividad">📅</div>
+        <div class="orbit-node" style="bottom:30%;left:10%" title="Aprendizaje">📚</div>
+        <div class="orbit-node" style="top:30%;left:10%" title="Research">🔍</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Capacidades -->
+<section id="capacidades">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Lo que hace</div>
+      <h2>Más que un chatbot.<br><span class="grad">Un sistema operativo.</span></h2>
+      <p>Karen integra 7 capas — desde tu identidad y reglas, hasta hooks de seguridad y orquestación de subagentes — para ser exactamente el asistente que necesitas en cada momento de tu vida.</p>
+    </div>
+
+    <div class="bento">
+      <div class="bento-card large reveal">
+        <div class="bento-icon">🧠</div>
+        <h3>Memoria persistente que aprende contigo</h3>
+        <p>Karen recuerda todo lo importante entre sesiones. Sistema híbrido de 3 capas — hot facts JSON + Mem0 vector search + Graphiti knowledge graph temporal — para que nunca repitas la misma cosa dos veces.</p>
+        <div class="tags">
+          <span class="tag">Mem0</span>
+          <span class="tag">Graphiti</span>
+          <span class="tag">Neo4j</span>
+          <span class="tag">LightRAG</span>
+        </div>
+        <div class="bento-stats">
+          <div class="bento-stat">
+            <div class="bento-stat-value">3</div>
+            <div class="bento-stat-label">Capas memoria</div>
+          </div>
+          <div class="bento-stat">
+            <div class="bento-stat-value">∞</div>
+            <div class="bento-stat-label">Cross-sesión</div>
+          </div>
+          <div class="bento-stat">
+            <div class="bento-stat-value">+29.6</div>
+            <div class="bento-stat-label">Temporal queries</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bento-card medium reveal">
+        <div class="bento-icon">🎭</div>
+        <h3>Personalidad JARVIS + FRIDAY</h3>
+        <p>Friday casual en el día a día. Jarvis formal en decisiones críticas. Sparring socrático en finanzas y salud. Cero pleasantries vacíos.</p>
+        <div class="tags">
+          <span class="tag">Tony Stark mode</span>
+          <span class="tag">Sparring</span>
+        </div>
+      </div>
+
+      <div class="bento-card small reveal">
+        <div class="bento-icon">🛡️</div>
+        <h3>8 dominios aislados</h3>
+        <p>Salud nunca toca dev. Finanzas nunca toca relaciones. Domain firewall por subagent enforced en runtime.</p>
+      </div>
+
+      <div class="bento-card small reveal">
+        <div class="bento-icon">⚡</div>
+        <h3>11 hooks ejecutables</h3>
+        <p>Integrity ledger, secret scanner, supply-chain guard, codegen SAST. Defensa activa en cada turno.</p>
+      </div>
+
+      <div class="bento-card small reveal">
+        <div class="bento-icon">💰</div>
+        <h3>98% más barata</h3>
+        <p>Routing inteligente Haiku→Sonnet→Opus + prompt caching agresivo + Markdown convert PDFs.</p>
+      </div>
+
+      <div class="bento-card wide reveal">
+        <div class="bento-icon">🤖</div>
+        <h3>6 subagents tier-gated</h3>
+        <p>Karen-Dev, Karen-Finance, Karen-Health, Karen-Research, Karen-Learn, Karen-Orchestrator. Cada uno con su tier (T0-T4), allowedTools, firewall, y trust score 0-1000.</p>
+        <div class="tags">
+          <span class="tag">karen-dev T1</span>
+          <span class="tag">karen-finance T2</span>
+          <span class="tag">karen-health T2</span>
+          <span class="tag">karen-research T1</span>
+        </div>
+      </div>
+
+      <div class="bento-card wide reveal">
+        <div class="bento-icon">🖥️</div>
+        <h3>Controla tu ordenador</h3>
+        <p>Computer Use API + Playwright + AppleScript + iOS Shortcuts. Karen abre apps, navega, agenda reuniones, manda emails — con confirmación humana en cada acción destructiva.</p>
+        <div class="tags">
+          <span class="tag">Computer Use</span>
+          <span class="tag">Playwright</span>
+          <span class="tag">macOS</span>
+          <span class="tag">iOS</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Arquitectura -->
+<section id="arquitectura" style="background:var(--bg-soft)">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Red neuronal</div>
+      <h2>7 capas que la hacen<br><span class="grad">imposible de romper.</span></h2>
+      <p>Karen no es un prompt — es un harness completo. Cada capa cumple una función crítica: identidad, aprendizaje continuo, gating de acceso, firewall, memoria, orquestación, herramientas, y loop continuo.</p>
+    </div>
+
+    <div class="arch-diagram reveal">
+      <div class="arch-layers">
+        <div class="arch-layer">
+          <div class="arch-layer-id">L0</div>
+          <div class="arch-layer-title">Constitution</div>
+          <div class="arch-layer-desc">Identidad inmutable · 15 reglas inviolables · valores</div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-id">L1</div>
+          <div class="arch-layer-title">Rule Book Auto-Update</div>
+          <div class="arch-layer-desc">Aprende correcciones automáticas · captura → extract → reload</div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-id">L2</div>
+          <div class="arch-layer-title">Trust Tier Gating</div>
+          <div class="arch-layer-desc">T0 Sandbox → T1 Daily → T2 Sensitive → T3 Operational → T4 Privileged</div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-id">L3</div>
+          <div class="arch-layer-title">Domain Firewall</div>
+          <div class="arch-layer-desc">Aislamiento estricto · salud ≠ dev ≠ finanzas · enforced en runtime</div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-id">L4</div>
+          <div class="arch-layer-title">Memory Stack</div>
+          <div class="arch-layer-desc">Hot facts + Mem0 vector + Graphiti grafo temporal bi-temporal</div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-id">L5</div>
+          <div class="arch-layer-title">Subagents Paralelos</div>
+          <div class="arch-layer-desc">6 personalidades especializadas · paralelo cold-start zero</div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-id">L6</div>
+          <div class="arch-layer-title">Tools (MCPs)</div>
+          <div class="arch-layer-desc">hex-line · Mem0 · Graphiti · firecrawl · github · Gmail · Calendar</div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-id">L7</div>
+          <div class="arch-layer-title">Continuous Loop</div>
+          <div class="arch-layer-desc">Stop hook re-inyecta TODOs nocturnos · filesystem = state durable</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dominios -->
+<section id="dominios">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Dominios aislados</div>
+      <h2>Tu vida, organizada<br><span class="grad">en 8 compartimentos.</span></h2>
+      <p>Cada dominio tiene su propio firewall, su propia memoria, su propio subagent. Lo que pasa en finanzas se queda en finanzas. Cross-domain solo si tú lo pides explícitamente.</p>
+    </div>
+
+    <div class="domains-grid reveal">
+      <div class="domain-card">
+        <span class="domain-emoji">💻</span>
+        <div class="domain-name">Dev</div>
+        <div class="domain-meta">02-DEV/ · T1</div>
+      </div>
+      <div class="domain-card">
+        <span class="domain-emoji">💰</span>
+        <div class="domain-name">Finanzas</div>
+        <div class="domain-meta">03-FINANZAS/ · T2</div>
+      </div>
+      <div class="domain-card">
+        <span class="domain-emoji">🫀</span>
+        <div class="domain-name">Salud</div>
+        <div class="domain-meta">04-SALUD/ · T2</div>
+      </div>
+      <div class="domain-card">
+        <span class="domain-emoji">📅</span>
+        <div class="domain-name">Productividad</div>
+        <div class="domain-meta">05-PROD/ · T1</div>
+      </div>
+      <div class="domain-card">
+        <span class="domain-emoji">📚</span>
+        <div class="domain-name">Aprendizaje</div>
+        <div class="domain-meta">06-APRENDIZAJE/ · T1</div>
+      </div>
+      <div class="domain-card">
+        <span class="domain-emoji">💌</span>
+        <div class="domain-name">Relaciones</div>
+        <div class="domain-meta">07-RELACIONES/ · T2</div>
+      </div>
+      <div class="domain-card">
+        <span class="domain-emoji">🎨</span>
+        <div class="domain-name">Hobbies</div>
+        <div class="domain-meta">08-HOBBIES/ · T1</div>
+      </div>
+      <div class="domain-card">
+        <span class="domain-emoji">🛒</span>
+        <div class="domain-name">Compras</div>
+        <div class="domain-meta">09-COMPRAS/ · T1</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Personality -->
+<section style="background:var(--bg-soft)">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Su personalidad</div>
+      <h2>JARVIS + FRIDAY.<br><span class="grad">Tu llamada.</span></h2>
+      <p>Karen cambia de modo según el contexto. Casual cuando trabajamos código. Formal cuando hay riesgos serios. Sparring socrático cuando estás a punto de tomar una decisión que afecta tu vida.</p>
+    </div>
+
+    <div class="personality reveal">
+      <div class="pers-card">
+        <div class="pers-header">
+          <div class="pers-avatar">🤵</div>
+          <div>
+            <div class="pers-name">Modo JARVIS</div>
+            <div class="pers-role">Formal · Crítico</div>
+          </div>
+        </div>
+        <p style="color:var(--text-dim);font-size:15px">Para decisiones financieras, problemas de seguridad, arquitectura compleja. Karen es precisa, anticipativa, brutalmente honesta.</p>
+        <div class="pers-traits">
+          <div class="pers-trait"><div class="pers-trait-icon">🎯</div>Sarcasmo seco cuando aplica</div>
+          <div class="pers-trait"><div class="pers-trait-icon">⚡</div>Anticipa necesidades</div>
+          <div class="pers-trait"><div class="pers-trait-icon">🛡️</div>Honest assistant — dice cuando es mala idea</div>
+        </div>
+      </div>
+
+      <div class="pers-card">
+        <div class="pers-header">
+          <div class="pers-avatar">😎</div>
+          <div>
+            <div class="pers-name">Modo FRIDAY</div>
+            <div class="pers-role">Casual · Cercana</div>
+          </div>
+        </div>
+        <p style="color:var(--text-dim);font-size:15px">Para trabajo cotidiano. Friday confía en ti, te chincha cuando hace falta, ejecuta sin fricción y sin filtros performativos.</p>
+        <div class="pers-traits">
+          <div class="pers-trait"><div class="pers-trait-icon">💬</div>Bromas sutiles, confianza total</div>
+          <div class="pers-trait"><div class="pers-trait-icon">🚫</div>Cero "encantada de ayudarte"</div>
+          <div class="pers-trait"><div class="pers-trait-icon">⚙️</div>Eficiente sin perder calidez</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Workflows -->
+<section>
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Workflows</div>
+      <h2>Comandos que cambian<br><span class="grad">tu día a día.</span></h2>
+      <p>Karen lleva 10+ comandos slash custom — desde un morning brief que orquesta paralelo todos sus subagents, hasta sparring socrático forzado en decisiones críticas.</p>
+    </div>
+
+    <div class="workflow reveal">
+      <div class="workflow-step">
+        <div class="workflow-num">01</div>
+        <div class="workflow-title">Morning Brief</div>
+        <div class="workflow-desc">Fan-out paralelo a todos los subagents. Agenda + dev TODOs + finanzas overnight + research watch. Digest único en 30 segundos.</div>
+        <div class="workflow-code">/morning-brief</div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">02</div>
+        <div class="workflow-title">Sparring socrático</div>
+        <div class="workflow-desc">Decisión financiera o de salud? Karen no recomienda. Pregunta horizonte, % allocation, tolerancia drawdown, convicción. Solo entonces opciones.</div>
+        <div class="workflow-code">/sparring "uranium ETFs"</div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">03</div>
+        <div class="workflow-title">Active learning</div>
+        <div class="workflow-desc">Karen identifica qué NO sabe de ti, selecciona máximo 5 preguntas de alta entropía, actualiza profile.json y Mem0. Nunca interroga.</div>
+        <div class="workflow-code">/karen-learn-me</div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">04</div>
+        <div class="workflow-title">Deep research</div>
+        <div class="workflow-desc">Multi-fuente verificación adversarial. Cita fuentes verbatim. Guarda en dominio correcto. Graphify ingest automático.</div>
+        <div class="workflow-code">/research "tema X" --domain</div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">05</div>
+        <div class="workflow-title">Audit semanal</div>
+        <div class="workflow-desc">Trust scores, violations, sycophancy rate, memoria stale. Auto cada domingo 23:00. Reporte forensics-ready.</div>
+        <div class="workflow-code">/karen-audit</div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">06</div>
+        <div class="workflow-title">Red team</div>
+        <div class="workflow-desc">Karen se ataca a sí misma. 10 tests rápidos o garak+PyRIT completo. Verifica resistencia IPI, jailbreaks, memory poisoning.</div>
+        <div class="workflow-code">/karen-redteam quick</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Security -->
+<section id="seguridad" style="background:var(--bg-soft)">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Seguridad</div>
+      <h2>Blindada contra los<br><span class="grad">ataques IA de 2026.</span></h2>
+      <p>OWASP LLM Top 10 + MITRE ATLAS. Karen mitiga las 8 amenazas críticas en estado activo de explotación — desde indirect prompt injection hasta supply chain attacks tipo axios npm.</p>
+    </div>
+
+    <div class="threats-list reveal">
+      <div class="threat-item">
+        <div class="threat-tier tier-1">T1</div>
+        <div class="threat-info">
+          <div class="threat-name">Indirect Prompt Injection (IPI) in the wild</div>
+          <div class="threat-desc">Google: +32% attacks Nov 2025-Feb 2026 · 60K successful en red-team competition</div>
+        </div>
+        <div class="threat-status">spotlight.py</div>
+      </div>
+      <div class="threat-item">
+        <div class="threat-tier tier-1">T1</div>
+        <div class="threat-info">
+          <div class="threat-name">npm supply chain (axios Mar 2026)</div>
+          <div class="threat-desc">100M weekly installs comprometidos con postinstall RAT</div>
+        </div>
+        <div class="threat-status">npm-guard.sh</div>
+      </div>
+      <div class="threat-item">
+        <div class="threat-tier tier-1">T1</div>
+        <div class="threat-info">
+          <div class="threat-name">MCP tool poisoning / rug-pull</div>
+          <div class="threat-desc">WhatsApp MCP exfiltró history completo (Abr 2025) · plugins comprometidos</div>
+        </div>
+        <div class="threat-status">mcp-pin-verify.sh</div>
+      </div>
+      <div class="threat-item">
+        <div class="threat-tier tier-1">T1</div>
+        <div class="threat-info">
+          <div class="threat-name">EchoLeak (CVE-2025-32711)</div>
+          <div class="threat-desc">Zero-click data exfiltration M365 Copilot · persistent memory poisoning</div>
+        </div>
+        <div class="threat-status">mem_filter.py</div>
+      </div>
+      <div class="threat-item">
+        <div class="threat-tier tier-1">T1</div>
+        <div class="threat-info">
+          <div class="threat-name">Hook rewrite escalation</div>
+          <div class="threat-desc">Plugins injected reescriben permissions y auto-aprueban comandos peligrosos</div>
+        </div>
+        <div class="threat-status">integrity-ledger.sh</div>
+      </div>
+      <div class="threat-item">
+        <div class="threat-tier tier-1">T1</div>
+        <div class="threat-info">
+          <div class="threat-name">Memory poisoning (AgentPoison)</div>
+          <div class="threat-desc">A-MemGuard: 66% poisoned memories miss detection · optimized trigger tokens</div>
+        </div>
+        <div class="threat-status">mem_filter + judge</div>
+      </div>
+      <div class="threat-item">
+        <div class="threat-tier tier-2">T2</div>
+        <div class="threat-info">
+          <div class="threat-name">CSS-hidden / Unicode smuggling</div>
+          <div class="threat-desc">display:none + ZWSP + Cyrillic homoglyphs bypass regex filters</div>
+        </div>
+        <div class="threat-status">spotlight.py</div>
+      </div>
+      <div class="threat-item">
+        <div class="threat-tier tier-2">T2</div>
+        <div class="threat-info">
+          <div class="threat-name">Hallucinated rm -rf / fake credentials</div>
+          <div class="threat-desc">Karen genera código peligroso o secrets inventados</div>
+        </div>
+        <div class="threat-status">codegen-scanner.sh</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Cost -->
+<section id="precio">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Cost optimization</div>
+      <h2>98% más barata.<br><span class="grad">Sin perder capacidad.</span></h2>
+      <p>Routing inteligente Haiku/Sonnet/Opus. Prompt caching agresivo. PDFs convertidos a markdown. Memory-first antes de re-leer. Budget hard caps. Resultado: una sesión típica baja de $5.20 a $0.10.</p>
+    </div>
+
+    <div class="cost-compare reveal">
+      <div class="cost-card naive">
+        <div class="cost-card-label">Setup naïf</div>
+        <div class="cost-card-value">$5.20</div>
+        <div class="cost-card-period">por sesión típica · 30 turnos · 1 hora</div>
+        <div class="cost-tactics" style="opacity:0.5">
+          <div class="cost-tactic" style="--check:none">Todo a Opus por defecto</div>
+          <div class="cost-tactic">Sin prompt caching</div>
+          <div class="cost-tactic">PDFs leídos raw</div>
+          <div class="cost-tactic">Re-fetch info ya conocida</div>
+        </div>
+      </div>
+      <div class="cost-card optimized">
+        <div class="cost-savings-arrow">↓</div>
+        <div class="cost-card-label" style="color:var(--success)">Karen Optimized</div>
+        <div class="cost-card-value">$0.10</div>
+        <div class="cost-card-period">por sesión típica · 30 turnos · 1 hora</div>
+        <div class="cost-tactics">
+          <div class="cost-tactic">Routing Haiku/Sonnet/Opus por tarea (15x ratio)</div>
+          <div class="cost-tactic">Prompt caching agresivo (90% reduction)</div>
+          <div class="cost-tactic">PDFs → Markdown convert (76% ahorro)</div>
+          <div class="cost-tactic">Memory-first antes fetch fresh</div>
+          <div class="cost-tactic">Subagent context isolation</div>
+          <div class="cost-tactic">Budget hard caps por sesión</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Compare -->
+<section style="background:var(--bg-soft)">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Karen vs. el resto</div>
+      <h2>Lo que <span class="grad">nadie más</span> hace.</h2>
+      <p>ChatGPT memoria es vulnerable a sycophancy. Claude Desktop nativo no tiene domain firewall. Mem0 solo es vector. Karen junta todo, lo blinda, y lo entrega listo para tu vida.</p>
+    </div>
+
+    <div class="compare-table reveal">
+      <div class="compare-row header">
+        <div class="col-feature">Característica</div>
+        <div class="col-other">Asistentes naïve</div>
+        <div class="col-karen">Karen AI P.A</div>
+      </div>
+      <div class="compare-row">
+        <div class="col-feature">Memoria cross-sesión</div>
+        <div class="col-other">Texto plano o vector</div>
+        <div class="col-karen">Híbrido + bi-temporal</div>
+      </div>
+      <div class="compare-row">
+        <div class="col-feature">Dominios aislados</div>
+        <div class="col-other"><span class="cross">✗</span> No existen</div>
+        <div class="col-karen">8 con firewall enforced</div>
+      </div>
+      <div class="compare-row">
+        <div class="col-feature">Personalidad</div>
+        <div class="col-other">Genérica, sycophant</div>
+        <div class="col-karen">Jarvis + Friday + sparring</div>
+      </div>
+      <div class="compare-row">
+        <div class="col-feature">Defensa IPI</div>
+        <div class="col-other"><span class="cross">✗</span> Vulnerable</div>
+        <div class="col-karen">Spotlighting + ZWSP strip</div>
+      </div>
+      <div class="compare-row">
+        <div class="col-feature">Supply chain protection</div>
+        <div class="col-other"><span class="cross">✗</span> Sin verificación</div>
+        <div class="col-karen">MCP pinning + npm guard</div>
+      </div>
+      <div class="compare-row">
+        <div class="col-feature">Cost optimization</div>
+        <div class="col-other">$5.20 sesión típica</div>
+        <div class="col-karen">$0.10 · 98% ahorro</div>
+      </div>
+      <div class="compare-row">
+        <div class="col-feature">Trust tier system</div>
+        <div class="col-other"><span class="cross">✗</span> Todo o nada</div>
+        <div class="col-karen">T0-T4 con scores 0-1000</div>
+      </div>
+      <div class="compare-row">
+        <div class="col-feature">Self-updating rules</div>
+        <div class="col-other"><span class="cross">✗</span> No aprende</div>
+        <div class="col-karen">Captura correcciones auto</div>
+      </div>
+      <div class="compare-row">
+        <div class="col-feature">Red team interno</div>
+        <div class="col-other"><span class="cross">✗</span> No</div>
+        <div class="col-karen">garak + PyRIT</div>
+      </div>
+      <div class="compare-row">
+        <div class="col-feature">Computer control</div>
+        <div class="col-other">Solo chat</div>
+        <div class="col-karen">Computer Use + Playwright</div>
+      </div>
+      <div class="compare-row">
+        <div class="col-feature">Audit trail</div>
+        <div class="col-other"><span class="cross">✗</span> No</div>
+        <div class="col-karen">Append-only JSONL forensics</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Final -->
+<section>
+  <div class="container">
+    <div class="cta-final reveal">
+      <div class="cta-final-inner">
+        <h2>Tu asistente personal,<br>blindado para 2026.</h2>
+        <p>Karen v2.2 está lista. Clone + install.sh + abre Claude Code. Onboarding turno 1 te pregunta máximo 5 cosas y empieza a trabajar contigo.</p>
+        <div class="hero-cta" style="margin-top:32px">
+          <a href="https://github.com/nicogemini1998-commits/Karen-V1" class="btn btn-primary" target="_blank">
+            Instalar Karen V1 →
+          </a>
+          <a href="#capacidades" class="btn btn-secondary">
+            Ver capacidades
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="logo"><span class="logo-dot"></span> KAREN <span style="color:var(--text-faint);font-weight:400">AI P.A v2.2</span></div>
+      <div class="footer-meta">
+        github.com/nicogemini1998-commits/Karen-V1 · MIT · 2026
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ─── Cursor glow follow ──────────────────────────────────
+  const glow = document.querySelector('.cursor-glow');
+  document.addEventListener('mousemove', e => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+  });
+  document.addEventListener('mouseleave', () => glow.style.opacity = 0);
+  document.addEventListener('mouseenter', () => glow.style.opacity = 1);
+
+  // ─── Bento card hover gradient ──────────────────────────
+  document.querySelectorAll('.bento-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      card.style.setProperty('--mx', x + '%');
+      card.style.setProperty('--my', y + '%');
+    });
+  });
+
+  // ─── Reveal on scroll ───────────────────────────────────
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ─── Nav scroll effect ──────────────────────────────────
+  let lastScroll = 0;
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    const currentScroll = window.scrollY;
+    if (currentScroll > 50) {
+      nav.style.background = 'rgba(5,5,7,0.85)';
+      nav.style.borderBottomColor = 'rgba(255,255,255,0.12)';
+    } else {
+      nav.style.background = 'rgba(5,5,7,0.6)';
+      nav.style.borderBottomColor = 'rgba(255,255,255,0.08)';
+    }
+    lastScroll = currentScroll;
+  });
+
+  // ─── Smooth scroll for nav links ────────────────────────
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', e => {
+      const target = document.querySelector(anchor.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // ─── CTA Install button ──────────────────────────────────
+  document.querySelector('.cta-nav').addEventListener('click', () => {
+    window.open('https://github.com/nicogemini1998-commits/Karen-V1', '_blank');
+  });
+</script>
+
+</body>
+</html>
