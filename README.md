@@ -45,9 +45,16 @@ En orden:
 
 1. [`docs/01-quien-soy/PERFIL_NICO.md`](./docs/01-quien-soy/PERFIL_NICO.md) — Quién es Nico, cómo trabaja, qué le revienta.
 2. [`docs/02-personalidad-karen/IDENTIDAD.md`](./docs/02-personalidad-karen/IDENTIDAD.md) — Personalidad Karen, tono, modo decisión.
-3. [`docs/03-arquitectura/ESTRUCTURA.md`](./docs/03-arquitectura/ESTRUCTURA.md) — Estructura carpetas, dominios aislados, memoria.
-4. [`docs/04-skills-catalogo/SKILLS.md`](./docs/04-skills-catalogo/SKILLS.md) — Skills disponibles por tier.
-5. [`docs/05-workflow/WORKFLOWS.md`](./docs/05-workflow/WORKFLOWS.md) — Flujos típicos por dominio.
+3. [`docs/02-personalidad-karen/ANTI-PATTERNS.md`](./docs/02-personalidad-karen/ANTI-PATTERNS.md) — 16 anti-patterns Karen NUNCA hace.
+4. [`docs/03-arquitectura/NEURAL-ARCHITECTURE.md`](./docs/03-arquitectura/NEURAL-ARCHITECTURE.md) — Red neuronal Karen: 7 capas harness.
+5. [`docs/03-arquitectura/MEMORY-STACK.md`](./docs/03-arquitectura/MEMORY-STACK.md) — Mem0 + Graphiti + LightRAG.
+6. [`docs/03-arquitectura/TIERS-AND-FIREWALL.md`](./docs/03-arquitectura/TIERS-AND-FIREWALL.md) — 5 tiers acceso + domain firewall.
+7. [`docs/03-arquitectura/ESTRUCTURA.md`](./docs/03-arquitectura/ESTRUCTURA.md) — Estructura carpetas, dominios.
+8. [`docs/04-skills-catalogo/SKILLS.md`](./docs/04-skills-catalogo/SKILLS.md) — Skills + plugins + MCPs.
+9. [`docs/05-workflow/RULE-BOOK-AUTO.md`](./docs/05-workflow/RULE-BOOK-AUTO.md) — Self-updating rule book.
+10. [`docs/05-workflow/WORKFLOWS.md`](./docs/05-workflow/WORKFLOWS.md) — Flujos típicos por dominio.
+11. [`docs/05-workflow/REGLAS.md`](./docs/05-workflow/REGLAS.md) — Reglas operativas.
+12. [`docs/05-workflow/UPGRADES.md`](./docs/05-workflow/UPGRADES.md) — Roadmap v1→v3.
 
 ---
 
@@ -86,6 +93,39 @@ Lo que pasa en `finanzas` no se mezcla con `dev`. Cross-dominio solo si tú pide
 
 ---
 
+## 🧠 Arquitectura — Red neuronal Karen
+
+Karen no es prompt. Karen es **harness** de 7 capas:
+
+```
+L0 — Constitution (CLAUDE.md + REGLAS.md)
+L1 — Rule Book Auto-Update (aprende correcciones automático)
+L2 — Trust Tier Gating (T0 sandbox → T4 privileged)
+L3 — Domain Firewall (salud no entra a dev)
+L4 — Memory (hot facts + Mem0 vector + Graphiti grafo temporal)
+L5 — Subagents (8 paralelos: dev/finance/health/relationships/learn/research/orchestrator/secrets)
+L6 — Tools (8 MCPs por subagent: hex-line, Mem0, Graphiti, firecrawl, etc.)
+L7 — Continuous Loop (Stop hook re-inyecta TODOs nocturnos)
+```
+
+Detalle: [`NEURAL-ARCHITECTURE.md`](./docs/03-arquitectura/NEURAL-ARCHITECTURE.md).
+
+---
+
+## 🎯 Roadmap
+
+| Versión | Estado | Target |
+|---|---|---|
+| v1.0 — Foundation | ✅ LIVE | 2026-06 |
+| v2.0-spec — Specs neural backbone | ✅ LIVE | 2026-06 |
+| v2.0 — Mem0+Graphiti+hooks impl | 🔨 pending | 2026-07 |
+| v2.5 — Active learning + audit | 🔨 pending | 2026-08 |
+| v3.0 — Capability separation + council | 🧪 experimental | 2026 Q4 |
+
+Detalle: [`UPGRADES.md`](./docs/05-workflow/UPGRADES.md).
+
+---
+
 ## 📦 Versión
 
-**v1.0** · 2026-06-01 · Initial release
+**v2.0-spec** · 2026-06-01 · Neural Backbone Spec

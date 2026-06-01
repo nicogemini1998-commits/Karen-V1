@@ -20,11 +20,17 @@
 |---|---|---|
 | 01 | [`docs/01-quien-soy/PERFIL_NICO.md`](./docs/01-quien-soy/PERFIL_NICO.md) | Quién es Nico |
 | 02 | [`docs/02-personalidad-karen/IDENTIDAD.md`](./docs/02-personalidad-karen/IDENTIDAD.md) | Personalidad Karen |
+| 02 | [`docs/02-personalidad-karen/ANTI-PATTERNS.md`](./docs/02-personalidad-karen/ANTI-PATTERNS.md) | 16 anti-patterns NUNCA hacer |
+| 03 | [`docs/03-arquitectura/NEURAL-ARCHITECTURE.md`](./docs/03-arquitectura/NEURAL-ARCHITECTURE.md) | Red neuronal 7 capas |
+| 03 | [`docs/03-arquitectura/MEMORY-STACK.md`](./docs/03-arquitectura/MEMORY-STACK.md) | Mem0 + Graphiti + LightRAG |
+| 03 | [`docs/03-arquitectura/TIERS-AND-FIREWALL.md`](./docs/03-arquitectura/TIERS-AND-FIREWALL.md) | Tiers T0-T4 + firewall |
 | 03 | [`docs/03-arquitectura/ESTRUCTURA.md`](./docs/03-arquitectura/ESTRUCTURA.md) | Carpetas, dominios |
-| 03 | [`docs/03-arquitectura/MEMORIA.md`](./docs/03-arquitectura/MEMORIA.md) | Sistema memoria + Graphify |
-| 04 | [`docs/04-skills-catalogo/SKILLS.md`](./docs/04-skills-catalogo/SKILLS.md) | Catálogo skills tier 1/2/3 |
+| 03 | [`docs/03-arquitectura/MEMORIA.md`](./docs/03-arquitectura/MEMORIA.md) | Sistema memoria v1 (markdown) |
+| 04 | [`docs/04-skills-catalogo/SKILLS.md`](./docs/04-skills-catalogo/SKILLS.md) | Catálogo skills + MCPs |
+| 05 | [`docs/05-workflow/RULE-BOOK-AUTO.md`](./docs/05-workflow/RULE-BOOK-AUTO.md) | Self-updating rule book |
 | 05 | [`docs/05-workflow/WORKFLOWS.md`](./docs/05-workflow/WORKFLOWS.md) | Flujos típicos |
 | 05 | [`docs/05-workflow/REGLAS.md`](./docs/05-workflow/REGLAS.md) | Reglas operativas |
+| 05 | [`docs/05-workflow/UPGRADES.md`](./docs/05-workflow/UPGRADES.md) | Roadmap v1→v3 |
 
 ## Dominios (creados por install.sh)
 
