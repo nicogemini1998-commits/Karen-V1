@@ -68,9 +68,22 @@
               └───────────────────────────┘
 ```
 
+### Estado real por capa (post-v1.1)
+
+| Capa | Estado |
+|---|---|
+| **L0 — Constitution** (identidad) | ✅ v1 |
+| **L1 — Rule book auto-update** | ✅ v1.1 — hooks `capture-correction.sh` + `load-rules.sh` |
+| **L2 — Trust tiers** | config ✅ · enforcement runtime 🔨 |
+| **L3 — Domain firewall** | ✅ best-effort — `domain-firewall.sh` |
+| **L4 — Memory** | markdown + hot facts ✅ · vector (Mem0) / graph (Graphiti) 🔨 v2 — ingest manual ya posible vía `mem0_client.py` |
+| **L5 — Subagents** | ✅ v1 — roster en `agents/` |
+| **L6 — Tools (MCPs)** | ✅ base (`.mcp.json`) · Mem0/Graphiti MCP custom 🔨 v2 |
+| **L7 — Continuous loop** | audit ✅ v1.1 — `audit-trail.sh` · loop overnight 🔨 |
+
 ---
 
-## L0 — Constitution
+## L0 — Constitution `[✅ v1]`
 
 `CLAUDE.md` + `docs/05-workflow/REGLAS.md`. Capa inmutable. Editable solo con aprobación explícita Nico.
 
@@ -84,7 +97,7 @@ Contiene:
 
 ---
 
-## L1 — Rule Book Auto-Update (Self-Learning)
+## L1 — Rule Book Auto-Update (Self-Learning) `[✅ v1.1 — capture-correction.sh + load-rules.sh]`
 
 ### Path
 `~/.claude/karen/rules-learned.md`
@@ -114,7 +127,7 @@ Karen aprende sin que Nico tenga que re-escribir reglas.
 
 ---
 
-## L2 — Trust Tier Gating (T0-T4)
+## L2 — Trust Tier Gating (T0-T4) `[config ✅ · enforcement runtime 🔨]`
 
 Inspirado Microsoft Agent Governance Toolkit + WorkOS authorization patterns.
 
@@ -135,7 +148,7 @@ Inspirado Microsoft Agent Governance Toolkit + WorkOS authorization patterns.
 
 ---
 
-## L3 — Domain Firewall
+## L3 — Domain Firewall `[✅ best-effort — domain-firewall.sh]`
 
 PreToolUse hook que bloquea:
 - Subagent `karen-health` queryeando memoria `01-MEMORIA/finanzas/`.
@@ -160,7 +173,7 @@ firewall:
 
 ---
 
-## L4 — Memory (3 capas)
+## L4 — Memory (3 capas) `[markdown + hot facts ✅ · vector/graph 🔨 v2]`
 
 ### L4a — Hot Facts (key-value)
 **Path:** `~/.claude/karen/profile.json`
@@ -168,10 +181,10 @@ firewall:
 ```json
 {
   "user": {
-    "alias": "Nico",
-    "location": "Sagunto, Valencia, España",
+    "alias": "YOUR-NAME",
+    "location": "YOUR-CITY, YOUR-COUNTRY",
     "timezone": "Europe/Madrid",
-    "github": "nicogemini1998-commits",
+    "github": "YOUR-GITHUB-USERNAME",
     "languages": ["es", "en"]
   },
   "current_focus": {
@@ -200,11 +213,11 @@ Carga: SessionStart hook lee + inyecta resumen 200 chars al system prompt.
 **Instalación:**
 ```bash
 pip install mem0ai
-# o
-docker run -d -p 8888:8888 mem0ai/mem0
+# o (template real del repo)
+docker compose -f templates/docker-compose.memory.yml up -d
 ```
 
-Wrapping en MCP server para que Karen lo use vía `mcp__mem0__*`.
+Wrapping en MCP server para que Karen lo use vía `mcp__mem0__*` `[v2 🔨]`. Hoy (v1.1): ingest manual/scripted con `templates/.claude/lib/mem0_client.py` (`add`/`search`/`delete`/`health`).
 
 ### L4c — Knowledge Graph (Temporal)
 **Backend:** Graphiti (Zep) o LightRAG.
@@ -230,13 +243,13 @@ Wrapping en MCP server para que Karen lo use vía `mcp__mem0__*`.
 Nico dice "uso Trade Republic" en Marzo. En Junio cambia a otro. Mem0 puede confundir. Graphiti edge: `Nico —[uses, valid: 2026-03 to 2026-06]→ TradeRepublic`, `Nico —[uses, valid: 2026-06 to NULL]→ NuevoBroker`. Query "qué broker usa Nico" → NuevoBroker. Query "qué broker usaba en Mayo" → TradeRepublic. Sin confusión.
 
 ### Estrategia híbrida (vector + grafo)
-- Mem0: facts simples ("Nico vive en Sagunto").
+- Mem0: facts simples ("Nico vive en Madrid").
 - Graphiti: relaciones temporales ("Nico cambió de X a Y en fecha Z").
 - LightRAG (opcional): retrieval graph-aware sobre carpetas numeradas (65-80% ahorro tokens vs full GraphRAG).
 
 ---
 
-## L5 — Subagents
+## L5 — Subagents `[✅ v1 — roster en agents/]`
 
 Cada uno con personalidad + tier + tools propios.
 
@@ -260,7 +273,7 @@ Cada uno con personalidad + tier + tools propios.
 
 ---
 
-## L6 — Tools (MCPs + Plugins)
+## L6 — Tools (MCPs + Plugins) `[✅ base — .mcp.json · Mem0/Graphiti MCP 🔨 v2]`
 
 ### Stack mínimo Karen v2
 
@@ -290,7 +303,7 @@ Default todo MCP write-capable → read-only. Flip a write solo en sesión activ
 
 ---
 
-## L7 — Continuous Loop (Stop Hook)
+## L7 — Continuous Loop (Stop Hook) `[audit ✅ v1.1 — audit-trail.sh · loop overnight 🔨]`
 
 ### Patrón
 **Quote SOTA:** *"A hook that intercepts the model's attempt to exit and re-injects the original prompt into a fresh context window, forcing the agent to continue against a completion goal."*

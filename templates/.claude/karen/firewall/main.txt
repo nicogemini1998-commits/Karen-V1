@@ -1,0 +1,9 @@
+# Firewall — main (agente principal sesión personal Karen)
+# main ES Nico: NO se bloquea de sus propios dominios (finanzas, salud, relaciones incluidos).
+# Único bloqueo: AISLAMIENTO EMPRESA. Las rutas Cliender JAMÁS se tocan desde la sesión
+# personal — ni lectura ni escritura. Para trabajo empresa → abrir Karen-Cliender en su
+# propio proyecto, nunca desde aquí. Patterns = substring match sobre la ruta completa.
+
+DENY  Cliender
+DENY  CLIENDER BRAIN
+DENY  OneDrive-SharedLibraries-HBDRevolutionSL

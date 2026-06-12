@@ -10,7 +10,9 @@
     "Write",
     "Glob",
     "Grep",
-    "mcp__hex-line__*",
+    "mcp__hex-line__read_file",
+    "mcp__hex-line__grep_search",
+    "mcp__hex-line__inspect_path",
     "mcp__memory__*",
     "mcp__firecrawl__*"
   ],

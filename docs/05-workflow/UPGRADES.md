@@ -13,7 +13,7 @@
 - ✅ Docs: perfil, identidad, arquitectura, memoria, skills, workflows, reglas
 - ✅ `install.sh` auto-instalación
 - ✅ Templates `.claude/settings.json` + `.mcp.json`
-- ✅ Agents: architect, code-reviewer, finanzas-sparring, salud-coach, learn-tutor
+- ✅ Agents: architect, code-reviewer, karen-finance, karen-health, karen-learn
 - ✅ Commands: sparring, dominio, agenda, memoria-add, portafolio, research
 - ✅ `.gitignore` exhaustivo
 
@@ -30,57 +30,64 @@
 
 ### Tier 1 — Must-have
 
-#### M1. Dual memory backend
-- **Mem0 self-hosted** docker + MCP wrapper.
-- **Graphiti + Neo4j** docker + MCP wrapper.
-- Custom MCP `mcp__mem0__*` y `mcp__graphiti__*`.
-- Migración data inicial: `01-MEMORIA/*` → upsert ambas capas.
-- Hot facts `profile.json` cargado SessionStart.
+#### M1. Dual memory backend — **v2.0 pending 🔨**
+
+> **Sección v2.0 pending explícita:** los MCP custom `mcp__mem0__*` y `mcp__graphiti__*` **NO existen todavía**. Cualquier doc del repo que los mencione describe diseño, no runtime. Hoy la memoria operativa es v1: hot facts (`profile.json`) + markdown por dominio.
+
+- **Mem0 self-hosted** docker + MCP wrapper. 🔨
+- **Graphiti + Neo4j** docker + MCP wrapper. 🔨
+- Custom MCP `mcp__mem0__*` y `mcp__graphiti__*`. 🔨
+- Migración data inicial: `01-MEMORIA/*` → upsert ambas capas. 🔨
+- Hot facts `profile.json` cargado SessionStart. ✅ (ya implementado v1.x, `install.sh` + `load-rules.sh`)
+- Compose Docker Mem0+Neo4j: template listo (`templates/docker-compose.memory.yml`), `install.sh` lo levanta opcional. ✅
 - **Docs:** `docs/03-arquitectura/MEMORY-STACK.md` ✅
 
-#### M2. Self-updating rule book
-- Hook `capture-correction.sh` PreToolUse / user_message.
-- Hook `load-rules.sh` SessionStart inyecta `rules-learned.md` al system prompt.
-- Auto-extract reglas con Haiku 4.5.
+#### M2. Self-updating rule book — **IMPL ✅ (v1.x)**
+- Hook `capture-correction.sh` PreToolUse / user_message. ✅
+- Hook `load-rules.sh` SessionStart inyecta `rules-learned.md` al system prompt. ✅
+- Auto-extract reglas con Haiku 4.5. ✅ (requiere `ANTHROPIC_API_KEY`)
 - **Docs:** `docs/05-workflow/RULE-BOOK-AUTO.md` ✅
-- Seed reglas iniciales (8 inviolables) precargadas.
+- Seed reglas iniciales (15 seed) precargadas por `install.sh`. ✅
 
-#### M3. Tier-gated subagents
-- 8 subagents nuevos con tier asignado.
-- Per-subagent `.claude/agents/<name>/settings.json` con `allowedTools` + `permissions`.
-- Trust score system + log.
+#### M3. Tier-gated subagents — **parcial: configs ✅ · trust runtime 🔨**
+- 8 subagents nuevos con tier asignado. ✅ (configs instaladas por `install.sh`)
+- Per-subagent config con `allowedTools` + `permissions`. ✅
+- Trust score system + log. 🔨 v2.0 pending
 - **Docs:** `docs/03-arquitectura/TIERS-AND-FIREWALL.md` ✅
 
-#### M4. Domain firewall
-- PreToolUse hook valida path access por subagent.
-- Reglas firewall YAML por subagent.
-- Logs violaciones.
+#### M4. Domain firewall — **IMPL ✅ (v1.x, best-effort)**
+- PreToolUse hook valida path access por subagent. ✅ (`domain-firewall.sh`)
+- Reglas firewall TXT por subagent (YAML = diseño v2.0). ✅
+- Logs violaciones (`firewall-violations.jsonl`). ✅
+- Limitación: enforcement por-subagente best-effort hasta v2 (ver TIERS-AND-FIREWALL.md).
 - **Docs:** mismo doc TIERS-AND-FIREWALL.md.
 
-#### M5. Citation-required mode
-- Hook intercepta claims factuales sobre Nico sin source path.
-- Bloquea + pide cite.
+#### M5. Citation-required mode — **parcial: warn-only ✅ (v1.1) · enforcement total 🔨**
+- Hook intercepta claims factuales sobre Nico sin source path. ✅ warn-only (`citation-required.sh`)
+- Bloquea + pide cite. 🔨 v2.0 pending
 - **Docs:** `docs/02-personalidad-karen/ANTI-PATTERNS.md` ✅
 
-#### M6. `/morning-brief` orchestration
-- Fan-out paralelo subagents.
-- Sintetiza digest único.
+#### M6. `/morning-brief` orchestration — **IMPL ✅ (v1.x)**
+- Fan-out paralelo subagents. ✅
+- Sintetiza digest único. ✅
 - **Docs:** `commands/morning-brief.md` ✅
 
 ### Tasks v2.0
 
+> Checkboxes `[x]` = ya cubierto por `install.sh` + hooks/commands v1.x shippeados. `[ ]` = pendiente real para v2.0.
+
 ```
-[ ] Setup Docker compose: Mem0 + Neo4j
-[ ] Build MCP wrappers Mem0 + Graphiti
-[ ] Migrar 01-MEMORIA/* a Mem0 + Graphiti
-[ ] Implementar capture-correction.sh
-[ ] Implementar load-rules.sh
-[ ] Seed rules-learned.md con 8 reglas inviolables
-[ ] Crear .claude/agents/karen-{dev,finance,health,relationships,learn,research,orchestrator,secrets}/settings.json
-[ ] Implementar trust score tracking
-[ ] Implementar firewall.sh PreToolUse
-[ ] Implementar citation hook
-[ ] Crear /morning-brief subagent orchestration
+[x] Setup Docker compose: Mem0 + Neo4j            ← template + install.sh (opcional)
+[ ] Build MCP wrappers Mem0 + Graphiti            ← v2.0 pending
+[ ] Migrar 01-MEMORIA/* a Mem0 + Graphiti         ← v2.0 pending
+[x] Implementar capture-correction.sh             ← hook v1.x
+[x] Implementar load-rules.sh                     ← hook v1.x
+[x] Seed rules-learned.md (15 reglas seed)        ← install.sh
+[x] Crear configs subagents karen-* (tier + allowedTools + firewall)  ← install.sh
+[ ] Implementar trust score tracking              ← v2.0 pending
+[x] Implementar domain-firewall.sh PreToolUse     ← TXT, best-effort por subagent (ver TIERS-AND-FIREWALL.md)
+[x] Implementar citation hook                     ← citation-required.sh v1.1 warn-only; enforcement total pendiente
+[x] Crear /morning-brief subagent orchestration   ← command v1.x
 [ ] Test end-to-end con conversación dummy
 ```
 
@@ -122,7 +129,7 @@
 - **Docs:** `commands/karen-audit.md` ✅
 
 #### N7. Continuous loop background
-- Stop hook re-inyecta TODOs pendientes `01-MEMORIA/TODO.md`.
+- Cron o `/loop` re-inyecta TODOs pendientes `01-MEMORIA/TODO.md` (Claude Code no soporta un "Stop hook" persistente para esto).
 - Re-inicia Karen en fresh context para work nocturno low-stakes.
 - Filesystem = state durable.
 
@@ -136,7 +143,7 @@
 [ ] Setup LightRAG indexing
 [ ] Daemon trust score review
 [ ] Implementar /karen-audit (semanal + manual)
-[ ] Stop hook continuous loop con TODO.md
+[ ] Continuous loop (cron o /loop) con TODO.md
 ```
 
 ---

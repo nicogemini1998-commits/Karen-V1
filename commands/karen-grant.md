@@ -10,7 +10,11 @@ Conceder permiso temporal Karen.
 
 ```
 /karen-grant <permission> --target <X> --subagent <Y> --duration <Z>
+/karen-grant list
+/karen-grant revoke <grant_id> | --all-active | --subagent <Y>
 ```
+
+`list` y `revoke` son subcomandos del MISMO command — no existen `/karen-revoke` ni `/karen-grants` separados. Ambos operan leyendo `~/.claude/karen/grants.jsonl`.
 
 ## Permisos disponibles
 
@@ -61,19 +65,27 @@ Conceder permiso temporal Karen.
 5. Auto-revoke al expirar.
 6. Log a `01-MEMORIA/audit/grants_AAAA-MM.md`.
 
-## Revoke explícito
+## Subcomando: revoke
 
 ```
-/karen-revoke grant_<uuid>
-/karen-revoke --all-active
-/karen-revoke --subagent karen-finance
+/karen-grant revoke grant_<uuid>
+/karen-grant revoke --all-active
+/karen-grant revoke --subagent karen-finance
 ```
 
-## List grants activos
+Cómo funciona (dentro del mismo command):
+1. Lee `~/.claude/karen/grants.jsonl` y localiza el/los grants objetivo.
+2. Append entry de revocación con `"revoked_at": "<ts ISO>"` (el log es append-only — nunca se borran líneas).
+3. Firewall hook deja de respetar el grant inmediatamente.
+4. Log a `01-MEMORIA/audit/grants_AAAA-MM.md`.
+
+## Subcomando: list
 
 ```
-/karen-grants list
+/karen-grant list
 ```
+
+Lee `~/.claude/karen/grants.jsonl` y filtra: activo = `expires_at > now` y sin `revoked_at`. No depende de ningún otro command ni servicio.
 
 Output:
 ```

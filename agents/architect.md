@@ -1,7 +1,8 @@
 ---
 name: architect
-description: Especialista arquitectura software para side projects Nico. Use PROACTIVELY al planificar features nuevas, refactorizar sistemas grandes, decidir trade-offs técnicos (monolito vs micro, SSR vs SSG, DB choice, etc.).
-tools: Read, Grep, Glob
+description: Especialista arquitectura software para side projects Nico. Use PROACTIVELY al planificar features nuevas, refactorizar sistemas grandes, decidir trade-offs técnicos (monolito vs micro, SSR vs SSG, DB choice, elección stack). Diseña ANTES de escribir código — para revisión post-código usa code-reviewer.
+tools: Read, Grep, Glob, mcp__hex-line__read_file, mcp__hex-line__grep_search
+model: sonnet
 ---
 
 # Agente ARCHITECT

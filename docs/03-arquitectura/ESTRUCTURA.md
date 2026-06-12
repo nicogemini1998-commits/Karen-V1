@@ -41,10 +41,12 @@
 │
 ├── 00-SISTEMA-KAREN/                   ← Config interna Karen
 │   ├── 01-RULES/                       ← Rules contextuales modulares
-│   └── 02-SKILLS/                      ← Notas sobre skills (no las skills)
+│   ├── 02-SKILLS/                      ← Notas sobre skills (no las skills)
+│   └── 03-HOOKS/                       ← Notas/overrides hooks locales
 │
 ├── 01-MEMORIA/                         ← MEMORIA PERSISTENTE (gitignored)
 │   ├── MEMORY.md                       ← Índice global, solo enlaces
+│   ├── audit/                          ← Audit trail append-only (audit-trail.sh)
 │   ├── dev/
 │   ├── finanzas/
 │   ├── salud/
@@ -75,6 +77,7 @@
 │   ├── notion-sync/
 │   ├── calendario-outlook/             ← Empresa (read-only)
 │   ├── calendario-gmail/               ← Personal (read/write)
+│   ├── tareas/                         ← Tareas GTD (karen-productividad)
 │   └── routines.md                     ← Rutinas mañana/noche
 │
 ├── 06-APRENDIZAJE/                     ← Libros, cursos
@@ -93,8 +96,12 @@
 └── 10-GRAPHIFY/                        ← Knowledge graph global
     ├── graph.json                      ← (gitignored)
     ├── corpus/                         ← Documentos ingestados
-    └── exports/                        ← Exports queries útiles
+    ├── exports/                        ← Exports queries útiles
+    ├── neo4j-data/                     ← Volumen Neo4j Docker (gitignored)
+    └── mem0-data/                      ← Volumen Mem0 Docker (gitignored)
 ```
+
+> **Nota `KAREN_ROOT`:** la raíz por defecto es `~/karen-personal/`, pero es configurable vía variable de entorno `KAREN_ROOT`. Si la defines, hooks y scripts resuelven rutas contra ella en vez del default.
 
 ---
 
@@ -146,6 +153,26 @@ Cualquier carpeta gitignored que debe existir en estructura inicial lleva un `.g
 - Estructura completa + carpetas vacías listas para usar.
 - Karen va llenando memoria conforme Nico trabaja.
 - Memoria nunca sube al repo (gitignored).
+
+---
+
+## Qué vive en `~/.claude/karen/` (runtime) vs repo (templates)
+
+El repo contiene **templates**; `install.sh` los copia a su ubicación **runtime**. Editar el template NO cambia el runtime (y viceversa) — tras tocar un template hay que re-ejecutar `install.sh`.
+
+| Runtime (`~/.claude/...`) | Template origen (repo) | Qué es |
+|---|---|---|
+| `~/.claude/settings.json` | `templates/.claude/settings.json` | Wiring hooks + permissions |
+| `~/.claude/.mcp.json` | `templates/.claude/.mcp.json` | MCP servers pinneados |
+| `~/.claude/karen/hooks/*.sh` | `templates/.claude/hooks/*.sh` | Hooks bash ejecutables |
+| `~/.claude/karen/lib/*.py` | `templates/.claude/lib/*.py` | Libs Python (spotlight, mem_filter, cost_optimizer) |
+| `~/.claude/karen/firewall/*.txt` | `templates/.claude/karen/firewall/*.txt` | Reglas ALLOW/DENY por subagent |
+| `~/.claude/karen/profile.json` | `templates/.claude/karen/profile.json` | Hot facts (SessionStart) |
+| `~/.claude/karen/rules-learned.md` | `templates/.claude/karen/rules-learned-seed.md` | Rule book auto-update (15 seed) |
+| `~/.claude/agents/*.md` | `agents/*.md` | Subagents Karen |
+| `~/.claude/commands/*.md` | `commands/*.md` | Slash commands custom |
+
+**Solo-runtime (no existen en el repo, gitignored por diseño):** `~/.claude/karen/trust-log.jsonl`, `firewall-violations.jsonl`, `integrity/`, `~/.claude/settings.local.json` y toda la memoria personal en `01-MEMORIA/`.
 
 ---
 

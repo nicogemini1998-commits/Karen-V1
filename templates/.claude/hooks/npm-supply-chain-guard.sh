@@ -7,6 +7,8 @@
 
 set -uo pipefail
 
+command -v jq >/dev/null 2>&1 || { echo "[KAREN] CRITICAL: jq no encontrado — hook inoperante" >&2; exit 0; }
+
 INPUT="$(cat 2>/dev/null || echo '{}')"
 trap 'echo "$INPUT"' EXIT
 
@@ -19,7 +21,13 @@ if ! echo "$CMD" | grep -Eq '\b(npm|pnpm|yarn|bun)[[:space:]]+(install|add|i)([[
 fi
 
 CWD=$(echo "$INPUT" | jq -r '.cwd // empty' 2>/dev/null || pwd)
-cd "$CWD" 2>/dev/null || exit 0
+[ -z "$CWD" ] && CWD="$PWD"
+
+# cd fallido NO puede ser bypass del guard (antes: || exit 0 permitía el install)
+if ! cd "$CWD" 2>/dev/null; then
+  echo "[KAREN-SUPPLY-CHAIN] BLOCKED: cwd inválido ('$CWD') — no se puede verificar lockfile." >&2
+  exit 2
+fi
 
 # 1. Require lockfile
 HAS_LOCK=0

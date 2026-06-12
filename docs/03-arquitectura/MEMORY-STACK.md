@@ -1,6 +1,8 @@
 # MEMORY STACK — Mem0 + Graphiti + LightRAG
 
 > Cómo Karen recuerda en 2026. Híbrido vector + grafo temporal + hot facts.
+>
+> **Estado:** markdown por dominio + índice `MEMORY.md` + hot facts `profile.json` `[IMPL ✅ v1]` · Mem0 MCP wrapper + Graphiti temporal `[v2 🔨]`. **`mem0_client.py` disponible para ingest manual/scripted desde v1.1** (`templates/.claude/lib/mem0_client.py`); MCP wrapper v2.
 
 ---
 
@@ -17,7 +19,7 @@ Solución: **3 capas con responsabilidades claras.**
 
 ---
 
-## L4a — Hot Facts (JSON key-value)
+## L4a — Hot Facts (JSON key-value) `[IMPL ✅ v1]`
 
 ### Para qué
 Datos estables, leídos siempre al boot.
@@ -29,11 +31,11 @@ Datos estables, leídos siempre al boot.
 ```json
 {
   "user": {
-    "alias": "Nico",
-    "location": "Sagunto, Valencia, España",
+    "alias": "YOUR-NAME",
+    "location": "YOUR-CITY, YOUR-COUNTRY",
     "timezone": "Europe/Madrid",
     "languages": ["es", "en"],
-    "github": "nicogemini1998-commits"
+    "github": "YOUR-GITHUB-USERNAME"
   },
   "preferences": {
     "tone_default": "friday",
@@ -62,24 +64,24 @@ Datos estables, leídos siempre al boot.
 
 ---
 
-## L4b — Semantic Memory (Mem0)
+## L4b — Semantic Memory (Mem0) `[v2 🔨 — MCP wrapper]`
 
 ### Para qué
 Búsqueda fuzzy de facts ("¿qué pensé sobre uranium ETFs?"). Embeddings.
 
 ### Stack
 - **Self-hosted Mem0** (gratis, control total).
-- Docker: `mem0ai/mem0` puerto 8888.
-- Custom MCP wrapper `mcp__mem0__add`, `mcp__mem0__search`, `mcp__mem0__delete`.
+- Docker: template real en `templates/docker-compose.memory.yml` — server FastAPI inline sobre `python:3.12-slim`, puerto `127.0.0.1:8888`.
+- **Hoy (v1.1):** ingest manual/scripted vía `templates/.claude/lib/mem0_client.py` (`add` / `search` / `delete` / `health`, stdlib puro, cero deps).
+- **v2 🔨:** custom MCP wrapper `mcp__mem0__add`, `mcp__mem0__search`, `mcp__mem0__delete`.
 
 ### Instalación
 ```bash
-docker run -d \
-  --name karen-mem0 \
-  -p 8888:8888 \
-  -v ~/karen-personal/10-MEMORY-STACK/mem0:/data \
-  -e MEM0_USER_ID=nico \
-  mem0ai/mem0:latest
+# Stack completo (Mem0 + Neo4j) desde el template real
+docker compose -f templates/docker-compose.memory.yml up -d
+
+# Smoke test
+python3 templates/.claude/lib/mem0_client.py health
 ```
 
 ### Scopes (3 niveles Mem0)
@@ -109,7 +111,7 @@ Query siempre incluye `metadata.domain = <X>` salvo cross-dominio explícito.
 
 ---
 
-## L4c — Knowledge Graph (Graphiti)
+## L4c — Knowledge Graph (Graphiti) `[v2 🔨]`
 
 ### Para qué
 Relaciones + temporalidad. ¿"Qué broker usa Nico AHORA"? ¿"Qué decisiones tomó sobre ETFs en Q1 2026"?
@@ -127,11 +129,8 @@ Relaciones + temporalidad. ¿"Qué broker usa Nico AHORA"? ¿"Qué decisiones to
 ### Stack
 ```bash
 pip install graphiti-core neo4j
-docker run -d --name karen-neo4j \
-  -p 7474:7474 -p 7687:7687 \
-  -e NEO4J_AUTH=neo4j/<pass-en-env> \
-  -v ~/karen-personal/10-MEMORY-STACK/neo4j:/data \
-  neo4j:5.20-community
+# Neo4j ya viene en el template (karen-neo4j, bolt 127.0.0.1:7687):
+docker compose -f templates/docker-compose.memory.yml up -d neo4j
 ```
 
 ### Entidades + relaciones típicas
@@ -171,7 +170,7 @@ graphiti.search(
 
 ---
 
-## Auto-extraction pipeline
+## Auto-extraction pipeline `[v2 🔨]`
 
 ### PostToolUse hook (entity extraction)
 Tras cada sesión:
@@ -260,14 +259,22 @@ karen review-stale --domain finanzas
 ## Integraciones con Karen workflow
 
 ### Cuando Karen escribe memoria
+
+**Flujo real hoy (v1.1):**
 ```
 1. Usuario decide algo importante.
 2. Karen escribe markdown 01-MEMORIA/<dominio>/AAAA-MM-DD_<tipo>_<slug>_v1.md
-3. PostToolUse hook:
+3. Actualizar MEMORY.md índice.
+4. (Opcional, si el stack memoria está up) ingest scripted:
+   python3 .claude/lib/mem0_client.py add --domain <dominio> "<texto>"
+```
+
+**Flujo objetivo v2 🔨 (hook automático):**
+```
+1-2 igual, y el PostToolUse hook hace:
    a. Upsert Mem0 con metadata.domain.
    b. Extract entities → Graphiti.
    c. Update profile.json si preference cambió.
-4. Actualizar MEMORY.md índice.
 ```
 
 ### Cuando Karen consulta memoria
@@ -287,8 +294,9 @@ karen review-stale --domain finanzas
 | Versión | Capa | Estado |
 |---|---|---|
 | v1.0 | Markdown files + indice MEMORY.md | ✅ |
-| v1.5 | + hot facts profile.json | pending |
-| v2.0 | + Mem0 self-hosted MCP | pending |
-| v2.5 | + Graphiti Neo4j MCP | pending |
+| v1.0 | + hot facts profile.json | ✅ (`templates/.claude/karen/profile.json`) |
+| v1.1 | + `mem0_client.py` ingest manual/scripted (server en template compose) | ✅ |
+| v2.0 | + Mem0 self-hosted MCP wrapper | 🔨 |
+| v2.5 | + Graphiti Neo4j MCP | 🔨 (Neo4j ya en template compose) |
 | v3.0 | + LightRAG indexing carpetas | experimental |
 | v3.5 | + entity extraction auto Haiku | experimental |

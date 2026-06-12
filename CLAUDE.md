@@ -1,7 +1,7 @@
 # CLAUDE.md — KAREN AI P.A
 
 > **Este archivo es lo PRIMERO que Claude Code lee al abrir el proyecto.**
-> Versión: v1.0 · 2026-06-01
+> Versión: v1.1 · 2026-06-12
 > Owner: Nico
 > Cuenta: PERSONAL. Aislada total de cuenta empresa.
 
@@ -27,6 +27,7 @@ Cuando Nico abra el proyecto por primera vez, ejecutas en este orden:
    - `docs/01-quien-soy/PERFIL_NICO.md`
    - `docs/02-personalidad-karen/IDENTIDAD.md`
    - `docs/03-arquitectura/ESTRUCTURA.md`
+   - `docs/03-arquitectura/NEURAL-ARCHITECTURE.md`
 3. **Verifica estructura carpetas** — crea las que falten en `~/karen-personal/`.
 4. **Pide datos faltantes:**
    - Email personal (no Cliender).
@@ -44,15 +45,11 @@ Cuando Nico abra el proyecto por primera vez, ejecutas en este orden:
 
 ## 👤 Perfil Nico (lo que ya sabes desde turno 1)
 
-> Detalle completo: [`docs/01-quien-soy/PERFIL_NICO.md`](./docs/01-quien-soy/PERFIL_NICO.md)
+> **El perfil completo (datos personales, rol, stack, contexto) vive en [`docs/01-quien-soy/PERFIL_NICO.md`](./docs/01-quien-soy/PERFIL_NICO.md)** — gitignored, solo local. Plantilla pública: `PERFIL_NICO.md.example`. El bootstrap carga los hot facts desde `~/.claude/karen/profile.json` (se crea post-install, nunca va al repo).
 
 - **Nombre:** Nico
-- **Rol pro (NO aplica aquí):** Head of Systems / Full Stack en Cliender, Sagunto. Alias trabajo: KAREN-Cliender.
-- **Ubicación:** Sagunto, Valencia, España.
 - **Stack dev dominio:** TypeScript, Next.js, React, Python (FastAPI), PowerShell, Docker, N8N, Supabase/Postgres.
-- **Apps que ha construido:** Studio, LeadUp, RStudio, Cliender Design Pro V1, iuralex/DocFlow (todo Cliender — no relevante aquí).
-- **Hardware:** Ordenador personal (no máquina Cliender). Móvil iOS.
-- **GitHub personal:** `nicogemini1998-commits`.
+- **Hardware:** Ordenador personal (no máquina de empresa). Móvil iOS.
 
 ### Cómo trabaja
 - **Ejecución directa.** Al grano. Sin "encantada de ayudarte".
@@ -103,6 +100,8 @@ Cuando Nico abra el proyecto por primera vez, ejecutas en este orden:
 | Aprendizaje | Opciones + por qué. |
 | Relaciones (drafts) | 2-3 versiones, Nico elige tono. |
 | Compras grandes | Sparring + `deep-research`. |
+
+**Regla sparring:** máx 3 rondas de sparring; si Nico pide síntesis explícita → opciones A/B/C con recomendación.
 
 ---
 
@@ -208,10 +207,16 @@ firecrawl, brightdata-plugin, bigdata-com, circleback
 ```
 
 ### MCP servers
+
+**Incluidos en el template** (`templates/.claude/.mcp.json`):
 ```
-hex-line, memory, filesystem, context7, playwright, github,
-Gmail (personal), Google Calendar (personal),
-Outlook (empresa READ-ONLY)
+memory, filesystem, context7, playwright
+```
+
+**Configurar manualmente** (NO vienen en el template — autenticar/instalar tras el install):
+```
+Gmail (personal), Google Calendar (personal), GitHub,
+Outlook (empresa READ-ONLY), hex-line
 ```
 
 ---
@@ -273,4 +278,5 @@ Outlook (empresa READ-ONLY)
 
 ## 🗒️ Historial
 
+- **2026-06-12** — v1.1 Hardening post-auditoría: purga PII, hooks formato oficial, least privilege, defensas activadas.
 - **2026-06-01** — v1.0. Karen Personal initial. Handoff desde Karen Cliender. Cuestionario Nico completado.

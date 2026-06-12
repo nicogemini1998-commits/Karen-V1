@@ -70,9 +70,21 @@ check ".mcp.json instalado" "[ -f '$CLAUDE_DIR/.mcp.json' ]"
 check "agents/ contiene karen agents" "ls $CLAUDE_DIR/agents/*.md 2>/dev/null | head -1 | grep -qE '\.md$'"
 check "commands/ contiene slash commands" "ls $CLAUDE_DIR/commands/*.md 2>/dev/null | head -1 | grep -q md"
 
+echo -e "\n${BOLD}3b. Cobertura agents (repo agents/ vs instalados)${NC}"
+if [ -d "$KAREN_ROOT/agents" ]; then
+  for f in "$KAREN_ROOT"/agents/*.md; do
+    [ -e "$f" ] || continue
+    base="$(basename "$f")"
+    check "agent $base instalado" "[ -f '$CLAUDE_DIR/agents/$base' ]"
+  done
+else
+  echo -e "  ${YELLOW}!${NC} $KAREN_ROOT/agents/ no encontrado — skip cobertura agents"
+fi
+
 echo -e "\n${BOLD}4. Karen config (~/.claude/karen/)${NC}"
 check "profile.json" "[ -f '$KAREN_CONFIG_DIR/profile.json' ]"
 check "rules-learned.md (seed)" "[ -f '$KAREN_CONFIG_DIR/rules-learned.md' ]"
+check "rules-learned.md con >=15 reglas" "[ \"\$(grep -c '^\*\*Regla\|^- \|^[0-9]' '$KAREN_CONFIG_DIR/rules-learned.md' 2>/dev/null)\" -ge 15 ]"
 check "hooks/ existen" "[ -d '$KAREN_CONFIG_DIR/hooks' ]"
 check "hook load-rules.sh ejecutable" "[ -x '$KAREN_CONFIG_DIR/hooks/load-rules.sh' ]"
 check "hook capture-correction.sh ejecutable" "[ -x '$KAREN_CONFIG_DIR/hooks/capture-correction.sh' ]"
@@ -87,11 +99,43 @@ check "hook mcp-pin-verify.sh ejecutable" "[ -x '$KAREN_CONFIG_DIR/hooks/mcp-pin
 check "hook npm-supply-chain-guard.sh ejecutable" "[ -x '$KAREN_CONFIG_DIR/hooks/npm-supply-chain-guard.sh' ]"
 check "hook codegen-scanner.sh ejecutable" "[ -x '$KAREN_CONFIG_DIR/hooks/codegen-scanner.sh' ]"
 check "hook post-bash-secret-scan.sh ejecutable" "[ -x '$KAREN_CONFIG_DIR/hooks/post-bash-secret-scan.sh' ]"
+check "hook audit-trail.sh ejecutable" "[ -x '$KAREN_CONFIG_DIR/hooks/audit-trail.sh' ]"
+check "hook memory-safety-filter.sh ejecutable" "[ -x '$KAREN_CONFIG_DIR/hooks/memory-safety-filter.sh' ]"
+check "hook untrusted-input-spotlight.sh ejecutable" "[ -x '$KAREN_CONFIG_DIR/hooks/untrusted-input-spotlight.sh' ]"
+check "hook citation-required.sh ejecutable" "[ -x '$KAREN_CONFIG_DIR/hooks/citation-required.sh' ]"
+
+echo -e "\n${BOLD}4b-drift. Hooks instalados vs templates (shasum)${NC}"
+if command -v shasum >/dev/null 2>&1 && [ -d "$KAREN_ROOT/templates/.claude/hooks" ]; then
+  DRIFT=0
+  for f in "$KAREN_ROOT"/templates/.claude/hooks/*.sh; do
+    [ -e "$f" ] || continue
+    hb="$(basename "$f")"
+    installed="$KAREN_CONFIG_DIR/hooks/$hb"
+    if [ ! -f "$installed" ]; then
+      echo -e "  ${YELLOW}!${NC} hook $hb no instalado (drift)"
+      DRIFT=$((DRIFT+1))
+    elif [ "$(shasum -a 256 "$f" | awk '{print $1}')" != "$(shasum -a 256 "$installed" | awk '{print $1}')" ]; then
+      echo -e "  ${YELLOW}!${NC} hook $hb difiere del template (drift)"
+      DRIFT=$((DRIFT+1))
+    fi
+  done
+  TOTAL=$((TOTAL+1))
+  if [ "$DRIFT" -eq 0 ]; then
+    echo -e "  ${GREEN}✓${NC} Hooks instalados idénticos a templates (sin drift)"
+    PASS=$((PASS+1))
+  else
+    echo -e "  ${YELLOW}!${NC} $DRIFT hook(s) con drift — re-corre install.sh si no es intencional"
+    WARN=$((WARN+1))
+  fi
+else
+  echo -e "  ${YELLOW}!${NC} shasum o $KAREN_ROOT/templates/.claude/hooks/ no disponibles — skip drift check"
+fi
 
 echo -e "\n${BOLD}4c. Libraries Python${NC}"
 check "lib/spotlight.py" "[ -f '$KAREN_CONFIG_DIR/lib/spotlight.py' ]"
-check "lib/mem_filter.py" "[ -f '$KAREN_CONFIG_DIR/lib/mem_filter.py' ]"
+check_warn "lib/mem_filter.py (hooks de memoria lo invocan via python3)" "[ -f '$KAREN_CONFIG_DIR/lib/mem_filter.py' ]"
 check "lib/cost_optimizer.py" "[ -f '$KAREN_CONFIG_DIR/lib/cost_optimizer.py' ]"
+check_warn "lib/mem0_client.py" "[ -f '$KAREN_CONFIG_DIR/lib/mem0_client.py' ]"
 
 echo -e "\n${BOLD}4d. Policy + audit dirs${NC}"
 check "policy/karen-rot.yaml" "[ -f '$KAREN_CONFIG_DIR/policy/karen-rot.yaml' ]"
@@ -105,19 +149,30 @@ check "firewall/ existe" "[ -d '$KAREN_CONFIG_DIR/firewall' ]"
 check "firewall karen-dev.txt" "[ -f '$KAREN_CONFIG_DIR/firewall/karen-dev.txt' ]"
 check "firewall karen-finance.txt" "[ -f '$KAREN_CONFIG_DIR/firewall/karen-finance.txt' ]"
 check "firewall karen-health.txt" "[ -f '$KAREN_CONFIG_DIR/firewall/karen-health.txt' ]"
+check "firewall main.txt" "[ -f '$KAREN_CONFIG_DIR/firewall/main.txt' ]"
+check "firewall karen-secrets-rotation.txt" "[ -f '$KAREN_CONFIG_DIR/firewall/karen-secrets-rotation.txt' ]"
+check "firewall karen-productividad.txt" "[ -f '$KAREN_CONFIG_DIR/firewall/karen-productividad.txt' ]"
 
-echo -e "\n${BOLD}5. Subagents config${NC}"
-for agent in karen-dev karen-finance karen-health karen-research karen-learn karen-orchestrator; do
-  check_warn "Subagent $agent config JSON" "[ -f '$CLAUDE_DIR/agents/$agent.json' ]"
-done
+echo -e "\n${BOLD}5. Subagents config (bloqueante — el firewall depende de ellos)${NC}"
+if [ -d "$KAREN_ROOT/templates/.claude/agents-config" ]; then
+  for f in "$KAREN_ROOT"/templates/.claude/agents-config/*.json; do
+    [ -e "$f" ] || continue
+    base="$(basename "$f")"
+    check "Subagent config $base instalado" "[ -f '$CLAUDE_DIR/agents/$base' ]"
+  done
+else
+  for agent in karen-dev karen-finance karen-health karen-research karen-learn karen-orchestrator karen-relationships karen-secrets-rotation architect code-reviewer karen-productividad; do
+    check "Subagent $agent config JSON" "[ -f '$CLAUDE_DIR/agents/$agent.json' ]"
+  done
+fi
 
 echo -e "\n${BOLD}6. Pre-requisitos sistema${NC}"
 check_warn "node 20+" "node --version | grep -E 'v(2[0-9]|[3-9][0-9])'"
 check_warn "npm" "command -v npm"
 check_warn "git" "command -v git"
 check_warn "docker" "command -v docker"
-check_warn "python3" "command -v python3"
-check_warn "jq (recomendado hooks)" "command -v jq"
+check_warn "python3 (hooks de memoria lo usan)" "command -v python3"
+check "jq (requerido por hooks)" "command -v jq"
 
 echo -e "\n${BOLD}7. Docker memory stack (opcional)${NC}"
 if command -v docker >/dev/null 2>&1; then

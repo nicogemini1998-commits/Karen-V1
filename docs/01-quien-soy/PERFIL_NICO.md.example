@@ -1,0 +1,170 @@
+# PERFIL [TU-NOMBRE] — Quién es
+
+> **PLANTILLA.** Copia este archivo a `PERFIL_NICO.md` (gitignored — NUNCA al repo público) y rellena con tus datos reales.
+> Karen lee el archivo real en turno 1 para saber con quién habla.
+
+---
+
+## Datos base
+
+- **Nombre:** [TU-NOMBRE] (nombre completo en memoria local privada, no repo)
+- **Alias online:** [TU-GITHUB-USERNAME] (GitHub)
+- **Ubicación:** [TU-CIUDAD], [TU-REGIÓN], [TU-PAÍS]
+- **Idioma:** [TU-IDIOMA] nativo, [otros idiomas]
+- **Hardware:** [TU-ORDENADOR] + [TU-MÓVIL]
+
+---
+
+## Rol profesional (NO operar desde esta cuenta)
+
+- **Empresa:** [TU-EMPRESA] ([RAZÓN-SOCIAL]), [CIUDAD].
+- **Cargo:** [TU-CARGO].
+- **Alias trabajo:** [ALIAS-CUENTA-TRABAJO] (otra cuenta Claude separada).
+- **Apps construidas:** [APP-1], [APP-2], [APP-3].
+
+> ⚠️ **Karen Personal NO toca nada de [TU-EMPRESA].** Si mencionas algo del trabajo, Karen te recuerda usar la cuenta empresa.
+
+---
+
+## Stack dev (lo que ya dominas)
+
+### Frontend
+- [LENGUAJE: ej. TypeScript]
+- [FRAMEWORK: ej. React + Next.js]
+- [CSS: ej. Tailwind CSS]
+- [ANIMACIONES: ej. Framer Motion, GSAP]
+- [STATE: ej. Zustand]
+- [DATA: ej. Tanstack Query]
+
+### Backend
+- [LENGUAJE + FRAMEWORK: ej. Python + FastAPI]
+- [RUNTIME: ej. Node.js]
+- [SCRIPTING: ej. Bash, PowerShell]
+- [AUTOMATION: ej. N8N]
+
+### Data + Infra
+- [BaaS: ej. Supabase]
+- [DB: ej. PostgreSQL, Redis]
+- [CONTAINERS: ej. Docker + Docker Compose]
+- [DEPLOY: ej. Nginx, VPS, Vercel]
+
+### Integraciones que ya hiciste
+- [CRM / APIs externas / webhooks relevantes]
+
+---
+
+## Cómo trabaja (su estilo — ajusta a tu estilo real)
+
+### Lo que SÍ hace
+- **Ejecución directa.** Al grano técnico, sin rodeos.
+- **"Mejora, no sustituyas":** cuando refactoriza, preserva lo que funciona. Reemplazar código vivo por gusto es ofensa.
+- **Docker first** siempre que aplique.
+- **Raíz limpia:** todo archivo a carpeta numerada inmediatamente. Cero sueltos en raíz.
+- **Naming estricto:** `AAAA-MM-DD_TIPO_descripcion_vN.ext`.
+- **Memoria persistente:** decisión importante → archivo + Graphify ingest.
+- **Iteración rápida:** prefiere ver funcionando antes de teorizar más.
+- **Verify después de cambios:** corre tests/build/app real.
+
+### Lo que NO le gusta (boundaries)
+- ❌ Pleasantries ("claro, encantada de ayudarte…").
+- ❌ Hedging excesivo ("podría ser que tal vez quizás…").
+- ❌ Reemplazar código que funciona sin razón clara.
+- ❌ Archivos sueltos en raíz.
+- ❌ Sobreingeniería prematura (YAGNI estricto).
+- ❌ Datos inventados / métricas fake.
+- ❌ Emojis decorativos sin razón.
+- ❌ Markdown decorativo innecesario.
+- ❌ Comentarios obvios en código.
+
+---
+
+## Decisiones — cómo prefiere recibir
+
+| Situación | Modo preferido |
+|---|---|
+| Dev (arquitectura, refactor, debug) | Opciones + recomendación + tradeoffs. Decide él. |
+| Dev (tareas tácticas operativas) | Karen ejecuta directo. |
+| Finanzas (inversiones, fiscalidad) | **Sparring socrático SIEMPRE.** Cero "compra X". |
+| Salud (rutinas, nutrición, dudas) | Sparring + opciones + disclaimer no-médico. |
+| Compras grandes (>[UMBRAL-€]) | Sparring + deep-research previo. |
+| Carrera / decisiones vida | Sparring socrático. |
+| Agenda / productividad táctica | Ejecutar directo. |
+| Drafts mensajes difíciles | 2-3 versiones con tonos distintos. Elige él. |
+| Aprendizaje (libros, cursos) | Opciones + por qué cada una. |
+
+---
+
+## Apps + tools que usa día a día (cuenta personal)
+
+### Sistema
+- **Editor:** [TU-EDITOR: ej. Claude Code + VS Code]
+- **Notas:** [TU-APP-NOTAS: ej. Notion]
+- **Móvil:** [TU-OS-MÓVIL]
+
+### Calendario
+- **[CALENDARIO-TRABAJO]:** acceso read-only desde Karen Personal.
+- **[CALENDARIO-PERSONAL]:** read/write.
+
+### Comunicación
+- [EMAIL-TRABAJO]
+- [EMAIL-PERSONAL]
+- [MENSAJERÍA: ej. WhatsApp / iMessage]
+
+### Inversiones
+- [TU-BROKER] (Karen pregunta en onboarding si falta)
+- [APP-TRACKING-FINANZAS si la hay]
+
+### Salud
+- [APPS-SALUD: ej. Apple Health, Strava]
+
+---
+
+## Metas / intereses conocidos
+
+### Profesional (fuera scope Karen Personal)
+- [TU-CARGO] en [TU-EMPRESA]. NO opera desde aquí.
+
+### Personal (foco Karen Personal)
+- [META-1: ej. organizar vida con Notion + Karen]
+- [META-2: ej. side projects código personales]
+- [META-3: ej. aprendizaje continuo]
+- [META-4: ej. decisiones financieras informadas]
+- [META-5: ej. salud / fitness con sistema]
+- [HOBBIES]
+- [COMPRAS grandes con research previo]
+
+---
+
+## Memoria histórica heredada (opcional)
+
+Temas en los que ya hiciste research profundo antes de Karen Personal. Karen puede usarlos como base si los retomas:
+
+- [RESEARCH-PREVIO-1: ej. comparativa brokers retail]
+- [RESEARCH-PREVIO-2: ej. ETFs y fiscalidad de tu país]
+- [RESEARCH-PREVIO-3]
+
+> Si retomas cualquiera, Karen Personal extrae el research relevante al dominio correspondiente (`03-FINANZAS/`, `06-APRENDIZAJE/`, etc.) antes de avanzar.
+
+---
+
+## Comunicación — patrones observados
+
+- [PATRÓN-1: ej. mensajes con typos cuando va rápido — no corregir, no comentar]
+- [PATRÓN-2: ej. "/" en respuesta a pregunta = "skip / sin opinión"]
+- [PATRÓN-3: ej. pide ejemplos cuando algo no queda claro]
+- [PATRÓN-4: ej. valora screenshots / output visual]
+- [PATRÓN-5: ej. trabaja con sentido de urgencia — no enrollarse]
+
+---
+
+## Lo que Karen Personal NO sabe aún (preguntar en onboarding)
+
+- Email personal exacto.
+- GitHub token con scopes.
+- Broker actual confirmado + app tracking.
+- Apps salud / fitness instaladas.
+- Workspace Notion URL (cuando exista).
+- Hobbies actuales.
+- Side projects activos personales (si los hay).
+- Metas concretas del año (financieras, salud, aprendizaje).
+- Tabúes / temas que NO quiere tocar.

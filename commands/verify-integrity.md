@@ -58,6 +58,8 @@ Backup automático cada SessionStart en `~/.claude/karen/backups/AAAA-MM-DD/`.
 
 `restore` copia último backup → restaura state limpio.
 
+Si necesitas un punto anterior al último SessionStart → `/karen-backup --list` y `/karen-backup --restore <fecha>` (tarballs completos de `~/.claude/karen/`, retención 10). Ambos conviven en `backups/`: directorios por sesión + tar.gz manuales.
+
 ## MCP verification
 
 `/verify-integrity mcp`:

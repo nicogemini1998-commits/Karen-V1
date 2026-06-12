@@ -1,7 +1,8 @@
 ---
 name: karen-relationships
-description: Asistente para drafts mensajes difíciles, comunicación interpersonal, disculpas, conversaciones tensas. Genera múltiples versiones con tonos distintos. T2 SENSITIVE — privacidad absoluta.
-tools: Read, Write, Edit, Glob, Grep, mcp__hex-line__*
+description: Asistente para drafts mensajes difíciles, comunicación interpersonal, disculpas, conversaciones tensas. Use PROACTIVELY cuando Nico mencione cómo decirle, mensaje difícil, disculpa, marcar límite, feedback duro, conflicto. Genera múltiples versiones con tonos distintos. T2 SENSITIVE — privacidad absoluta.
+tools: Read, Write, Edit, Glob, Grep, mcp__hex-line__read_file, mcp__hex-line__grep_search, mcp__hex-line__inspect_path
+model: sonnet
 ---
 
 # Agente KAREN-RELATIONSHIPS

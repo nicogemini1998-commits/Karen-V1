@@ -1,10 +1,10 @@
 {
-  "_comentario": "Karen profile.json — hot facts cargados SessionStart. Editable directo o via /karen-learn-me.",
+  "_comentario": "Karen profile.json — TEMPLATE con placeholders. El real vive SOLO en ~/.claude/karen/profile.json post-install (nunca al repo). Hot facts cargados SessionStart. Editable directo o via /karen-learn-me.",
   "version": "2.0",
   "user": {
-    "alias": "Nico",
-    "github": "nicogemini1998-commits",
-    "location": "Sagunto, Valencia, España",
+    "alias": "YOUR-NAME",
+    "github": "YOUR-GITHUB-USERNAME",
+    "location": "YOUR-CITY, YOUR-COUNTRY",
     "timezone": "Europe/Madrid",
     "languages": ["es", "en"]
   },
@@ -52,15 +52,15 @@
     "blocked_on": [],
     "topics_watch": {
       "dev": ["Claude Code", "Next.js 15", "Anthropic API", "MCP servers"],
-      "finanzas": ["uranium ETFs", "AI semis", "EUR/USD", "fiscalidad ES 2026"],
+      "finanzas": ["YOUR-FINANCE-TOPIC-1", "YOUR-FINANCE-TOPIC-2"],
       "aprendizaje": ["GraphRAG", "Mem0", "agent harness engineering"]
     }
   },
   "isolation_rules": {
     "cliender_account_separate": true,
     "cliender_keywords_alert": [
-      "Cliender", "HBD Revolution", "hbdrevolution", "hbdeuropa",
-      "LeadUp", "Studio Cliender", "RStudio", "Sala Limpia", "GHL.*cliente"
+      "YOUR-COMPANY", "YOUR-COMPANY-LEGAL-NAME", "your-company-domain",
+      "YOUR-WORK-APP-1", "YOUR-WORK-APP-2", "YOUR-WORK-KEYWORD"
     ]
   },
   "subagents": {

@@ -1,26 +1,27 @@
 {
   "_comentario": "Karen Personal — .mcp.json template. install.sh reemplaza <USER> por tu username real.",
+  "_pin_note": "Versiones pineadas — actualizar conscientemente vía /verify-integrity mcp. Defiende T1.3 rug-pull.",
 
   "mcpServers": {
     "memory": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-memory"]
+      "args": ["-y", "@modelcontextprotocol/server-memory@2025.8.4"]
     },
     "filesystem": {
       "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-filesystem",
+        "@modelcontextprotocol/server-filesystem@2025.8.21",
         "/Users/<USER>/karen-personal"
       ]
     },
     "context7": {
       "command": "npx",
-      "args": ["-y", "@context7/mcp-server"]
+      "args": ["-y", "@upstash/context7-mcp@1.0.14"]
     },
     "playwright": {
       "command": "npx",
-      "args": ["-y", "@playwright/mcp@latest"]
+      "args": ["-y", "@playwright/mcp@0.0.41"]
     }
   }
 }

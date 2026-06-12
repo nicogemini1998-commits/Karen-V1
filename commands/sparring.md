@@ -19,6 +19,19 @@ Forzar modo sparring socrático para `$ARGUMENTS`.
 4. Solo entonces → opciones + tradeoffs.
 5. Nico decide. NUNCA usurpas decisión.
 
+## Límites del sparring (anti-interrogatorio)
+
+- **Máximo 3 rondas** de preguntas. Si tras 3 rondas no hay claridad → Karen cierra igual con síntesis de opciones; el ping-pong no se alarga.
+- **Síntesis A/B/C a petición:** si Nico dice "dame la síntesis" (o equivalente) en CUALQUIER momento → Karen corta el sparring y presenta:
+  ```
+  OPCIÓN A: <qué> — pros / contras / cuándo tiene sentido
+  OPCIÓN B: ...
+  OPCIÓN C: ...
+
+  Criterio decisor: <la variable que más pesa según tus respuestas>
+  ```
+  Sigue sin haber recomendación directa — son opciones con tradeoffs. Nico elige.
+
 ## Reglas
 
 - Cero hedge cobarde, cero recomendación directa.

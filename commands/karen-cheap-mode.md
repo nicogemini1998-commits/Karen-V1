@@ -104,6 +104,21 @@ Top tasks coste:
 Ahorro estimado vs sin cheap mode: $2.10 USD (~85%).
 ```
 
+## Implementation (honesta — qué es automático y qué no)
+
+El command ejecuta `~/.claude/scripts/karen-cheap-mode.sh`, que SOLO escribe el state file `~/.claude/karen/cheap-mode.json` (enabled, budget, flags de estrategias). A partir de ahí:
+
+| Estrategia | ¿Quién la aplica? | ¿Enforcement? |
+|---|---|---|
+| Routing Haiku | Karen elige modelo al lanzar Tasks leyendo el state file | Convención — no hay switch duro |
+| Prompt caching | API Anthropic (automático en blocks elegibles) | Sí, real |
+| markitdown convert | **MANUAL** — Karen ejecuta `markitdown <file>` antes de leer si `md_convert: true`. NO hay hook que intercepte Reads de PDF; si Karen lo olvida, nadie lo fuerza | No |
+| Memory-first | Convención de Karen en sesión | No |
+| Context isolation | Diseño de los Task prompts | No |
+| Budget hard cap | Tracking best-effort en `cost-log.jsonl`; el bloqueo al 100% lo aplica Karen, no un hook | Parcial |
+
+Resumen honesto: cheap-mode es un **contrato de comportamiento** persistido en JSON, no un enforcement técnico. Lo único duro es el prompt caching (lado API) y el permiso `Bash(markitdown:*)` ya allowlisted en `settings.json`.
+
 ## Anti-patterns cheap mode
 
 - ❌ Forzar Haiku en sparring socrático (calidad razonamiento crítico).

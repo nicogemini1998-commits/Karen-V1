@@ -7,6 +7,8 @@
 
 set -uo pipefail
 
+command -v jq >/dev/null 2>&1 || { echo "[KAREN] CRITICAL: jq no encontrado — hook inoperante" >&2; exit 0; }
+
 INPUT="$(cat 2>/dev/null || echo '{}')"
 trap 'echo "$INPUT"' EXIT
 

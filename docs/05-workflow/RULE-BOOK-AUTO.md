@@ -159,13 +159,13 @@ fi
 
 ## Auto-limpieza periódica
 
-### Stop hook semanal
+### Limpieza semanal (cron o `/loop` — Claude Code no soporta un "Stop hook" semanal persistente)
 - Lee `rules-learned.md`.
 - Llama Opus con prompt "deduplica + consolida + archiva obsoletas".
 - Output nueva versión + backup `rules-learned-AAAA-MM-DD.md.bak`.
 
 ### Manual review
-- Mensual Nico hace `karen review-rules` → ver listado.
+- Mensual Nico hace `/karen-audit --rules` → ver listado.
 - Marcar `archived: true` reglas no aplicables.
 
 ---

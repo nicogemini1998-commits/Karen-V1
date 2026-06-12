@@ -6,6 +6,8 @@
 
 set -uo pipefail
 
+command -v jq >/dev/null 2>&1 || { echo "[KAREN] CRITICAL: jq no encontrado — hook inoperante" >&2; exit 0; }
+
 INPUT="$(cat)"
 trap 'echo "$INPUT"' EXIT
 
@@ -26,9 +28,12 @@ case "$FILE_PATH" in
     # Si está en raíz (depth=0)
     if [ "$DEPTH" = "0" ]; then
       BASENAME=$(basename "$FILE_PATH")
-      # Whitelist raíz
+      # Whitelist raíz (docs base + config estándar de tooling)
       case "$BASENAME" in
         CLAUDE.md|README.md|_ATAJOS.md|CHANGELOG.md|.gitignore|.gitattributes|.env|.env.example|.mcp.json)
+          exit 0
+          ;;
+        package.json|tsconfig.json|.npmrc|Makefile|.eslintrc*|.prettierrc*|docker-compose*.yml)
           exit 0
           ;;
         .*)

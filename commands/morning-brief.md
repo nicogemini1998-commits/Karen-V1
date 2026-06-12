@@ -18,6 +18,23 @@ Karen orchestrator lanza en paralelo:
 
 Espera todos. Sintetiza digest único.
 
+## Paralelización (real, no secuencial)
+
+- Karen lanza los subagents con el **Task tool, todas las llamadas en un MISMO bloque** (5 Task calls paralelas — nunca una tras otra esperando resultado).
+- Cada subagent recibe SOLO su scope (context isolation, ver `/karen-cheap-mode`) y devuelve su sección ya formateada.
+- Timeout por subagent: 120s.
+
+### Fallback si un subagent falla/timeout
+
+- La sección sale IGUAL, marcada `[⚠ STALE]`, rellena con el último dato conocido de `01-MEMORIA/` (o "sin datos frescos" si no hay nada).
+- **El brief SIEMPRE sale.** Un subagent caído nunca bloquea el digest completo.
+- El fallo se anota en el propio brief, ej.:
+  ```
+  📰 RESEARCH [⚠ STALE]
+  ────────
+  karen-research timeout (120s). Último research: 2026-06-14.
+  ```
+
 ## Output
 
 ```

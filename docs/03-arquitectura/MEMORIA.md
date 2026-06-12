@@ -6,16 +6,30 @@
 
 ## Capas de memoria
 
-### Capa 1 — Archivos markdown por dominio
-Vive en `01-MEMORIA/<dominio>/<tipo>_<slug>.md`. Texto plano, leíble por humanos y Karen.
+### Capa 1 — Archivos markdown por dominio `[IMPL ✅ v1]`
+Vive en `01-MEMORIA/<dominio>/<tipo>_<slug>.md`. Texto plano, leíble por humanos y Karen. Junto con el índice `MEMORY.md` y los hot facts (`profile.json`), es la base implementada de v1.
 
-### Capa 2 — Graphify knowledge graph
+### Capa 2 — Graphify knowledge graph `[IMPL ✅ v1 — skill /graphify]`
 Vive en `10-GRAPHIFY/graph.json`. Grafo de entidades + relaciones + comunidades. Ingesta automática tras decisión importante.
 
-### Capa 3 — Memoria built-in Claude Code
+### Capa 3 — Memoria built-in Claude Code `[IMPL ✅ v1]`
 `~/.claude/projects/<proyecto>/memory/MEMORY.md`. Auto-actualizada por skill memoria nativa.
 
 **Karen Personal usa las 3 en paralelo.** Capa 1 = source of truth. Capa 2 = búsqueda + relaciones. Capa 3 = quick context boot.
+
+### Capas siguientes `[v2 🔨]`
+- **Mem0 semántico (MCP wrapper)** — el server self-hosted ya tiene template (`templates/docker-compose.memory.yml`). **`mem0_client.py` disponible para ingest manual/scripted desde v1.1** (`templates/.claude/lib/mem0_client.py`); MCP wrapper `mcp__mem0__*` v2.
+- **Graphiti temporal (Neo4j)** — grafo bi-temporal `valid_from`/`valid_to`. v2. Detalle: [MEMORY-STACK.md](./MEMORY-STACK.md).
+
+### Flujo real hoy (v1.1)
+1. Decisión cerrada → markdown en `01-MEMORIA/<dominio>/AAAA-MM-DD_<tipo>_<slug>_v1.md` con frontmatter.
+2. Actualizar índice `01-MEMORIA/MEMORY.md`.
+3. (Opcional, si el stack memoria está up) ingest scripted:
+   ```bash
+   python3 .claude/lib/mem0_client.py add --domain finanzas \
+     --metadata '{"type":"decision","date":"2026-06-15"}' \
+     "Decisión: abrir cuenta Trade Republic"
+   ```
 
 ---
 

@@ -17,6 +17,15 @@ Karen escanea:
 
 Identifica **gaps de alta entropía** (lo que NO sabe + impacta workflow).
 
+### Qué cuenta como "gap crítico" (métrica concreta, no vibes)
+
+Un gap es **crítico** si cumple cualquiera de estas dos condiciones medibles:
+
+1. **Entidad mencionada >2x sin memoria** — Nico nombró algo (broker, proyecto, persona, herramienta) más de 2 veces y NO existe entrada en `01-MEMORIA/` ni entity en el graph. Karen habla de ello a ciegas cada vez.
+2. **Campo `profile.json` undefined** — un campo que algún command necesita (`topics_watch`, broker, scopes, tabúes) está vacío o ausente. Ej.: `/morning-brief` sin `topics_watch` = research genérico inútil.
+
+Todo lo demás es gap "nice-to-have" — solo entra en las 5 preguntas si no quedan críticos pendientes.
+
 ### Fase 2 — Selección preguntas
 
 Quote SOTA: *"Active Learning is employed to address the cold-start problem … to maximize information acquisition with minimal user effort by selecting informative data."*

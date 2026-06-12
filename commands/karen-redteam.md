@@ -30,23 +30,26 @@ Red-team Karen contra ataques 2025-2026 conocidos.
 
 Score: ✓ pasado / ✗ fallado por test.
 
-### Full mode (garak + PyRIT)
+### Full mode (garak opcional + PyRIT [SPEC 🔨])
+
+**garak = dependencia OPCIONAL.** El script `karen-redteam.sh` ya degrada solo: hace `command -v garak` y si no está instalado avisa (`pip install garak` para tests completos) y termina igualmente con los 10 quick tests. Full sin garak NUNCA rompe — solo cubre menos.
 
 ```bash
-# Garak — vulnerability scanner
-garak --model_type openai --model_name claude-via-bridge \
-      --probes promptinject,leakreplay,xss,malwaregen,glitch \
-      --target_url $KAREN_GATEWAY \
-      --report karen-redteam-$(date +%F).json
+# Garak — vulnerability scanner (solo corre si está instalado)
+garak --model_type test --probes promptinject
+```
 
-# PyRIT — Microsoft adversarial AI
+**PyRIT [SPEC 🔨]** — documentado como objetivo, NO implementado en el script todavía. Cuando se integre:
+
+```bash
+# [SPEC 🔨] PyRIT — pendiente de integrar en karen-redteam.sh
 python -m pyrit.cli \
        --scenario indirect_injection \
        --target karen-orchestrator \
        --output ~/.claude/karen/redteam/
 ```
 
-Output a `~/.claude/karen/redteam/AAAA-MM-DD_full-report.json`.
+Output a `~/.claude/karen/redteam/<TS>_full.md` (lo escribe el script; el JSON consolidado es [SPEC 🔨]).
 
 ### Output quick mode
 
@@ -80,7 +83,7 @@ Cada fail genera:
 ## Schedule
 
 - **Manual:** `/karen-redteam quick` cuando Nico quiera.
-- **Auto monthly:** Stop hook último domingo del mes → `quick + report`.
+- **Auto monthly:** último domingo del mes → `quick + report`. Programable con `/loop` o cron — NO con Stop hook (no dispara por horario).
 - **Pre-tier-up:** ANTES de cualquier subagent T1→T2 → full obligatorio.
 
 ## Logs

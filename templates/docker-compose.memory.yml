@@ -1,6 +1,7 @@
 # Karen Memory Stack — Mem0 + Neo4j (Graphiti backend)
 # Uso: docker compose -f docker-compose.memory.yml up -d
 # Requiere .env en directorio padre con NEO4J_PASSWORD + MEM0_USER_ID
+# Cliente CLI/lib para el server Mem0: templates/.claude/lib/mem0_client.py
 
 services:
   # ─── Neo4j (backend para Graphiti knowledge graph) ────────
@@ -33,6 +34,8 @@ services:
     image: python:3.12-slim
     container_name: karen-mem0
     restart: unless-stopped
+    # No-root: server.py y datos en volúmenes montados se crean como 1000:1000, no como root
+    user: "1000:1000"
     ports:
       - "127.0.0.1:8888:8888"
     working_dir: /app
@@ -42,13 +45,20 @@ services:
     environment:
       - MEM0_USER_ID=${MEM0_USER_ID:-nico}
       - MEM0_DATA_DIR=/data
+      - MEM0_DIR=/data            # mem0ai persiste history/vector store aquí (no en /tmp efímero)
+      - HOME=/tmp                 # user no-root sin passwd entry → pip --user necesita HOME escribible
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
-    command: >
-      sh -c "
-        pip install --no-cache-dir 'mem0ai>=0.1.20' fastapi uvicorn &&
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}  # Memory() default usa embeddings OpenAI
+    # Literal block (|) + heredoc a columna 0: con folded (>) el PYEOF quedaba
+    # indentado y el heredoc nunca cerraba; el Python inline daba IndentationError.
+    command:
+      - sh
+      - -c
+      - |
+        pip install --no-cache-dir --user 'mem0ai>=0.1.20' fastapi uvicorn &&
         if [ ! -f /app/server.py ]; then
-          cat > /app/server.py <<'PYEOF'
-        from fastapi import FastAPI
+        cat > /app/server.py <<'PYEOF'
+        from fastapi import FastAPI, HTTPException
         from pydantic import BaseModel
         from mem0 import Memory
         import os
@@ -73,20 +83,29 @@ services:
 
         @app.post('/search')
         def search(req: SearchReq):
-            return m.search(req.query, user_id=req.user_id, limit=req.limit)
+            return m.search(req.query, user_id=req.user_id, limit=req.limit, filters=req.filter or None)
+
+        @app.delete('/memories/{memory_id}')
+        def delete(memory_id: str):
+            try:
+                m.delete(memory_id=memory_id)
+            except Exception as exc:
+                raise HTTPException(status_code=404, detail=str(exc))
+            return {'status': 'deleted', 'memory_id': memory_id}
 
         @app.get('/health')
         def health():
             return {'status': 'ok'}
         PYEOF
         fi &&
-        uvicorn server:app --host 0.0.0.0 --port 8888
-      "
+        python -m uvicorn server:app --host 0.0.0.0 --port 8888
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8888/health || exit 1"]
+      # python:3.12-slim no trae wget/curl → check con urllib stdlib
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8888/health', timeout=5)"]
       interval: 30s
       timeout: 10s
       retries: 5
+      start_period: 120s  # pip install tarda en el primer arranque
     depends_on:
       neo4j:
         condition: service_healthy

@@ -104,7 +104,9 @@ Confirmar antes de:
 - Cualquier cosa irreversible.
 
 ### Permisos
-- `~/.claude/settings.local.json` NUNCA al repo.
+- **`settings.json` vs `settings.local.json` — no son lo mismo:**
+  - `settings.json` — config **compartible**: SÍ vive en el repo (`templates/.claude/settings.json`) y se distribuye vía `install.sh`. Wiring de hooks, plugins y permissions del proyecto.
+  - `settings.local.json` — config **privada por máquina + usuario**: JAMÁS al repo y JAMÁS en carpetas cloud-sync (OneDrive/Drive/Dropbox). Solo en `~/.claude/` de cada máquina. Allowlists personales, env vars, overrides.
 - `.env` NUNCA al repo.
 - Tokens GitHub con scope mínimo necesario.
 

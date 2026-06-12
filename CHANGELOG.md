@@ -4,7 +4,41 @@
 
 ---
 
+## [v1.1] — 2026-06-12 (Hardening post-auditoría)
+
+> **Nota versionado:** re-baseline de numeración. Lo implementado y shippeado es **v1.x** (hooks + libs + commands + install). **v2.x** queda reservado para el runtime Mem0/Graphiti + judge + trust (julio 2026). Las entradas v2.0-spec/v2.1/v2.2 abajo se mantienen como historia.
+
+### Hardening — 127 findings de auditoría resueltos
+- **Formato hooks oficial Claude Code** — `settings.json` migrado al schema oficial de hooks (matchers + estructura por evento).
+- **Least privilege** — permissions allowlist recortada a lo que Karen usa de verdad.
+- **Purga PII** — datos personales eliminados de templates y docs públicos.
+- **Pinning MCP** — versiones MCP servers pinneadas en `.mcp.json`.
+
+### Added — 4 hooks nuevos
+- `audit-trail.sh` — log append-only de tool calls a `01-MEMORIA/audit/`.
+- `memory-safety-filter.sh` — wiring `mem_filter.py` en escrituras de memoria.
+- `untrusted-input-spotlight.sh` — wiring `spotlight.py` sobre contenido externo (web/email/docs).
+- `citation-required.sh` — v1 warn-only: claims factuales sobre Nico sin source → warning.
+
+### Added — 4 commands nuevos
+- `/evening-wind-down` — cierre de día.
+- `/deep-reflection` — reflexión profunda periódica.
+- `/karen-backup` — backup memoria + config.
+- `/karen-audit-trail` — consulta del audit trail.
+
+### Added — Agente
+- `karen-productividad` — dominio productividad (GTD, calendarios, rutinas).
+
+### Changed
+- `agents/finanzas-sparring.md` → `agents/karen-finance.md` (naming consistente `karen-*`).
+- HTML showcase movidos a `docs/99-showcase/` (raíz limpia).
+- Honesty pass en docs: todo etiquetado IMPL ✅ vs SPEC 🔨.
+
+---
+
 ## [v2.2] — 2026-06-01 (Security + Cost + Computer Control + Bugs Fixed)
+
+> **IMPL vs SPEC:** los 5 hooks security, las 3 libs Python, los 3 commands y el wiring `settings.json`/`install.sh` de esta entrada son código real probado **IMPL ✅**. Los docs (`THREAT-MODEL.md`, `COST-OPTIMIZATION.md`, `COMPUTER-CONTROL.md`) mezclan defensas implementadas con diseño: judge dual-LLM, weekly memory sweep, trust score runtime y Computer Use son **SPEC 🔨 (v2.x)**. `karen-rot.yaml` existe como policy declarativa; su enforcement runtime es SPEC 🔨.
 
 > Karen blindada contra ataques 2025-2026 + cost optimization + computer control specs.
 > Probado localmente: 65/69 pass, 0 fail, 4 warn (Docker opcional).
@@ -216,7 +250,8 @@
 
 ### Tags git
 - `v1.0` — initial release ✅
-- `v2.0-spec` — specs documentación, sin código wrappers ⬅ ACTUAL
-- `v2.0` — código MCP wrappers + hooks implementados (target Julio 2026)
+- `v2.0-spec` — specs documentación, sin código wrappers ✅
+- `v1.1` — hardening post-auditoría: hooks + libs + commands implementados ⬅ ACTUAL
+- `v2.0` — MCP wrappers Mem0/Graphiti + judge + trust runtime (target Julio 2026)
 - `v2.5` — active learning + audit weekly (target Agosto 2026)
 - `v3.0-experimental` — capability separation harness (target Q4 2026)

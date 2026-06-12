@@ -18,6 +18,15 @@ Karen recopila:
 6. **Tier mismatches:** subagents con score que justifica upgrade.
 7. **Anti-pattern detections:** hallucinations, citations missing, raíz violations.
 
+## Definición de métricas (concretas, calculables)
+
+- **Disagreement rate** = correcciones de Nico ÷ sugerencias totales de Karen en el periodo.
+  - Numerador: entries en `~/.claude/karen/captures.jsonl` (las detecta el hook `capture-correction.sh` en cada prompt).
+  - Denominador: sugerencias registradas en `~/.claude/karen/audit-log.jsonl` para el mismo rango de fechas.
+  - Lectura: <3% = sycophancy creeping (Karen no discrepa, o Nico desistió de corregir). >20% = Karen falla demasiado. Target sano: 5-15%.
+- **Gap crítico** (misma definición que `/karen-learn-me`): entidad mencionada >2x sin memoria en `01-MEMORIA/`/graph, o campo `profile.json` undefined que algún command necesita.
+- **Memoria stale** = entry con `date` >6 meses sin review.
+
 ## Output
 
 ```
@@ -87,7 +96,7 @@ Manual: cuando quieras `/karen-audit`
 
 ## Schedule
 
-Auto cada domingo 23:00 vía Stop hook → `01-MEMORIA/audit/AAAA-MM-DD_weekly.md`.
+Auto semanal (domingo 23:00) → `01-MEMORIA/audit/AAAA-MM-DD_weekly.md`. Programable con `/loop` o cron — NO con Stop hook (los Stop hooks disparan al cerrar sesión, no por horario).
 
 ## Alertas críticas
 

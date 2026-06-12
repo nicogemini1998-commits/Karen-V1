@@ -39,7 +39,7 @@ Estos plugins traen muchas skills + MCPs preconfigurados.
 ### Memoria + búsqueda
 | Skill | Función |
 |---|---|
-| `graphify` | Knowledge graph desde input. **CRÍTICO.** |
+| `graphify` | Knowledge graph desde input. **CRÍTICO** — solo cuando esté instalada como skill local (`~/.claude/skills/graphify/`). No viene con este repo; si falta, Karen usa memoria markdown v1 y lo reporta. |
 | `claude-mem:mem-search` | Búsqueda memoria histórica |
 | `claude-mem:knowledge-agent` | Agente conocimiento |
 | `claude-mem:smart-search` | Búsqueda inteligente |
@@ -81,6 +81,22 @@ Estos plugins traen muchas skills + MCPs preconfigurados.
 | `simplify` | Aplicar fixes de code-review |
 | `find-skills` | Buscar skill correcta |
 | `env-check` | Verificar entorno |
+
+### Commands custom Karen (vienen con el repo, `commands/`)
+| Command | Función |
+|---|---|
+| `/morning-brief` | Digest mañanero fan-out subagents |
+| `/evening-wind-down` | Cierre de día (nuevo v1.1) |
+| `/deep-reflection` | Reflexión profunda periódica (nuevo v1.1) |
+| `/karen-backup` | Backup memoria + config (nuevo v1.1) |
+| `/karen-audit-trail` | Consulta del audit trail append-only (nuevo v1.1) |
+| `/karen-learn-me` | Onboarding active learning (5 preguntas máx) |
+| `/karen-audit` | Auditoría: rules, violations, grants |
+| `/karen-grant` | Permisos temporales (network, write, tier-up) |
+| `/karen-cheap-mode` | Routing Haiku + caching agresivo |
+| `/karen-redteam` | Red-team rápido (IPI/jailbreak/memory poisoning) |
+| `/verify-integrity` | Verifica integrity ledger + MCP pins |
+| `/sparring` `/dominio` `/agenda` `/memoria-add` `/portafolio` `/research` | Operativa por dominio |
 
 ---
 
@@ -363,7 +379,7 @@ Karen ejecuta en onboarding:
 2. Verificar /find-skills lista tier 1
 3. Configurar ~/.claude/.mcp.json con servers manuales
 4. Auth OAuth Gmail/Calendar/Outlook
-5. /graphify init namespaces por dominio
+5. /graphify init namespaces por dominio (solo si la skill graphify está instalada — si no, skip y anotar)
 6. Test cada skill tier 1 con dummy query
 7. Reportar a Nico: instaladas ✓ / faltan ✗
 ```

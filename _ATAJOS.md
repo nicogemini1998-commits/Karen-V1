@@ -31,6 +31,7 @@
 | 05 | [`docs/05-workflow/WORKFLOWS.md`](./docs/05-workflow/WORKFLOWS.md) | Flujos típicos |
 | 05 | [`docs/05-workflow/REGLAS.md`](./docs/05-workflow/REGLAS.md) | Reglas operativas |
 | 05 | [`docs/05-workflow/UPGRADES.md`](./docs/05-workflow/UPGRADES.md) | Roadmap v1→v3 |
+| 99 | [`docs/99-showcase/`](./docs/99-showcase/) | HTML demos: showcase premium + versión para niños |
 
 ## Dominios (creados por install.sh)
 

@@ -45,7 +45,18 @@ MAR 2026-06-16
 Eventos: <N> total
 ```
 
+## Boundary explícito: Outlook empresa vs Gmail personal
+
+| | Outlook (empresa) | Gmail (personal) |
+|---|---|---|
+| Acceso | **READ-ONLY** | Read/write (write con confirm) |
+| Token | Separado — cuenta Microsoft 365 Cliender, scope solo lectura | Token personal de Nico |
+| Karen puede | Listar eventos, detectar conflictos | Listar, crear, mover, borrar eventos |
+| Karen NUNCA | Crear/editar/borrar, leer adjuntos, responder invitaciones | — |
+
+**Por qué (aislamiento Cliender):** Karen es el agente PERSONAL de Nico. Si Karen tuviera write sobre la cuenta empresa, un prompt injection o un fallo de Karen podría modificar/filtrar datos corporativos — y los datos Cliender se quedarían mezclados en memoria personal. Token read-only separado = blast radius cero hacia la empresa. Refuerza el hook `cliender-isolation-guard.sh`.
+
 ## Si pide editar
 
-- Personal (Gmail) → OK editar.
-- Empresa (Outlook) → "Eso es empresa. Edita desde tu cuenta Cliender."
+- Personal (Gmail) → OK editar (con confirm antes de escribir).
+- Empresa (Outlook) → "Eso es empresa. Edita desde tu cuenta Cliender." Sin excepciones — ni con grant.

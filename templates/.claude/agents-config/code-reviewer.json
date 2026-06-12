@@ -1,0 +1,37 @@
+{
+  "_comentario": "Subagent Code-Reviewer — T1. Revisión DESPUÉS de escribir código. Set read-only estricto: el git diff llega como input del invocador; ejecutar tests/build requiere /karen-grant puntual. Para diseño previo → architect.",
+  "name": "code-reviewer",
+  "tier": "T1",
+  "trust_score": 100,
+  "description": "Code review side projects Nico. Severidades CRITICAL/HIGH/MEDIUM/LOW. Decisión APPROVE/WARN/BLOCK. Anti-template, anti-sobreingeniería.",
+  "allowedTools": [
+    "Read",
+    "Grep",
+    "Glob",
+    "mcp__hex-line__read_file",
+    "mcp__hex-line__grep_search",
+    "mcp__hex-line__inspect_path"
+  ],
+  "permissions": {
+    "allow_paths": [
+      "01-MEMORIA/dev/**",
+      "02-DEV/**"
+    ],
+    "deny_paths": [
+      "01-MEMORIA/finanzas/**",
+      "01-MEMORIA/salud/**",
+      "01-MEMORIA/relaciones/**",
+      "03-FINANZAS/**",
+      "04-SALUD-FITNESS/**",
+      "07-RELACIONES/**"
+    ],
+    "allow_network": []
+  },
+  "memory_scope": "dev",
+  "rules_forced": [
+    "severity_levels_required",
+    "block_on_critical",
+    "no_bikeshedding",
+    "mejora_no_sustituyas"
+  ]
+}

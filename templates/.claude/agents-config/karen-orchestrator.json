@@ -42,10 +42,14 @@
   ],
   "delegation_map": {
     "dev|side project|código|debug": "karen-dev",
-    "finanzas|invertir|broker|ETF|fiscalidad": "karen-finance",
+    "finanzas|invertir|broker|ETF|fiscalidad": "karen-finance (sparring SIEMPRE)",
     "salud|fitness|rutina|nutrición": "karen-health",
     "research|investigar|estudiar tema": "karen-research",
     "aprender|curso|libro|tutor": "karen-learn",
-    "agenda|calendario|email": "karen-orchestrator (handle direct)"
+    "agenda|calendario|email|tareas": "karen-productividad",
+    "mensaje difícil|disculpa|conversación tensa": "karen-relationships",
+    "arquitectura|diseño sistema|stack (ANTES de código)": "architect",
+    "review|pre-commit (DESPUÉS de código)": "code-reviewer",
+    "rotar token|regenerar key (solo petición explícita)": "karen-secrets-rotation"
   }
 }

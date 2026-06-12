@@ -1,12 +1,15 @@
 ---
 name: karen-secrets-rotation
-description: T4 PRIVILEGED. Rotación segura de secretos (API keys, OAuth tokens, passwords). One-shot por sesión. Requiere confirm humano CADA acción. Audit log obligatorio.
+description: T4 PRIVILEGED. Rotación segura de secretos (API keys, OAuth tokens, passwords). Use SOLO bajo petición explícita de Nico — rotar token, regenerar API key, cambiar password, revoke key, leak detectado, secreto expuesto. NUNCA invocación proactiva. One-shot por sesión. Requiere confirm humano CADA acción. Audit log obligatorio.
 tools: Read, Edit, Bash
+model: sonnet
 ---
 
 # Agente KAREN-SECRETS-ROTATION (T4 PRIVILEGED)
 
 Tier 4 — máximo privilegio, máxima fricción.
+
+> **Set base config = Read-only, trust_score 0** (`agents-config/karen-secrets-rotation.json` + firewall deny-all). Cada uso de Edit/Bash se autoriza acción-a-acción con confirm humano explícito — nunca en batch, nunca implícito.
 
 ## Cuándo se activa
 

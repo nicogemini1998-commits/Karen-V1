@@ -7,6 +7,8 @@
 
 set -uo pipefail
 
+command -v jq >/dev/null 2>&1 || { echo "[KAREN] CRITICAL: jq no encontrado — hook inoperante" >&2; exit 0; }
+
 INPUT="$(cat 2>/dev/null || echo '{}')"
 trap 'echo "$INPUT"' EXIT
 
@@ -29,7 +31,6 @@ SECRET_PATTERNS=(
   'xoxb-[a-zA-Z0-9-]+'                               # Slack bot
   'xoxp-[a-zA-Z0-9-]+'                               # Slack user
   'AKIA[0-9A-Z]{16}'                                 # AWS access key
-  '[a-zA-Z0-9/+=]{40}'                               # generic base64 40
   '-----BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY-----'  # Private keys
   'eyJhbGciOi[A-Za-z0-9+/=]{20,}'                    # JWT pattern
 )
@@ -46,9 +47,11 @@ for pattern in "${SECRET_PATTERNS[@]}"; do
 done
 
 if [ "$DETECTED" = "1" ]; then
-  echo "[KAREN-SECRET-SCAN] WARNING: secret pattern in Bash output. Logged at $LOG" >&2
-  echo "[KAREN-SECRET-SCAN] Review output before sharing externally." >&2
-  # Non-blocking — solo warning, no exit 2 (Bash output puede ser legítimo en algunos casos)
+  echo "[KAREN-SECRET-SCAN] BLOCKED: secret pattern en output Bash. Logged at $LOG" >&2
+  echo "[KAREN-SECRET-SCAN] Revisa el output y rota el secret si quedó expuesto." >&2
+  # Bloqueante: patrón específico de secret en output = exfil potencial (T1.1 / OWASP LLM02).
+  # Solo patrones específicos — el genérico base64-40 se eliminó (falsas alarmas SHA1/UUID).
+  exit 2
 fi
 
 exit 0

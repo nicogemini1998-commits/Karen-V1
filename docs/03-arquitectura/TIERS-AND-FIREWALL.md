@@ -97,7 +97,35 @@ Karen empieza pequeña. Gana acceso conforme demuestra fiabilidad. Pierde acceso
 
 ## Domain Firewall
 
-### Reglas de aislamiento
+### Formato canónico: TXT (ALLOW/DENY) — [IMPL ✅]
+
+**Lo que existe HOY** es el hook `domain-firewall.sh` (PreToolUse) + un archivo de reglas TXT por subagent en `~/.claude/karen/firewall/<subagent>.txt`:
+
+```text
+# Firewall rules — karen-finance (T2 SENSITIVE)
+
+DENY  /01-MEMORIA/dev/
+DENY  /01-MEMORIA/salud/
+DENY  /01-MEMORIA/relaciones/
+DENY  /02-DEV/
+DENY  /04-SALUD-FITNESS/
+DENY  /07-RELACIONES/
+
+ALLOW /01-MEMORIA/finanzas/
+ALLOW /03-FINANZAS/
+```
+
+Semántica del hook real:
+- Una regla por línea: `ALLOW <pattern>` o `DENY <pattern>`. Líneas `#` = comentario.
+- Match por substring contra el path objetivo (tools `Read|Edit|Write|Glob|Grep|mcp__hex-line__*`).
+- **Primera regla que matchea gana**: `DENY` → exit 2 (bloquea) + log a `~/.claude/karen/firewall-violations.jsonl`; `ALLOW` → pasa.
+- Sin archivo de reglas o sin match → pass-through (default permisivo).
+
+> **⚠️ LIMITACIÓN conocida (v1.x):** el input JSON que Claude Code pasa a los hooks **no expone `subagent_name`**. El hook intenta `subagent_name // .agent // "main"` y en la práctica casi siempre resuelve a `main` → el enforcement **por-subagente es best-effort**: aplica si el entorno define `CLAUDE_AGENT_NAME` (o el harness inyecta el campo); si no, solo cuentan las reglas de `main`. Enforcement por-subagente real queda para v2.0.
+
+### Reglas de aislamiento — diseño YAML [SPEC 🔨 v2.0 pending]
+
+> **Esto NO está implementado.** Es el diseño objetivo v2.0: reglas declarativas YAML con tiers, network allowlist y MCP allowlist por subagent. El runtime actual solo aplica el TXT de arriba (paths). Se mantiene como especificación.
 
 ```yaml
 firewall_rules:
@@ -169,7 +197,9 @@ firewall_rules:
     medical_disclaimer: true  # auto-añadir disclaimer no-médico
 ```
 
-### PreToolUse hook firewall
+### PreToolUse hook firewall [SPEC 🔨 v2.0 pending]
+
+> Sketch del hook YAML-aware objetivo (requiere `yq`). El hook **implementado hoy** es `domain-firewall.sh` con el formato TXT documentado arriba.
 
 ```bash
 #!/usr/bin/env bash
@@ -211,7 +241,9 @@ echo "$INPUT"
 
 ---
 
-## Trust Score System
+## Trust Score System [SPEC 🔨 v2.0]
+
+> Sin runtime todavía. Los tiers se aplican hoy vía `allowedTools` por subagent + firewall TXT; el scoring automático es diseño v2.0.
 
 ### Inicialización
 Cada subagent empieza en 100/1000.

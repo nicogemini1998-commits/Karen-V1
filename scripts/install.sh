@@ -72,6 +72,12 @@ if [ ! -f "CLAUDE.md" ] || [ ! -f "README.md" ]; then
   exit 1
 fi
 
+if [ ! -w "$KAREN_ROOT" ]; then
+  err "Sin permisos de escritura en $KAREN_ROOT."
+  echo "  Ajusta permisos (ej: chown -R $USER \"$KAREN_ROOT\" o chmod u+w) y re-corre el script."
+  exit 1
+fi
+
 # ────────────────────────────────────────────────────────────
 # FASE 1 — Estructura dominios
 # ────────────────────────────────────────────────────────────
@@ -102,6 +108,7 @@ DOMAINS=(
   "05-PRODUCTIVIDAD/notion-sync"
   "05-PRODUCTIVIDAD/calendario-outlook"
   "05-PRODUCTIVIDAD/calendario-gmail"
+  "05-PRODUCTIVIDAD/tareas"
   "06-APRENDIZAJE/libros"
   "06-APRENDIZAJE/cursos"
   "06-APRENDIZAJE/idiomas"
@@ -121,7 +128,7 @@ for dir in "${DOMAINS[@]}"; do
     touch "$dir/.gitkeep"
   fi
 done
-ok "33 carpetas dominios creadas."
+ok "${#DOMAINS[@]} carpetas dominios creadas."
 
 # ────────────────────────────────────────────────────────────
 # FASE 2 — MEMORY.md inicial + profile.json
@@ -203,38 +210,83 @@ if [ -f "templates/.claude/.mcp.json" ]; then
 fi
 
 # Agents (subagents Karen)
+COPIED=0
 for f in agents/*.md; do
   [ -e "$f" ] || continue
   base="$(basename "$f")"
   cp "$f" "$CLAUDE_DIR/agents/$base"
+  COPIED=$((COPIED+1))
 done
-ok "Agents copiados a ~/.claude/agents/"
+if [ "$COPIED" -gt 0 ]; then
+  ok "Agents copiados a ~/.claude/agents/ ($COPIED copiados)."
+else
+  warn "0 agents copiados — revisa carpeta agents/ del repo."
+fi
 
 # Subagents settings JSON
 if [ -d "templates/.claude/agents-config" ]; then
-  cp -r templates/.claude/agents-config/* "$CLAUDE_DIR/agents/" 2>/dev/null || true
-  ok "Subagents settings (allowedTools + tier) copiados."
+  COPIED=0
+  for f in templates/.claude/agents-config/*.json; do
+    [ -e "$f" ] || continue
+    cp "$f" "$CLAUDE_DIR/agents/$(basename "$f")"
+    COPIED=$((COPIED+1))
+  done
+  if [ "$COPIED" -gt 0 ]; then
+    ok "Subagents settings (allowedTools + tier) copiados ($COPIED copiados)."
+  else
+    warn "0 subagent configs copiados — revisa templates/.claude/agents-config/."
+  fi
+else
+  warn "templates/.claude/agents-config/ no existe — el firewall por subagente no funcionará."
 fi
 
 # Commands
+COPIED=0
 for f in commands/*.md; do
   [ -e "$f" ] || continue
   base="$(basename "$f")"
   cp "$f" "$CLAUDE_DIR/commands/$base"
+  COPIED=$((COPIED+1))
 done
-ok "Commands copiados a ~/.claude/commands/"
+if [ "$COPIED" -gt 0 ]; then
+  ok "Commands copiados a ~/.claude/commands/ ($COPIED copiados)."
+else
+  warn "0 commands copiados — revisa carpeta commands/ del repo."
+fi
 
 # Hooks ejecutables
 if [ -d "templates/.claude/hooks" ]; then
-  cp -r templates/.claude/hooks/* "$KAREN_CONFIG_DIR/hooks/"
+  COPIED=0
+  for f in templates/.claude/hooks/*; do
+    [ -e "$f" ] || continue
+    cp -r "$f" "$KAREN_CONFIG_DIR/hooks/"
+    COPIED=$((COPIED+1))
+  done
   chmod +x "$KAREN_CONFIG_DIR/hooks/"*.sh 2>/dev/null || true
-  ok "Hooks ejecutables copiados a ~/.claude/karen/hooks/"
+  if [ "$COPIED" -gt 0 ]; then
+    ok "Hooks ejecutables copiados a ~/.claude/karen/hooks/ ($COPIED copiados)."
+  else
+    warn "0 hooks copiados — revisa templates/.claude/hooks/."
+  fi
+else
+  warn "templates/.claude/hooks/ no existe — Karen sin hooks de seguridad."
 fi
 
 # Firewall rules
 if [ -d "templates/.claude/karen/firewall" ]; then
-  cp -r templates/.claude/karen/firewall/* "$KAREN_CONFIG_DIR/firewall/"
-  ok "Firewall rules copiadas."
+  COPIED=0
+  for f in templates/.claude/karen/firewall/*; do
+    [ -e "$f" ] || continue
+    cp -r "$f" "$KAREN_CONFIG_DIR/firewall/"
+    COPIED=$((COPIED+1))
+  done
+  if [ "$COPIED" -gt 0 ]; then
+    ok "Firewall rules copiadas ($COPIED copiadas)."
+  else
+    warn "0 firewall rules copiadas — revisa templates/.claude/karen/firewall/."
+  fi
+else
+  warn "templates/.claude/karen/firewall/ no existe — domain-firewall sin reglas."
 fi
 
 # Seed rules
@@ -250,9 +302,21 @@ if [ -f "templates/.claude/karen/profile.json" ] && [ ! -f "$KAREN_CONFIG_DIR/pr
 fi
 
 # Libraries Python (spotlight, mem_filter, cost_optimizer)
+# Los hooks de memoria invocan python3 ~/.claude/karen/lib/mem_filter.py — sin esto fallan.
 if [ -d "templates/.claude/lib" ]; then
-  cp -r templates/.claude/lib/* "$KAREN_CONFIG_DIR/lib/"
-  ok "Libraries Python copiadas (spotlight.py, mem_filter.py, cost_optimizer.py)."
+  COPIED=0
+  for f in templates/.claude/lib/*; do
+    [ -e "$f" ] || continue
+    cp -r "$f" "$KAREN_CONFIG_DIR/lib/"
+    COPIED=$((COPIED+1))
+  done
+  if [ "$COPIED" -gt 0 ]; then
+    ok "Libraries Python copiadas a ~/.claude/karen/lib/ ($COPIED copiadas)."
+  else
+    warn "0 libraries copiadas — revisa templates/.claude/lib/."
+  fi
+else
+  warn "templates/.claude/lib/ no existe — hooks que usan mem_filter.py fallarán."
 fi
 
 # Scripts ejecutables (verify-integrity, karen-redteam, karen-cheap-mode)
@@ -349,12 +413,27 @@ if command -v docker >/dev/null 2>&1; then
       fi
     fi
 
-    ask "¿Levantar Mem0 + Neo4j ahora? (y/n) — necesita Docker running"
-    read -r REPLY || REPLY="n"
-    if [[ "$REPLY" =~ ^[Yy]$ ]]; then
-      (cd "$KAREN_ROOT/10-GRAPHIFY" && docker compose up -d) && ok "Mem0 (8888) + Neo4j (7474/7687) corriendo." || warn "Docker compose falló. Revisa .env y arranca manual."
+    # Pre-check credenciales: nunca levantar stack con passwords template
+    ENV_READY="yes"
+    if [ ! -f "$KAREN_ROOT/.env" ]; then
+      ENV_READY="no"
+    elif grep -qE 'CAMBIAME|changeme' "$KAREN_ROOT/.env"; then
+      ENV_READY="no"
+    elif ! grep -qE '^NEO4J_PASSWORD=.+' "$KAREN_ROOT/.env"; then
+      ENV_READY="no"
+    fi
+
+    if [ "$ENV_READY" = "yes" ]; then
+      ask "¿Levantar Mem0 + Neo4j ahora? (y/n) — necesita Docker running"
+      read -r REPLY || REPLY="n"
+      if [[ "$REPLY" =~ ^[Yy]$ ]]; then
+        (cd "$KAREN_ROOT/10-GRAPHIFY" && docker compose up -d) && ok "Mem0 (8888) + Neo4j (7474/7687) corriendo." || warn "Docker compose falló. Revisa .env y arranca manual."
+      else
+        log "Skip levantar Docker. Cuando quieras: cd 10-GRAPHIFY && docker compose up -d"
+      fi
     else
-      log "Skip levantar Docker. Cuando quieras: cd 10-GRAPHIFY && docker compose up -d"
+      warn "Credenciales template detectadas — edita .env primero (CAMBIAME/changeme o NEO4J_PASSWORD vacío)."
+      log "Cuando esté listo: edita $KAREN_ROOT/.env y luego: cd 10-GRAPHIFY && docker compose up -d"
     fi
   fi
 else

@@ -28,6 +28,9 @@ credentials/
 .claude/projects/
 .claude/backups/
 
+# PII — solo local, usar .example como plantilla
+docs/01-quien-soy/PERFIL_NICO.md
+
 # === Dominios con datos PERSONALES SENSIBLES (memoria, salud, finanzas, relaciones) ===
 01-MEMORIA/dev/*
 01-MEMORIA/finanzas/*

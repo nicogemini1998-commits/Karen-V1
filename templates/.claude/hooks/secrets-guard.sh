@@ -6,8 +6,11 @@
 
 set -uo pipefail
 
+command -v jq >/dev/null 2>&1 || { echo "[KAREN] CRITICAL: jq no encontrado — hook inoperante" >&2; exit 0; }
+
+# Sin trap stdout: los hooks PreToolUse no son filtros stdin/stdout.
+# exit 0 = permitir (sin output); exit 2 = bloquear (stderr = motivo).
 INPUT="$(cat)"
-trap 'echo "$INPUT"' EXIT
 
 TOOL=$(echo "$INPUT" | jq -r '.tool_name // empty' 2>/dev/null || echo "")
 case "$TOOL" in
@@ -17,6 +20,10 @@ esac
 
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // .tool_input.path // empty' 2>/dev/null || echo "")
 CONTENT=$(echo "$INPUT" | jq -r '.tool_input.content // .tool_input.new_text // empty' 2>/dev/null || echo "")
+# mcp__hex-line__edit_file pasa los cambios en el array .tool_input.edits
+EDITS=$(echo "$INPUT" | jq -r '.tool_input.edits // empty | tostring' 2>/dev/null || echo "")
+SCAN_TEXT="$CONTENT
+$EDITS"
 
 # Skip si archivo es .env legítimo
 case "$FILE_PATH" in
@@ -28,7 +35,8 @@ esac
 # Patrones secretos comunes
 SECRET_PATTERNS=(
   'sk-ant-[a-zA-Z0-9_-]{20,}'                       # Anthropic API key
-  'sk-[a-zA-Z0-9]{20,}'                              # OpenAI / generic
+  'sk-proj-[a-zA-Z0-9_-]{20,}'                       # OpenAI project key
+  'sk-[a-zA-Z0-9]{20,}'                              # OpenAI / generic (legacy)
   'AIza[a-zA-Z0-9_-]{30,}'                           # Google API key
   'ghp_[a-zA-Z0-9]{30,}'                             # GitHub PAT classic
   'github_pat_[a-zA-Z0-9_]{50,}'                     # GitHub PAT fine-grained
@@ -38,9 +46,9 @@ SECRET_PATTERNS=(
 )
 
 for pattern in "${SECRET_PATTERNS[@]}"; do
-  if echo "$CONTENT" | grep -Eq -- "$pattern"; then
+  if echo "$SCAN_TEXT" | grep -Eq -- "$pattern"; then
     echo "SECRETS_GUARD_BLOCK: secret detectado en escritura a '$FILE_PATH'." >&2
-    echo "Patrón coincidente (parcial): $(echo "$CONTENT" | grep -Eo -- "$pattern" | head -1 | head -c 20)..." >&2
+    echo "Patrón coincidente (parcial): $(echo "$SCAN_TEXT" | grep -Eo -- "$pattern" | head -1 | head -c 20)..." >&2
     echo "Mueve secret a .env (gitignored) y referencia con \$VAR_NAME." >&2
     exit 2
   fi

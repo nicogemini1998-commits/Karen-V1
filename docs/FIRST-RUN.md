@@ -5,6 +5,16 @@
 
 ---
 
+## 🔧 Paso 0 — Ejecuta `scripts/install.sh` ANTES de abrir Claude Code
+
+```bash
+cd ~/karen-personal && bash scripts/install.sh && bash scripts/verify-install.sh
+```
+
+> **Sin este paso, NADA del resto funciona como se describe:** el `settings.json` referencia hooks en `~/.claude/karen/hooks/` que aún no existen, y Claude Code los falla **silenciosamente** — cero guards (no firewall, no secrets-guard, no integrity ledger) y cero avisos. Si ya abriste Claude Code sin instalar: cierra, ejecuta install, reabre.
+
+---
+
 ## ⚡ Comprobación previa (silenciosa)
 
 Karen verifica internamente antes de saludar:
@@ -38,8 +48,8 @@ Verificando sistemas:
   ✓ Memoria índice MEMORY.md leída
 
 Lo que sé de ti desde turno 1:
-  · Alias: Nico (Sagunto, Valencia)
-  · GitHub: nicogemini1998-commits
+  · Alias: YOUR-NAME (YOUR-CITY)
+  · GitHub: YOUR-GITHUB-USERNAME
   · Stack dev: TS + Next.js + Python + Docker
   · Tono default: Friday casual
   · Sparring obligatorio: finanzas, salud, compras grandes
@@ -109,6 +119,19 @@ Si faltan → recordar a Nico:
 - github: needs_auth → recordar
 - notion: needs_auth → recordar
 ```
+
+---
+
+## ⚠️ Failure modes — qué hace Karen cuando algo falla
+
+Ningún fallo de infra opcional tumba el turno 1. Comportamiento esperado:
+
+| Fallo | Comportamiento Karen |
+|---|---|
+| **Docker down / Mem0+Neo4j no levantados** | No es crítico. La memoria **v1 markdown sigue OK** (`profile.json` + `01-MEMORIA/*.md`). Karen lo anota en el saludo (⚠) y ofrece levantar el stack, sin bloquear nada. |
+| **MCP auth fail (Gmail/Calendar/GitHub/Notion)** | **Skip de esa integración** — Karen sigue con el resto, marca la integración como `needs_auth` y recuerda a Nico autenticar. Nunca inventa datos para suplir la integración caída. |
+| **`profile.json` corrupto o ilegible** | **Defaults + warn**: Karen arranca con perfil mínimo por defecto (Friday tone, sparring T2 activo), avisa explícitamente "profile.json corrupto — usando defaults" y propone regenerarlo con `/karen-learn-me` o restaurar desde `/karen-backup`. |
+| **Hooks ausentes (install.sh no ejecutado)** | Estado degradado SIN avisos automáticos de Claude Code (ver Paso 0). Karen lo detecta en la auditoría silenciosa y propone re-ejecutar `bash scripts/install.sh`. |
 
 ---
 
@@ -212,7 +235,7 @@ Sistemas verificados:
   ⚠ Plugins faltantes: bigdata-com, circleback. Habilita con /plugin marketplace.
   ⚠ Stack memoria Docker: no levantado. v1 markdown OK por ahora.
 
-Sé de ti turno 1: Nico, Sagunto, stack TS+Next+Python+Docker,
+Sé de ti turno 1: YOUR-NAME, YOUR-CITY, stack TS+Next+Python+Docker,
 Friday default, sparring en finanzas/salud, Cliender aislada.
 
 Falta: broker actual, GitHub PAT, tópicos finance, Notion, tabúes.

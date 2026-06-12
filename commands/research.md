@@ -19,6 +19,28 @@ Research multi-fuente sobre `$ARGUMENTS`.
 6. `/graphify ingest` namespace dominio.
 7. Actualizar `MEMORY.md` con enlace.
 
+## Fallback sin graphify
+
+Si el skill `/graphify` no está disponible o falla → el research NO se pierde:
+
+1. Guardar igualmente el markdown en `01-MEMORIA/<dominio>/AAAA-MM-DD_RESEARCH_<slug>_v1.md` con frontmatter completo:
+   ```yaml
+   ---
+   domain: <dominio>
+   type: research
+   date: AAAA-MM-DD
+   expires: never
+   tags: []
+   sources: [<urls>]
+   graphify: pending
+   ---
+   ```
+2. Actualizar `MEMORY.md` con el enlace (eso sí o sí).
+3. Avisar a Nico: "Graphify no disponible — guardado en memoria plana con `graphify: pending`."
+4. Próxima sesión con graphify operativo → ingest de todos los `graphify: pending` del dominio.
+
+El graph es un índice; la memoria markdown es la fuente de verdad.
+
 ## Reglas
 
 - Cero datos inventados. Citar fuentes.

@@ -1,5 +1,5 @@
 {
-  "_comentario": "Subagent Karen-Finance — T2 sensitive. Sparring socrático SIEMPRE. Citation required.",
+  "_comentario": "Subagent Karen-Finance — T2 sensitive. Sparring socrático SIEMPRE. Citation required. Sin red en el set base (WebFetch fuera por diseño, allow_network vacío): acceso red SOLO vía /karen-grant network puntual (dominios en allow_network_temporary_request) o delegando a /deep-research.",
   "name": "karen-finance",
   "tier": "T2",
   "trust_score": 100,
@@ -10,7 +10,9 @@
     "Write",
     "Glob",
     "Grep",
-    "mcp__hex-line__*",
+    "mcp__hex-line__read_file",
+    "mcp__hex-line__grep_search",
+    "mcp__hex-line__inspect_path",
     "mcp__memory__*",
     "mcp__bigdata-com__*",
     "mcp__firecrawl__*"

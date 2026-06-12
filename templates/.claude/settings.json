@@ -1,8 +1,10 @@
 {
-  "_comentario": "Karen-V1 settings.json v2.2 — security + cost optimization + computer control hooks",
-  "_version": "2.2",
+  "_NOTE": "ARTEFACTO POST-INSTALL — no usar directo; scripts/install.sh copia templates/.claude/hooks/ → ~/.claude/karen/hooks/. Sin install.sh los hooks fallan file-not-found.",
+  "_comentario": "Karen-V1 settings.json v3.0 — security + cost optimization + computer control hooks. Formato oficial de hooks (timeouts en SEGUNDOS, comandos anidados en 'hooks').",
+  "_version": "3.0",
 
-  "model": "claude-opus-4-7",
+  "model": "opus",
+  "_model_note": "Alias 'opus' — resuelve siempre al Opus vigente, a prueba de futuro. No pinear IDs de modelo (claude-opus-4-x): caducan y rompen la config.",
   "language": "español",
   "theme": "light",
 
@@ -20,16 +22,10 @@
 
   "permissions": {
     "allow": [
-      "Bash(npm install:* --ignore-scripts)",
-      "Bash(npm ci:* --ignore-scripts)",
+      "Bash(npm install:*)",
+      "Bash(npm ci:*)",
       "Bash(npm run:*)",
-      "Bash(npm exec:*)",
-      "Bash(pnpm install:* --ignore-scripts)",
-      "Bash(pnpm install --frozen-lockfile:*)",
-      "Bash(pnpm:*)",
-      "Bash(yarn:*)",
-      "Bash(npx:*)",
-      "Bash(node:*)",
+      "Bash(pnpm install:*)",
       "Bash(python3:*)",
       "Bash(pip3 install:*)",
       "Bash(git status:*)",
@@ -43,20 +39,18 @@
       "Bash(git branch:*)",
       "Bash(git stash:*)",
       "Bash(ls:*)",
-      "Bash(cat:*)",
+      "Bash(cat ~/karen-personal/*)",
+      "Bash(touch ~/karen-personal/*)",
       "Bash(mkdir:*)",
       "Bash(cp:*)",
       "Bash(mv:*)",
       "Bash(docker:*)",
       "Bash(docker compose:*)",
       "Bash(docker-compose:*)",
-      "Bash(curl:*)",
+      "Bash(curl -s https://registry.npmjs.org/*)",
       "Bash(jq:*)",
-      "Bash(echo:*)",
-      "Bash(touch:*)",
       "Bash(date:*)",
       "Bash(markitdown:*)",
-      "Bash(osascript:*)",
       "mcp__hex-line__*",
       "mcp__memory__*",
       "mcp__firecrawl__*",
@@ -82,74 +76,173 @@
   "hooks": {
     "SessionStart": [
       {
-        "command": "bash ~/.claude/karen/hooks/load-rules.sh",
-        "timeout": 3000,
-        "description": "Carga rules-learned.md + profile.json"
+        "_desc": "Carga rules-learned.md + profile.json",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/karen/hooks/load-rules.sh",
+            "timeout": 3
+          }
+        ]
       },
       {
-        "command": "bash ~/.claude/karen/hooks/integrity-ledger.sh",
-        "timeout": 5000,
-        "description": "Verifica SHA256 ledger config Karen (defeats T1.7)"
+        "_desc": "Verifica SHA256 ledger config Karen (defeats T1.7)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/karen/hooks/integrity-ledger.sh",
+            "timeout": 5
+          }
+        ]
       },
       {
-        "command": "bash ~/.claude/karen/hooks/mcp-pin-verify.sh",
-        "timeout": 10000,
-        "description": "Verifica MCP server pins vs npm registry (defeats T1.3 rug-pull)"
+        "_desc": "Verifica MCP server pins vs npm registry (defeats T1.3 rug-pull)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/karen/hooks/mcp-pin-verify.sh",
+            "timeout": 10
+          }
+        ]
       }
     ],
 
     "UserPromptSubmit": [
       {
-        "command": "bash ~/.claude/karen/hooks/capture-correction.sh",
-        "timeout": 2000,
-        "description": "Detecta correcciones Nico, append a rules-learned"
+        "_desc": "Detecta correcciones Nico, append a rules-learned",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/karen/hooks/capture-correction.sh",
+            "timeout": 2
+          }
+        ]
       },
       {
-        "command": "bash ~/.claude/karen/hooks/cliender-isolation-guard.sh",
-        "timeout": 1000,
-        "description": "Alerta menciones Cliender en cuenta personal"
+        "_desc": "Alerta menciones Cliender en cuenta personal",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/karen/hooks/cliender-isolation-guard.sh",
+            "timeout": 1
+          }
+        ]
       }
     ],
 
     "PreToolUse": [
       {
-        "matcher": "Write|Edit|mcp__hex-line__write_file|mcp__hex-line__edit_file",
-        "command": "bash ~/.claude/karen/hooks/raiz-limpia-guard.sh",
-        "timeout": 1500,
-        "description": "Bloquea archivos sueltos en raíz proyecto"
+        "_desc": "Audit trail append-only de cada tool call",
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/karen/hooks/audit-trail.sh",
+            "timeout": 2
+          }
+        ]
       },
       {
+        "_desc": "Bloquea archivos sueltos en raíz proyecto",
         "matcher": "Write|Edit|mcp__hex-line__write_file|mcp__hex-line__edit_file",
-        "command": "bash ~/.claude/karen/hooks/secrets-guard.sh",
-        "timeout": 1500,
-        "description": "Bloquea escritura secrets fuera de .env"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/karen/hooks/raiz-limpia-guard.sh",
+            "timeout": 2
+          }
+        ]
       },
       {
+        "_desc": "Bloquea escritura secrets fuera de .env",
+        "matcher": "Write|Edit|mcp__hex-line__write_file|mcp__hex-line__edit_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/karen/hooks/secrets-guard.sh",
+            "timeout": 2
+          }
+        ]
+      },
+      {
+        "_desc": "Aislamiento dominios por subagent",
         "matcher": "Read|Edit|Write|Glob|Grep|mcp__hex-line__*",
-        "command": "bash ~/.claude/karen/hooks/domain-firewall.sh",
-        "timeout": 1500,
-        "description": "Aislamiento dominios por subagent"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/karen/hooks/domain-firewall.sh",
+            "timeout": 2
+          }
+        ]
       },
       {
+        "_desc": "Enforces --ignore-scripts + lockfile en npm/pnpm install (defeats T1.2)",
         "matcher": "Bash",
-        "command": "bash ~/.claude/karen/hooks/npm-supply-chain-guard.sh",
-        "timeout": 2000,
-        "description": "Enforces --ignore-scripts + lockfile en npm/pnpm install (defeats T1.2)"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/karen/hooks/npm-supply-chain-guard.sh",
+            "timeout": 2
+          }
+        ]
       }
     ],
 
     "PostToolUse": [
       {
+        "_desc": "SAST sobre código generado (semgrep/bandit/shellcheck si disponibles)",
         "matcher": "Write|Edit|mcp__hex-line__write_file|mcp__hex-line__edit_file",
-        "command": "bash ~/.claude/karen/hooks/codegen-scanner.sh",
-        "timeout": 5000,
-        "description": "SAST sobre código generado (semgrep/bandit/shellcheck si disponibles)"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/karen/hooks/codegen-scanner.sh",
+            "timeout": 5
+          }
+        ]
       },
       {
+        "_desc": "Detecta secrets en output Bash (warning)",
         "matcher": "Bash",
-        "command": "bash ~/.claude/karen/hooks/post-bash-secret-scan.sh",
-        "timeout": 2000,
-        "description": "Detecta secrets en output Bash (warning)"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/karen/hooks/post-bash-secret-scan.sh",
+            "timeout": 2
+          }
+        ]
+      },
+      {
+        "_desc": "Filtra datos sensibles antes de persistir en memoria/archivos",
+        "matcher": "Write|Edit|mcp__hex-line__write_file|mcp__hex-line__edit_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/karen/hooks/memory-safety-filter.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "_desc": "Spotlighting de contenido externo no confiable (email/GitHub/web) contra prompt injection",
+        "matcher": "mcp__gmail__.*|mcp__github__.*|mcp__firecrawl__.*|WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/karen/hooks/untrusted-input-spotlight.sh",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "_desc": "Exige citas verificables en resultados de subagentes",
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/karen/hooks/citation-required.sh",
+            "timeout": 3
+          }
+        ]
       }
     ]
   }

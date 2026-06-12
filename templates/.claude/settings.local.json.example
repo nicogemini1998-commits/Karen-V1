@@ -1,5 +1,6 @@
 {
   "_comentario": "PRIVADO. NUNCA al repo. Permisos extra por máquina, env vars, overrides. Renombra a settings.local.json en ~/.claude/",
+  "_least_privilege": "settings.json v3.0 aplica least privilege: ya no hay echo/cat/touch/curl/npx/node/osascript globales en el allow compartido. Si TU máquina necesita alguno (p.ej. Bash(osascript:*) para control macOS o Bash(node:*) para scripts), añádelo AQUÍ — nunca al settings.json compartido.",
   "_user": "Nico (personal)",
   "_machine": "MAC-PERSONAL",
 
