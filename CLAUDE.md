@@ -271,6 +271,42 @@ Outlook (empresa READ-ONLY)
 
 ---
 
+## ⚡ Eficiencia operativa (lecciones del informe de uso)
+
+### Orden — regla de oro (inviolable)
+- **Nada suelto JAMÁS** — ni en la raíz del repo (VS Code) ni en Obsidian. Cada archivo/nota tiene su carpeta y ruta.
+- Raíz solo: `CLAUDE.md`, `README.md`, `_ATAJOS.md`, `CHANGELOG.md` + carpetas numeradas/sistema + dot-files.
+- Vault Obsidian (`10-GRAPHIFY/`) organizado en subcarpetas (Metas, Dominios, Sistema, Stack, Proyectos, Conceptos) + índices en la raíz del vault. Cada neurona conectada por `[[wikilinks]]`, cero huérfanas.
+- Notion: todo cuelga de `🧠 KAREN — Centro de Mando` (dominios + bases de datos). Nada en la raíz del workspace suelto.
+
+### Output & comunicación
+- Respuestas concisas, dentro de límites. Outputs grandes → pasos secuenciales, no un bloque gigante.
+- Enlazar a archivos en vez de pegar bloques largos.
+
+### Configuración antes de construir
+- **Validar credenciales/MCPs ANTES** de construir features que dependan de ellos (evita bloqueos 401 a mitad de build). → `/verify-creds`.
+
+### Agentes & tareas en background
+- **Verificar IDs de agentes** del contexto antes de referenciarlos. Nunca asumir que un ID existe. → `/status`.
+- Trabajo grande → **fases con checklist de aceptación** + checkpoint de confirmación. Listar asunciones inseguras antes de implementar. → `/phase`.
+
+### Verificación automática
+- Hook de typecheck para el dashboard Next.js: `scripts/typecheck-karen-dashboard.sh`. Atrapa errores TS antes de runtime. Activar registrándolo en `.claude/settings.json` (requiere OK de Nico).
+
+---
+
+## 🧭 Lecciones operativas (aprendidas — jun 2026)
+
+> Detalle en memoria: [[leccion-proceso-trabajo]], [[preferencias-visuales-nico]], [[capacidad-navegador-cdp]].
+
+- **Referencia visual PRIMERO.** Para cualquier diseño visual subjetivo (orbe, hero, estética), pedir imagen/video/URL de referencia antes de iterar a ciegas. Si Nico la da → extraer frames con `ffmpeg` y leerlos como imagen. (El orbe costó 5 iteraciones por no hacerlo.)
+- **Credenciales/permisos ANTES de construir** → reflejo `/verify-creds` al empezar features con OAuth/API/MCP. (Se perdió tiempo con OAuth `org_internal` y Notion 404 por workspace separado.)
+- **Defaults visuales de Nico:** liquid glass / Apple, plasma vivo, paleta índigo-violeta-magenta, animaciones siempre, **nada genérico/template** — lo personal manda. Aplicar sin preguntar.
+- **Capacidad navegador (CDP):** Karen controla el navegador vía `playwright-core` + `connectOverCDP` con la sesión logueada de Nico. Scripts en `02-DEV/tooling/kanzv-browser/`. Reutilizable para analítica de redes propias y benchmarking — no solo KANZV.
+
+---
+
 ## 🗒️ Historial
 
+- **2026-06-16** — v1.1. Notion montado (Centro de Mando + 8 dominios + 7 DBs). Dashboard migrado a Next.js (02-DEV). Vault Obsidian organizado (62 nodos). MCPs: Notion + 21st.dev. Mejoras del informe de uso aplicadas (orden, comandos `/verify-creds` `/status` `/phase`, hook typecheck).
 - **2026-06-01** — v1.0. Karen Personal initial. Handoff desde Karen Cliender. Cuestionario Nico completado.

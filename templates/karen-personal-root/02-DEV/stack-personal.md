@@ -140,3 +140,11 @@ mi-side-project/
 | ¿Auth? | Clerk para rápido. NextAuth si quieres control + DB propia. |
 | ¿Self-host o managed? | Managed primero (Vercel, Supabase). Self-host cuando justificación clara. |
 | ¿Dark/Light? | Ambos si justificado. NO default dark sin razón. |
+
+## Conexiones
+
+- [[Stack — Next.js + Tailwind]]
+- [[Stack — Docker]]
+- [[Dominio — Dev & Side Projects]]
+- [[Proyecto — Dashboard Karen (Next.js)]]
+- [[_MAPA-CEREBRO]]

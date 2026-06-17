@@ -90,3 +90,11 @@ Subagents config:            ✓ 6/6 válidos
 
 Status: ✅ INTEGRIDAD OK
 ```
+
+## Conexiones
+
+- [[THREAT-MODEL]]
+- [[verify-creds]]
+- [[karen-audit]]
+- [[Reglas operativas]]
+- [[_MAPA-CEREBRO]]

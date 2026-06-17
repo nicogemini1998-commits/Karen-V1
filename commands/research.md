@@ -59,3 +59,11 @@ TL;DR (3 líneas):
 
 ¿Quieres deep-dive a algún punto?
 ```
+
+## Conexiones
+
+- [[Dominio — Compras & Research]]
+- [[Sparring socrático]]
+- [[morning-brief]]
+- [[memoria-add]]
+- [[_MAPA-CEREBRO]]

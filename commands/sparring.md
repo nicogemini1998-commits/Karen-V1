@@ -39,3 +39,11 @@ Antes de avanzar, X preguntas:
 
 Responde y vemos opciones.
 ```
+
+## Conexiones
+
+- [[Sparring socrático]]
+- [[Dominio — Finanzas]]
+- [[finanzas-sparring]]
+- [[portafolio]]
+- [[_MAPA-CEREBRO]]

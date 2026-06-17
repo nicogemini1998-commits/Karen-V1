@@ -93,3 +93,11 @@ grant_e5f6  cross-domain  finanzas,dev  karen-research  revoked 2026-06-15 14:00
 - **Auto-expire** end-session por defecto salvo `--duration explícita`.
 - **Cuento usos** por grant; alertar si grant usado >10 veces (puede indicar abuse).
 - **Audit mensual** review grants pasados.
+
+## Conexiones
+
+- [[THREAT-MODEL]]
+- [[TIERS-AND-FIREWALL]]
+- [[Reglas operativas]]
+- [[karen-audit]]
+- [[_MAPA-CEREBRO]]

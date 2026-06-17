@@ -138,3 +138,11 @@ Cada sesión:
 - Qué Nico ahora puede hacer/explicar.
 - Schedule revisión.
 - Próximo paso concreto.
+
+## Conexiones
+
+- [[Dominio — Aprendizaje IA]]
+- [[Meta — Top 1% en IA]]
+- [[Aprender construyendo lo que vendo]]
+- [[karen-learn-me]]
+- [[_MAPA-CEREBRO]]

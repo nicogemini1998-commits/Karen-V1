@@ -49,3 +49,11 @@ Eventos: <N> total
 
 - Personal (Gmail) → OK editar.
 - Empresa (Outlook) → "Eso es empresa. Edita desde tu cuenta Cliender."
+
+## Conexiones
+
+- [[Dominio — Productividad]]
+- [[04_Productividad]]
+- [[Reglas operativas]]
+- [[morning-brief]]
+- [[_MAPA-CEREBRO]]
