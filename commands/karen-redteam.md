@@ -87,3 +87,11 @@ Cada fail genera:
 
 Todos resultados → `~/.claude/karen/redteam/`.
 Logs append-only para forensics.
+
+## Conexiones
+
+- [[THREAT-MODEL]]
+- [[karen-audit]]
+- [[Reglas operativas]]
+- [[verify-integrity]]
+- [[_MAPA-CEREBRO]]

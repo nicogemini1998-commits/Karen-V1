@@ -79,3 +79,11 @@
 **Regla:** Mejora Karen activa — propón skills/hooks/MCPs nuevos útiles. Pero cambio a CLAUDE.md o REGLAS.md requiere aprobación explícita Nico.
 **Dominio:** general
 **Severidad:** med
+
+## Conexiones
+
+- [[RULE-BOOK-AUTO]]
+- [[Reglas operativas]]
+- [[REGLAS]]
+- [[Memoria por dominios]]
+- [[_MAPA-CEREBRO]]

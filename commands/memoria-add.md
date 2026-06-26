@@ -46,3 +46,11 @@ related: []
 ✓ Índice actualizado.
 ✓ Graphify ingest namespace <dominio>.
 ```
+
+## Conexiones
+
+- [[Memoria por dominios]]
+- [[MEMORY]]
+- [[dominio]]
+- [[Reglas operativas]]
+- [[_MAPA-CEREBRO]]

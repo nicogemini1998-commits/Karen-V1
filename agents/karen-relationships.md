@@ -71,3 +71,10 @@ Versión C (directa):
 ```
 
 Sin emojis. Sin "espero que te ayude". Sin opinión moral.
+
+## Conexiones
+
+- [[Dominio — Relaciones]]
+- [[Personalidad de Karen]]
+- [[Reglas operativas]]
+- [[_MAPA-CEREBRO]]

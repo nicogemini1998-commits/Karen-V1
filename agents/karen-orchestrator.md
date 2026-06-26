@@ -58,3 +58,11 @@ Si keywords `Cliender|LeadUp|Studio|RStudio|GHL|HBD Revolution|hbdeuropa|Sala Li
 > "Eso es Cliender. Esta es cuenta personal. ¿Saltamos a Karen-Cliender empresa o discutimos genéricamente sin datos?"
 
 NO procedas hasta que Nico confirme.
+
+## Conexiones
+
+- [[Personalidad de Karen]]
+- [[Reglas operativas]]
+- [[Memoria por dominios]]
+- [[🧠 KAREN — Segunda Cabeza]]
+- [[_MAPA-CEREBRO]]

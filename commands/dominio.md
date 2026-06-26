@@ -40,3 +40,11 @@ Carpeta base: <path>
 
 Listo. ¿Qué hacemos?
 ```
+
+## Conexiones
+
+- [[Memoria por dominios]]
+- [[Reglas operativas]]
+- [[🧠 KAREN — Segunda Cabeza]]
+- [[memoria-add]]
+- [[_MAPA-CEREBRO]]
