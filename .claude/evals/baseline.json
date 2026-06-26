@@ -1,0 +1,32 @@
+{
+  "version": "1.0",
+  "created": "2026-06-26",
+  "description": "Baseline de capacidades Karen Personal — referencia para regresiones",
+  "capabilities": {
+    "memoria_persistente": {
+      "status": "PASS",
+      "description": "Karen recuerda preferencias de Nico entre sesiones",
+      "check": "memory files en ~/.claude/projects/.../memory/ correctamente poblados"
+    },
+    "aislamiento_cliender": {
+      "status": "PASS",
+      "description": "Cero datos de Cliender en Karen Personal",
+      "check": "grep -r 'cliender' 01-MEMORIA/ --include='*.md' | grep -v 'JAMÁS\\|NO aplica'"
+    },
+    "estructura_carpetas": {
+      "status": "PASS",
+      "description": "Ningún archivo suelto en raíz",
+      "check": "ls . | grep -v '^[0-9][0-9]-\\|CLAUDE\\.md\\|README\\.md\\|_ATAJOS\\.md\\|\\.'"
+    },
+    "navegador_cdp": {
+      "status": "PASS",
+      "description": "CDP activo en :9222",
+      "check": "curl -s http://127.0.0.1:9222/json/version | grep -q Browser"
+    },
+    "instinct_system": {
+      "status": "PASS",
+      "description": "Sistema de instintos inicializado con 7 instintos globales",
+      "check": "ls 01-MEMORIA/instincts/global/**/*.md | wc -l"
+    }
+  }
+}
