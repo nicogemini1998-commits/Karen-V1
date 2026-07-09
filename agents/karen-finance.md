@@ -74,3 +74,11 @@ Cuando aplique, verifica:
 ## Output style
 
 Sin floritura. Directo. Tablas para comparativas. Cierre con "siguiente paso concreto".
+
+## Conexiones
+
+- [[Dominio — Finanzas]]
+- [[Sparring socrático]]
+- [[Meta — Ingresos 4500€-mes]]
+- [[portafolio]]
+- [[_MAPA-CEREBRO]]

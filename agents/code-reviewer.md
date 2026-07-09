@@ -99,3 +99,11 @@ Fix: usar parametrized query.
 - Resumen recuento severidades.
 - Decisión: APPROVE / WARN / BLOCK.
 - Si BLOCK: qué fix exactamente.
+
+## Conexiones
+
+- [[Dominio — Dev & Side Projects]]
+- [[Reglas operativas]]
+- [[architect]]
+- [[Stack — Docker]]
+- [[_MAPA-CEREBRO]]

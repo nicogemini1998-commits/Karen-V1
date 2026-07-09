@@ -1,9 +1,10 @@
 # CLAUDE.md — KAREN AI P.A
 
 > **Este archivo es lo PRIMERO que Claude Code lee al abrir el proyecto.**
-> Versión: v1.1 · 2026-06-12
+> Versión: v1.2 · 2026-06-26
 > Owner: Nico
 > Cuenta: PERSONAL. Aislada total de cuenta empresa.
+> Integración ECC (Everything-Claude-Code): continuous learning, eval-driven dev, autonomous loops, knowledge ops 6-layer, security governance.
 
 ---
 
@@ -149,7 +150,7 @@ Cuando Nico abra el proyecto por primera vez, ejecutas en este orden:
 
 ---
 
-## 🧠 Memoria — dominios aislados
+## 🧠 Memoria — Arquitectura 6 Capas (ECC Knowledge Ops)
 
 > Detalle completo: [`docs/03-arquitectura/MEMORIA.md`](./docs/03-arquitectura/MEMORIA.md)
 
@@ -157,12 +158,45 @@ Cuando Nico abra el proyecto por primera vez, ejecutas en este orden:
 - **Aislada por dominio:** dev ≠ finanzas ≠ salud.
 - **Selectiva agresiva dentro de cada dominio.**
 - **Graphify global:** namespace por dominio, queries cross-dominio solo si Nico pide explícito.
+- **6 capas ordenadas por velocidad de acceso** — la capa correcta para cada tipo de conocimiento.
 
-### Aplicación
-1. Etiquetar dominio al guardar: `[dev]`, `[finanzas]`, `[salud]`, etc.
-2. Archivo en `01-MEMORIA/<dominio>/<tipo>_<slug>.md`.
-3. `MEMORY.md` raíz solo enlaza.
-4. Graphify ingesta con metadata `domain: <X>`.
+### 6 Capas de Conocimiento
+
+| Capa | Dónde | Para qué |
+|------|-------|----------|
+| 1. Verdad activa | GitHub issues/PRs, Notion tareas | Estado operativo en curso |
+| 2. Memoria rápida | `~/.claude/projects/*/memory/` (auto-loaded) | Preferencias, feedback, refs de sesión |
+| 3. Grafo semántico | MCP memory server | Búsqueda semántica + relaciones cruzadas |
+| 4. Knowledge base | `01-MEMORIA/<dominio>/` + Graphify | Notas duraderas, research, decisiones cerradas |
+| 5. Datos externos | Supabase / Postgres | Documentos grandes, búsqueda SQL |
+| 6. Archivo local | `10-GRAPHIFY/` Obsidian vault | Notas humanas, gameplans archivados |
+
+### Workflow de ingesta (Classify → Deduplicate → Store → Index)
+1. **Clasifica** el tipo: decisión → capa 4 + MCP | preferencia → capa 2 | ref activa → capa 1
+2. **Deduplica** ANTES de guardar: busca en memory files + consulta MCP + comprueba Notion
+3. **Guarda** en la capa correcta con etiqueta de dominio: `[dev]`, `[finanzas]`, `[salud]`, etc.
+4. **Indexa** actualizando `MEMORY.md` y Graphify con `domain: <X>`
+
+### Instintos — aprendizaje por proyecto (ECC Continuous Learning v2.1)
+Sistema de aprendizaje atómico que crea "instintos" con puntuación de confianza:
+- **Almacenamiento:** `01-MEMORIA/instincts/<proyecto-hash>/` (project-scoped)
+- **Formato:** YAML frontmatter + evidencia → `id`, `trigger`, `confidence` (0.3–0.9), `domain`, `scope`
+- **Flujo:** observación → análisis background → instinto → evolución → skill/comando/agente
+- **Comandos:** `/instinct-status` · `/instinct-export` · `/instinct-import` · `/evolve` · `/promote`
+- **Regla de promoción:** instinto en 2+ proyectos → pasa a global (`01-MEMORIA/instincts/global/`)
+
+Ejemplo de instinto:
+```yaml
+---
+id: referencia-visual-primero
+trigger: "cuando Nico pide diseño visual sin dar referencia"
+confidence: 0.9
+domain: workflow
+scope: global
+---
+Pedir imagen/URL/video de referencia ANTES de diseñar. Extraer frames con ffmpeg si da video.
+Evidence: El orbe costó 5 iteraciones por no hacerlo (jun 2026).
+```
 
 ---
 
@@ -242,6 +276,18 @@ Outlook (empresa READ-ONLY), hex-line
 - **Plan mode** para refactors grandes / features / decisiones arquitectura.
 - **Verify después de edits.**
 
+### Seguridad & Gobernanza (ECC Security Governance)
+- **Fact-forcing gate:** antes de editar cualquier archivo, investigar primero — nunca editar a ciegas. Leer → entender → editar.
+- **Config protection:** no debilitar reglas de linter/formatter. Si el código falla el linter → arreglar el código, no la regla.
+- **Secrets never in code:** detectar patrones `sk-`, `ghp_`, `AKIA`, env vars hardcodeadas → parar y alertar.
+- **Governance capture:** decisiones de arquitectura/seguridad → `01-MEMORIA/dev/AAAA-MM-DD_governance_<slug>.md`.
+
+### Gestión de compactación de contexto
+- **Pre-compactación:** antes de compactar, guardar estado importante en memoria persistente.
+- **Post-SessionStart:** cargar instintos globales relevantes al empezar sesión.
+- **Límite sesión:** si contexto > 80% → sugerir compactación antes de continuar.
+- **ECC_SESSION_START_MAX_CHARS:** máximo 8000 chars de contexto previo al arrancar.
+
 ---
 
 ## 🎯 Workflows típicos
@@ -255,6 +301,22 @@ Outlook (empresa READ-ONLY), hex-line
 4. Docker compose desde día 1.
 5. `code-review` + `simplify` antes de commit.
 6. Graphify ingest del proyecto.
+
+### Side project nuevo — pipeline autónomo (ECC Sequential Pipeline)
+Para features grandes sin intervención manual:
+```bash
+#!/bin/bash
+set -e
+# Paso 1: implementar (Sonnet)
+claude -p "Lee spec en docs/. Implementa [feature]. TDD. Sin nuevos archivos doc."
+# Paso 2: de-sloppify (limpiar sin negativos)
+claude -p "Revisa cambios del commit anterior. Elimina tests redundantes. Conserva lógica real."
+# Paso 3: verificar
+claude -p "Ejecuta build, lint, typecheck, tests. Arregla fallos. Sin features nuevas."
+# Paso 4: commit
+claude -p "Crea commit convencional para los cambios staged."
+```
+**Model routing:** Opus para research/review, Sonnet para implementación.
 
 ### Decisión financiera
 1. **Sparring socrático SIEMPRE.** No recomendación directa.
@@ -274,9 +336,112 @@ Outlook (empresa READ-ONLY), hex-line
 2. Vista combinada cuando Nico pregunte agenda.
 3. NO escribir en Outlook empresa.
 
+### Feature nueva con criterios de aceptación (ECC Eval-Driven Dev)
+Antes de escribir código, definir criterios de éxito:
+```markdown
+[CAPABILITY EVAL: nombre-feature]
+Task: qué debe hacer exactamente
+Success Criteria:
+  - [ ] criterio 1 (verificable con código/test)
+  - [ ] criterio 2
+  - [ ] criterio 3
+Grader: bash | claude | manual
+```
+Guardar en `.claude/evals/<feature-name>.md`. Ejecutar grader después de implementar.
+
+### Compra grande / inversión compleja
+1. `deep-research` multi-fuente.
+2. Sparring socrático con Nico — mínimo 3 preguntas antes de opinar.
+3. Pass de verificación adversarial: buscar razones para NO hacerlo.
+4. Memoria → `09-COMPRAS-RESEARCH/` o `03-FINANZAS/`.
+
+---
+
+## ⚡ Eficiencia operativa (lecciones del informe de uso)
+
+### Orden — regla de oro (inviolable)
+- **Nada suelto JAMÁS** — ni en la raíz del repo (VS Code) ni en Obsidian. Cada archivo/nota tiene su carpeta y ruta.
+- Raíz solo: `CLAUDE.md`, `README.md`, `_ATAJOS.md`, `CHANGELOG.md` + carpetas numeradas/sistema + dot-files.
+- Vault Obsidian (`10-GRAPHIFY/`) organizado en subcarpetas (Metas, Dominios, Sistema, Stack, Proyectos, Conceptos) + índices en la raíz del vault. Cada neurona conectada por `[[wikilinks]]`, cero huérfanas.
+- Notion: todo cuelga de `🧠 KAREN — Centro de Mando` (dominios + bases de datos). Nada en la raíz del workspace suelto.
+
+### Output & comunicación
+- Respuestas concisas, dentro de límites. Outputs grandes → pasos secuenciales, no un bloque gigante.
+- Enlazar a archivos en vez de pegar bloques largos.
+
+### Configuración antes de construir
+- **Validar credenciales/MCPs ANTES** de construir features que dependan de ellos (evita bloqueos 401 a mitad de build). → `/verify-creds`.
+
+### Agentes & tareas en background
+- **Verificar IDs de agentes** del contexto antes de referenciarlos. Nunca asumir que un ID existe. → `/status`.
+- Trabajo grande → **fases con checklist de aceptación** + checkpoint de confirmación. Listar asunciones inseguras antes de implementar. → `/phase`.
+
+### Verificación automática
+- Hook de typecheck para el dashboard Next.js: `scripts/typecheck-karen-dashboard.sh`. Atrapa errores TS antes de runtime. Activar registrándolo en `.claude/settings.json` (requiere OK de Nico).
+
+---
+
+## 🧭 Lecciones operativas (aprendidas — jun 2026)
+
+> Detalle en memoria: [[leccion-proceso-trabajo]], [[preferencias-visuales-nico]], [[capacidad-navegador-cdp]].
+
+- **Referencia visual PRIMERO.** Para cualquier diseño visual subjetivo (orbe, hero, estética), pedir imagen/video/URL de referencia antes de iterar a ciegas. Si Nico la da → extraer frames con `ffmpeg` y leerlos como imagen. (El orbe costó 5 iteraciones por no hacerlo.)
+- **Credenciales/permisos ANTES de construir** → reflejo `/verify-creds` al empezar features con OAuth/API/MCP. (Se perdió tiempo con OAuth `org_internal` y Notion 404 por workspace separado.)
+- **Defaults visuales de Nico:** liquid glass / Apple, plasma vivo, paleta índigo-violeta-magenta, animaciones siempre, **nada genérico/template** — lo personal manda. Aplicar sin preguntar.
+- **Capacidad navegador (CDP):** Karen controla el navegador vía `playwright-core` + `connectOverCDP` con la sesión logueada de Nico. Scripts en `02-DEV/tooling/kanzv-browser/`. Reutilizable para analítica de redes propias y benchmarking — no solo KANZV.
+
+---
+
+## 🔬 Evaluación continua (ECC Eval-Driven Development)
+
+### Filosofía
+Define criterios ANTES de implementar. Los evals son los "unit tests del desarrollo con IA".
+
+### Tipos de eval
+- **Capability:** ¿puede Karen hacer algo que antes no podía?
+- **Regression:** ¿los cambios rompen algo que ya funcionaba?
+
+### Métricas
+- **pass@k:** al menos 1 de k intentos tiene éxito (confiabilidad básica)
+- **pass^k:** todos k intentos tienen éxito (confiabilidad alta)
+
+### Almacenamiento
+```
+.claude/evals/
+├── baseline.json          ← snapshot de referencia
+├── <feature-name>.md      ← criterios de aceptación
+└── <feature-name>.log     ← resultados de ejecución
+```
+
+---
+
+## 🔁 Loops autónomos (ECC Autonomous Loops)
+
+Espectro de complejidad creciente:
+
+| Patrón | Complejidad | Cuándo usarlo |
+|--------|-------------|---------------|
+| Sequential pipeline | Baja | Features daily dev, CI/CD |
+| Infinite agentic loop | Media | Generación de contenido paralela, spec-driven |
+| De-Sloppify pattern | Add-on | Cleanup tras cualquier implementación |
+| Ralphinho/RFC DAG | Alta | Features grandes multi-agente con merge queue |
+
+### De-Sloppify (siempre después de implementar)
+Pass separado de limpieza — nunca mezclar con implementación:
+```bash
+claude -p "Revisa todos los archivos cambiados. Elimina: tests redundantes de tipos, checks defensivos innecesarios, imports sin usar. Conserva lógica de negocio real. Ejecuta tests después."
+```
+
+### Model routing en pipelines
+- **Opus:** research profundo, review de seguridad, arquitectura
+- **Sonnet:** implementación estándar, refactoring, features
+- **Haiku:** análisis background, clasificación de instintos, tasks rápidas
+
 ---
 
 ## 🗒️ Historial
 
+- **2026-06-26** — v1.2. Integración ECC: knowledge ops 6-layer, continuous learning v2.1 (instinct system), eval-driven dev, autonomous loops, security governance, de-sloppify, model routing.
+- **2026-06-16** — v1.1. Notion montado (Centro de Mando + 8 dominios + 7 DBs). Dashboard migrado a Next.js (02-DEV). Vault Obsidian organizado (62 nodos). MCPs: Notion + 21st.dev. Mejoras del informe de uso aplicadas (orden, comandos `/verify-creds` `/status` `/phase`, hook typecheck).
 - **2026-06-12** — v1.1 Hardening post-auditoría: purga PII, hooks formato oficial, least privilege, defensas activadas.
 - **2026-06-01** — v1.0. Karen Personal initial. Handoff desde Karen Cliender. Cuestionario Nico completado.

@@ -106,3 +106,11 @@ Karen alerta proactiva si detecta:
 - Grant usado >10 veces (puede indicar abuse).
 - Violation high-severity sin captura en rule-book (hook fallando).
 - Hallucination factual con citation falsa.
+
+## Conexiones
+
+- [[THREAT-MODEL]]
+- [[Reglas operativas]]
+- [[karen-redteam]]
+- [[verify-integrity]]
+- [[_MAPA-CEREBRO]]

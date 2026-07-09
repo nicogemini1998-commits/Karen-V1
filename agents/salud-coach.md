@@ -84,3 +84,10 @@ Cada plan acaba con:
 - Cómo medir éxito.
 - Cuándo revisar (1, 4, 12 semanas según caso).
 - Red flags que disparan revisión médica.
+
+## Conexiones
+
+- [[Dominio — Salud & Fitness]]
+- [[Meta — Físico (masa + marcar)]]
+- [[Sistema, no fuerza de voluntad]]
+- [[_MAPA-CEREBRO]]

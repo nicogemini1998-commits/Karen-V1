@@ -42,6 +42,8 @@ docs/01-quien-soy/PERFIL_NICO.md
 01-MEMORIA/compras-research/*
 !01-MEMORIA/**/.gitkeep
 !01-MEMORIA/MEMORY.md
+# Onboarding = datos personales del cuestionario de Nico → privado.
+01-MEMORIA/onboarding/*
 
 03-FINANZAS/portafolio.md
 03-FINANZAS/research-ETFs/*
@@ -64,14 +66,28 @@ docs/01-quien-soy/PERFIL_NICO.md
 10-GRAPHIFY/graph.json
 10-GRAPHIFY/corpus/*
 10-GRAPHIFY/exports/*
+# Vault Obsidian COMPLETO es privado (KANZV con contratos/NDAs/pricing, metas, dominios personales).
+# Repo público → nada del segundo cerebro sale. Solo se permite .gitkeep para conservar la carpeta.
+10-GRAPHIFY/**
+!10-GRAPHIFY/
 !10-GRAPHIFY/.gitkeep
-!10-GRAPHIFY/**/.gitkeep
 
 # === Side projects (código personal — no al repo Karen) ===
 02-DEV/proyectos-activos/*
 !02-DEV/proyectos-activos/.gitkeep
 02-DEV/snippets/*
 !02-DEV/snippets/.gitkeep
+# Tooling de navegador: scripts sí (sistema Karen), dependencias no.
+02-DEV/tooling/**/node_modules/
+02-DEV/tooling/**/package-lock.json
+# Prototipos HTML antiguos: contienen nombre real en enlaces sociales → privado.
+02-DEV/prototipos/*
+!02-DEV/prototipos/.gitkeep
+
+# === Config local de editor / vaults basura (no al repo) ===
+.obsidian/
+**/.obsidian/
+Karen assistant/
 
 # === Calendarios sync (datos privados) ===
 05-PRODUCTIVIDAD/calendario-outlook/*

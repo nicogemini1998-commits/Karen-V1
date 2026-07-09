@@ -57,3 +57,11 @@ El update NO pasa por este command. Flujo:
 
 - Esto NUNCA sube al repo (`03-FINANZAS/portafolio.md` gitignored).
 - Output solo en sesión, no logear externo.
+
+## Conexiones
+
+- [[Dominio — Finanzas]]
+- [[01_Finanzas]]
+- [[finanzas-sparring]]
+- [[sparring]]
+- [[_MAPA-CEREBRO]]

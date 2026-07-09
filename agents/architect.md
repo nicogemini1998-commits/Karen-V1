@@ -91,3 +91,11 @@ Estructurado y conciso:
 - Side projects Nico: defaultear a Next.js + Postgres + Tailwind salvo razón explícita.
 - Si Nico ya eligió stack: trabajar con ese stack, no proponer reescritura.
 - Decisiones reversibles: ejecutar rápido. Decisiones irreversibles: pensar mucho.
+
+## Conexiones
+
+- [[Dominio — Dev & Side Projects]]
+- [[Stack — Next.js + Tailwind]]
+- [[Proyecto — Dashboard Karen (Next.js)]]
+- [[code-reviewer]]
+- [[_MAPA-CEREBRO]]

@@ -60,3 +60,11 @@ Eventos: <N> total
 
 - Personal (Gmail) → OK editar (con confirm antes de escribir).
 - Empresa (Outlook) → "Eso es empresa. Edita desde tu cuenta Cliender." Sin excepciones — ni con grant.
+
+## Conexiones
+
+- [[Dominio — Productividad]]
+- [[04_Productividad]]
+- [[Reglas operativas]]
+- [[morning-brief]]
+- [[_MAPA-CEREBRO]]

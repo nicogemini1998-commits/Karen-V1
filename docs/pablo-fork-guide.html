@@ -1,0 +1,899 @@
+<title>Guía Fork — Tu Asistente Personal IA</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #080C18;
+    --surface:   #0F1628;
+    --border:    #1E2940;
+    --blue:      #4F8EF7;
+    --blue-dim:  #1E3A6E;
+    --amber:     #F5A623;
+    --amber-dim: #3D2800;
+    --green:     #34D399;
+    --green-dim: #0D2E22;
+    --text:      #E8EDF8;
+    --muted:     #6B7A9E;
+    --code-bg:   #0A0F1E;
+    --radius:    6px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    padding: 48px 24px 96px;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+  }
+
+  .label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-size: clamp(26px, 4vw, 36px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text);
+    text-wrap: balance;
+    margin-bottom: 16px;
+  }
+
+  h1 span { color: var(--blue); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 520px;
+    line-height: 1.6;
+  }
+
+  /* ── Meta pills ── */
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .pill {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* ── Sections ── */
+  section { margin-bottom: 52px; }
+
+  h2 {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  h2::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 24px 0 10px;
+  }
+
+  p { color: #B0BAD4; margin-bottom: 12px; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── Steps ── */
+  .steps { display: flex; flex-direction: column; gap: 0; }
+
+  .step {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 0 20px;
+    position: relative;
+  }
+
+  .step:not(:last-child) .step-line {
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .step-num {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--blue);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .step-content {
+    padding: 8px 0 36px;
+  }
+
+  .step-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .step-body { color: #8A96B8; font-size: 14px; }
+
+  /* ── Code blocks ── */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 12px 0;
+    overflow-x: auto;
+  }
+
+  .code-block code {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+    font-size: 13px;
+    color: #7DD3FC;
+    line-height: 1.8;
+    white-space: pre;
+    display: block;
+  }
+
+  .code-block code .comment { color: var(--muted); }
+  .code-block code .cmd { color: #34D399; }
+  .code-block code .str { color: #FCA5A5; }
+
+  /* ── Callouts ── */
+  .callout {
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 16px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  .callout.warning {
+    background: var(--amber-dim);
+    border: 1px solid rgba(245,166,35,.25);
+    color: #FCD07A;
+  }
+
+  .callout.info {
+    background: var(--blue-dim);
+    border: 1px solid rgba(79,142,247,.2);
+    color: #93C5FD;
+  }
+
+  .callout.success {
+    background: var(--green-dim);
+    border: 1px solid rgba(52,211,153,.2);
+    color: #6EE7B7;
+  }
+
+  /* ── Checklist ── */
+  .checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .checklist li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 14px;
+    color: #8A96B8;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .checklist li .check {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .checklist li strong { color: var(--text); display: block; font-size: 13.5px; }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+
+  th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    color: #8A96B8;
+    vertical-align: top;
+  }
+
+  td:first-child { color: var(--text); font-weight: 500; }
+  tr:last-child td { border-bottom: none; }
+
+  /* ── Inline code ── */
+  code {
+    font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+    font-size: 12.5px;
+    background: #0E1525;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: #7DD3FC;
+  }
+
+  /* ── Divider ── */
+  .divider { height: 1px; background: var(--border); margin: 48px 0; }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding-top: 28px;
+    color: var(--muted);
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Responsive ── */
+  @media (max-width: 500px) {
+    body { padding: 32px 16px 64px; }
+    .step { grid-template-columns: 32px 1fr; gap: 0 14px; }
+    .step-num { width: 32px; height: 32px; font-size: 12px; }
+    .step:not(:last-child) .step-line { left: 15px; }
+  }
+</style>
+
+<header>
+  <div class="label">De Nico para Pablo — Asistente Personal IA</div>
+  <h1>Cómo montar tu propio<br><span>asistente personal con IA</span></h1>
+  <p class="subtitle">Guía completa para hacer fork del sistema Karen, personalizarlo a tu medida y recibir mejoras futuras — sin pisar nada de lo de Nico.</p>
+  <div class="meta">
+    <span class="pill">Tiempo estimado: 2–3 horas</span>
+    <span class="pill">Nivel: básico–intermedio</span>
+    <span class="pill">Plataforma: macOS</span>
+  </div>
+</header>
+
+<!-- SECCIÓN 0: QUÉ ES ESTO -->
+<section>
+  <h2>Contexto — qué vas a montar</h2>
+
+  <p>Nico ha construido un sistema de asistente personal con IA llamado <strong>Karen</strong> — un Claude Code configurado a fondo para conocer su perfil, sus preferencias, sus proyectos y sus patrones de trabajo. Aprende con el tiempo y se vuelve más preciso con cada sesión.</p>
+
+  <p>Tú vas a hacer una <strong>copia independiente</strong> de ese sistema y la vas a personalizar con tu propio perfil. Tu asistente y el de Nico corren en máquinas distintas, en repositorios distintos, con memorias distintas. Nunca interfieren entre sí.</p>
+
+  <div class="callout info">
+    <span class="callout-icon">ℹ</span>
+    <div>El sistema base (la arquitectura, las herramientas, los scripts) es compartido. Lo personal (tu perfil, tus datos, tus instintos) es solo tuyo y nunca sale de tu máquina ni de tu repo.</div>
+  </div>
+</section>
+
+<!-- SECCIÓN 1: ANTES DE EMPEZAR -->
+<section>
+  <h2>Fase 1 — Lo que necesitas antes de copiar el repo</h2>
+
+  <p>Prepara todo esto antes de tocar GitHub. Si falta algo, el setup se atascará a mitad.</p>
+
+  <h3>Software obligatorio</h3>
+
+  <ul class="checklist">
+    <li>
+      <div class="check"></div>
+      <div>
+        <strong>Claude Code — CLI de Anthropic</strong>
+        Instala desde la terminal: <code>npm install -g @anthropic-ai/claude-code</code><br>
+        Necesitas una cuenta en claude.ai con acceso a Claude Code (plan Pro o superior).
+      </div>
+    </li>
+    <li>
+      <div class="check"></div>
+      <div>
+        <strong>Node.js v18 o superior</strong>
+        Descarga desde <a href="https://nodejs.org" target="_blank">nodejs.org</a> — elige la versión LTS.
+        Verifica con <code>node --version</code> en terminal.
+      </div>
+    </li>
+    <li>
+      <div class="check"></div>
+      <div>
+        <strong>Git</strong>
+        En macOS ya viene instalado. Verifica con <code>git --version</code>.
+        Si no está: instala Xcode Command Line Tools con <code>xcode-select --install</code>.
+      </div>
+    </li>
+    <li>
+      <div class="check"></div>
+      <div>
+        <strong>VS Code (recomendado) o cualquier editor de texto</strong>
+        Para editar los archivos de configuración de tu asistente.
+        Descarga desde <a href="https://code.visualstudio.com" target="_blank">code.visualstudio.com</a>.
+      </div>
+    </li>
+  </ul>
+
+  <h3>Cuentas y credenciales</h3>
+
+  <ul class="checklist">
+    <li>
+      <div class="check"></div>
+      <div>
+        <strong>Cuenta de GitHub personal</strong>
+        Si no tienes, créala en github.com. Usa una cuenta personal — no la de empresa si tienes.
+        Guarda tu nombre de usuario, lo vas a necesitar.
+      </div>
+    </li>
+    <li>
+      <div class="check"></div>
+      <div>
+        <strong>SSH key configurada en GitHub</strong>
+        Es lo que usa Git para autenticarte sin contraseña.<br>
+        Si no tienes, sigue los pasos de la Fase 2 — la creamos juntos.
+      </div>
+    </li>
+    <li>
+      <div class="check"></div>
+      <div>
+        <strong>Gmail personal que quieras conectar (opcional pero recomendado)</strong>
+        Para que tu asistente pueda leer y redactar correos. Necesitarás activar el MCP de Gmail después.
+      </div>
+    </li>
+    <li>
+      <div class="check"></div>
+      <div>
+        <strong>Cuenta de Notion personal (opcional)</strong>
+        Para el panel de control de tu asistente. Puedes añadirlo después si no lo tienes ahora.
+      </div>
+    </li>
+  </ul>
+
+  <h3>Información que tendrás que escribir en tu configuración</h3>
+
+  <p>Prepara estas respuestas — las vas a necesitar para personalizar tu <code>CLAUDE.md</code>:</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Dato</th>
+          <th>Para qué sirve</th>
+          <th>Ejemplo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Tu nombre completo</td>
+          <td>El asistente te llama por tu nombre</td>
+          <td>Pablo García</td>
+        </tr>
+        <tr>
+          <td>Tu ciudad</td>
+          <td>Contexto de agenda y referencias locales</td>
+          <td>Sagunto, Valencia</td>
+        </tr>
+        <tr>
+          <td>Tu stack tecnológico</td>
+          <td>El asistente propone herramientas que ya conoces</td>
+          <td>Figma, Shopify, básico de JS</td>
+        </tr>
+        <tr>
+          <td>Tus proyectos activos</td>
+          <td>Contexto para priorizar y conectar ideas</td>
+          <td>KANZV COUTURE, proyecto X</td>
+        </tr>
+        <tr>
+          <td>Tu broker / app de inversión</td>
+          <td>Si quieres que te ayude con finanzas</td>
+          <td>Trade Republic, Indexa Capital</td>
+        </tr>
+        <tr>
+          <td>Tus apps de salud</td>
+          <td>Para seguimiento si lo quieres</td>
+          <td>Apple Health, Garmin, Strava</td>
+        </tr>
+        <tr>
+          <td>Lo que NO quieres que haga</td>
+          <td>Límites de tu asistente — igual de importante</td>
+          <td>Nunca acceder a datos de Nico, nunca...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠</span>
+    <div><strong>Importante sobre KANZV COUTURE:</strong> si quieres que tu asistente tenga acceso a datos de KANZV (contratos, precios, clientes), configúralo en tu propia instancia con tus propias credenciales. Nunca uses el repo de Nico ni le pidas acceso a su asistente para datos compartidos de KANZV — cada uno gestiona su propia copia.</div>
+  </div>
+</section>
+
+<!-- SECCIÓN 2: SSH KEY -->
+<section>
+  <h2>Fase 2 — Configurar SSH con GitHub</h2>
+
+  <p>La SSH key es como una llave digital que identifica tu Mac ante GitHub. Solo tienes que hacerlo una vez.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Abre la Terminal</div>
+        <div class="step-body">Pulsa <code>Cmd + Espacio</code>, escribe "Terminal" y abre la aplicación.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Comprueba si ya tienes una key</div>
+        <div class="step-body">
+          <div class="code-block"><code>ls ~/.ssh/</code></div>
+          Si ves archivos como <code>id_ed25519</code> y <code>id_ed25519.pub</code>, ya tienes una — salta al paso 5. Si ves <code>mac_personal</code> y <code>mac_personal.pub</code>, también — salta al paso 5.
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Genera una nueva SSH key (si no tienes)</div>
+        <div class="step-body">
+          Reemplaza el email con el de tu cuenta de GitHub:
+          <div class="code-block"><code><span class="cmd">ssh-keygen</span> -t ed25519 -C <span class="str">"tu-email@gmail.com"</span> -f ~/.ssh/mac_personal</code></div>
+          Pulsa Enter dos veces cuando pregunte por contraseña (déjala vacía para facilitar el uso).
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Añade la key al agente SSH</div>
+        <div class="step-body">
+          <div class="code-block"><code>ssh-add ~/.ssh/mac_personal</code></div>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Copia la key pública</div>
+        <div class="step-body">
+          <div class="code-block"><code>cat ~/.ssh/mac_personal.pub | pbcopy</code></div>
+          Esto copia la key al portapapeles automáticamente.
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Añade la key en GitHub</div>
+        <div class="step-body">
+          Ve a <strong>github.com → Settings → SSH and GPG keys → New SSH key</strong>.<br>
+          Pon un nombre (ej: "MacBook Pablo"), pega la key y guarda.
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Verifica la conexión</div>
+        <div class="step-body">
+          <div class="code-block"><code>ssh -T git@github.com</code></div>
+          Debes ver: <code>Hi tu-usuario! You've successfully authenticated...</code>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN 3: FORK -->
+<section>
+  <h2>Fase 3 — Hacer el Fork del repo de Nico</h2>
+
+  <div class="callout success">
+    <span class="callout-icon">✓</span>
+    <div>Un fork es una copia completa e independiente del repo de Nico en tu propia cuenta de GitHub. Puedes hacer lo que quieras con ella — Nico no lo ve, no le afecta, y tú no puedes romper nada del original.</div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Ve al repositorio de Nico en GitHub</div>
+        <div class="step-body">
+          Abre el navegador y ve a:<br>
+          <div class="code-block"><code>https://github.com/nicogemini1998-commits/Karen-V1</code></div>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Haz clic en el botón Fork</div>
+        <div class="step-body">
+          Está en la esquina superior derecha de la página. GitHub te pregunta dónde crear el fork — elige tu cuenta personal. Cambia el nombre si quieres (ej: <code>mi-asistente-personal</code> o <code>Karen-Pablo</code>).
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Clona tu fork en tu Mac</div>
+        <div class="step-body">
+          En terminal, reemplaza <code>tu-usuario</code> y <code>nombre-repo</code> con los tuyos:
+          <div class="code-block"><code><span class="cmd">git</span> clone git@github.com:<span class="str">tu-usuario/nombre-repo</span>.git ~/Desktop/mi-asistente
+<span class="cmd">cd</span> ~/Desktop/mi-asistente</code></div>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Conecta el repo original como fuente de mejoras</div>
+        <div class="step-body">
+          Esto te permite recibir las actualizaciones que Nico haga al sistema base en el futuro:
+          <div class="code-block"><code><span class="cmd">git</span> remote add upstream git@github.com:nicogemini1998-commits/Karen-V1.git
+<span class="cmd">git</span> remote -v  <span class="comment"># debe mostrar origin (tuyo) y upstream (de Nico)</span></code></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN 4: PERSONALIZAR -->
+<section>
+  <h2>Fase 4 — Personalizar tu asistente</h2>
+
+  <p>Aquí es donde conviertes el sistema de Nico en el tuyo. Abre la carpeta en VS Code:</p>
+
+  <div class="code-block"><code>code ~/Desktop/mi-asistente</code></div>
+
+  <h3>1. Editar CLAUDE.md — el cerebro del asistente</h3>
+
+  <p>Este es el archivo más importante. Abre <code>CLAUDE.md</code> y cambia todo lo que sea específico de Nico:</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Qué cambiar</th><th>Por qué</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Nombre "Nico" → tu nombre</td>
+          <td>El asistente te llamará correctamente</td>
+        </tr>
+        <tr>
+          <td>Stack tecnológico</td>
+          <td>Propone herramientas que tú usas, no las de Nico</td>
+        </tr>
+        <tr>
+          <td>Proyectos mencionados</td>
+          <td>Elimina referencias a proyectos de Nico que no son tuyos</td>
+        </tr>
+        <tr>
+          <td>Regla aislamiento "Cliender"</td>
+          <td>Cámbiala por lo que tú quieras aislar (empresa, clientes, etc.)</td>
+        </tr>
+        <tr>
+          <td>GitHub username personal</td>
+          <td>El tuyo, no <code>nicogemini1998-commits</code></td>
+        </tr>
+        <tr>
+          <td>Ubicación</td>
+          <td>Tu ciudad</td>
+        </tr>
+        <tr>
+          <td>Historial del changelog</td>
+          <td>Borra el historial de Nico — empieza el tuyo desde hoy</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warning">
+    <span class="callout-icon">⚠</span>
+    <div><strong>No toques</strong> las secciones de arquitectura, reglas operativas generales, sistema de instintos, eval-driven dev o loops autónomos — eso es el sistema base que funciona para los dos. Solo personaliza lo que te identifica a ti.</div>
+  </div>
+
+  <h3>2. Borrar los instintos de Nico y crear los tuyos</h3>
+
+  <p>Los instintos son los patrones de trabajo aprendidos. Los de Nico no aplican a ti — bórralos y empieza limpio:</p>
+
+  <div class="code-block"><code><span class="comment"># Borra los instintos de Nico</span>
+<span class="cmd">rm</span> -rf 01-MEMORIA/instincts/global/
+
+<span class="comment"># Crea la estructura vacía</span>
+<span class="cmd">mkdir</span> -p 01-MEMORIA/instincts/global/workflow
+<span class="cmd">mkdir</span> -p 01-MEMORIA/instincts/global/visual
+<span class="cmd">mkdir</span> -p 01-MEMORIA/instincts/global/comunicacion
+<span class="cmd">mkdir</span> -p 01-MEMORIA/instincts/global/dev</code></div>
+
+  <p>Tu asistente irá creando sus propios instintos a medida que trabajéis juntos. También puedes crear manualmente los primeros con el script incluido:</p>
+
+  <div class="code-block"><code><span class="cmd">bash</span> 02-DEV/tooling/karen-learning/instinct-create.sh \
+  --id <span class="str">"mi-primer-instinto"</span> \
+  --trigger <span class="str">"cuando haga X"</span> \
+  --confidence 0.7 \
+  --domain workflow \
+  --scope global \
+  --action <span class="str">"hacer Y"</span> \
+  --evidence <span class="str">"razón de este patrón"</span></code></div>
+
+  <h3>3. Limpiar la memoria personal de Nico</h3>
+
+  <p>Los archivos de memoria de Nico están ignorados en git (no los verás en el repo), pero si los ves en tu máquina, bórralos. La memoria de tu asistente se creará automáticamente en <code>~/.claude/projects/.../memory/</code> cuando empieces a usarlo.</p>
+
+  <h3>4. Actualizar el Obsidian vault (opcional pero recomendado)</h3>
+
+  <p>La carpeta <code>10-GRAPHIFY/</code> es el "segundo cerebro" en Obsidian. Para configurar el tuyo:</p>
+
+  <ul class="checklist">
+    <li>
+      <div class="check"></div>
+      <div>
+        <strong>Descarga Obsidian</strong>
+        Desde obsidian.md — es gratis para uso personal.
+      </div>
+    </li>
+    <li>
+      <div class="check"></div>
+      <div>
+        <strong>Abre el vault</strong>
+        En Obsidian: "Open folder as vault" → selecciona la carpeta <code>10-GRAPHIFY/</code> dentro de tu repo.
+      </div>
+    </li>
+    <li>
+      <div class="check"></div>
+      <div>
+        <strong>Edita los nodos de sistema</strong>
+        Abre <code>Sistema/Quién es Nico.md</code> → renómbralo y actualiza con tu perfil.
+        Haz lo mismo con <code>Personalidad de Karen.md</code> → ponle el nombre que quieras a tu asistente.
+      </div>
+    </li>
+  </ul>
+
+  <h3>5. Instalar Claude Code y abrir el proyecto</h3>
+
+  <div class="code-block"><code><span class="comment"># Instala Claude Code si no lo has hecho</span>
+<span class="cmd">npm</span> install -g @anthropic-ai/claude-code
+
+<span class="comment"># Abre tu asistente</span>
+<span class="cmd">cd</span> ~/Desktop/mi-asistente
+<span class="cmd">claude</span></code></div>
+
+  <p>La primera vez que abras el proyecto, el asistente leerá tu <code>CLAUDE.md</code> y se presentará con tu configuración. Es el momento de completar el onboarding — te irá preguntando los datos que faltan.</p>
+</section>
+
+<!-- SECCIÓN 5: MEJORAS FUTURAS -->
+<section>
+  <h2>Fase 5 — Recibir mejoras futuras de Nico</h2>
+
+  <p>Cuando Nico mejore el sistema base (nuevas capacidades, integraciones, patrones), puedes jalar esos cambios a tu repo sin que afecten tu personalización:</p>
+
+  <div class="code-block"><code><span class="comment"># Paso 1: trae los cambios del repo de Nico (sin aplicar todavía)</span>
+<span class="cmd">git</span> fetch upstream
+
+<span class="comment"># Paso 2: revisa qué cambió (opcional, para saber qué viene)</span>
+<span class="cmd">git</span> diff main upstream/main -- CLAUDE.md
+
+<span class="comment"># Paso 3: aplica los cambios del sistema base en tu rama</span>
+<span class="cmd">git</span> merge upstream/main
+
+<span class="comment"># Paso 4: si hay conflictos (ej: los dos editasteis CLAUDE.md)</span>
+<span class="comment"># Git te mostrará los conflictos — conserva lo tuyo, añade lo nuevo de Nico</span>
+<span class="comment"># Luego: git add . && git commit</span>
+
+<span class="comment"># Paso 5: sube tu versión actualizada</span>
+<span class="cmd">git</span> push origin main</code></div>
+
+  <div class="callout info">
+    <span class="callout-icon">ℹ</span>
+    <div>Git es inteligente y normalmente fusiona los cambios solo. Los conflictos solo ocurren si los dos editasteis exactamente la misma línea del mismo archivo. En ese caso, Git te muestra las dos versiones y tú decides qué conservar — es más fácil de lo que suena.</div>
+  </div>
+</section>
+
+<!-- SECCIÓN 6: AISLAMIENTO -->
+<section>
+  <h2>Garantías de aislamiento — cómo sé que no daño nada de Nico</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Qué</th><th>Situación</th><th>Garantía</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Repo de Nico</td>
+          <td>Tú puedes leerlo, nunca escribir en él</td>
+          <td>GitHub no te da permisos de escritura en repos ajenos</td>
+        </tr>
+        <tr>
+          <td>Memoria de Nico</td>
+          <td>Está en su Mac, en su <code>~/.claude/</code></td>
+          <td>Nunca sale de su máquina — ni al repo, ni a ningún lado</td>
+        </tr>
+        <tr>
+          <td>Instintos de Nico</td>
+          <td>En su carpeta local, gitignoreados</td>
+          <td>No están en el repo — no puedes verlos ni copiarlos</td>
+        </tr>
+        <tr>
+          <td>Tu personalización</td>
+          <td>En tu fork, en tu Mac</td>
+          <td>Nico no tiene acceso a tu fork a menos que se lo des</td>
+        </tr>
+        <tr>
+          <td>Datos KANZV</td>
+          <td>Cada uno gestiona su copia en su instancia</td>
+          <td>Configura tus propias credenciales — nunca uses las de Nico</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section>
+  <h2>Resumen — orden exacto de pasos</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Instala Node.js, Git y VS Code</div>
+        <div class="step-body">Verifica con <code>node --version</code> y <code>git --version</code></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Crea tu cuenta de GitHub si no tienes</div>
+        <div class="step-body">github.com → Sign up</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Genera tu SSH key y añádela a GitHub</div>
+        <div class="step-body">Sigue la Fase 2 de esta guía</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Haz fork del repo de Nico en tu cuenta</div>
+        <div class="step-body"><code>github.com/nicogemini1998-commits/Karen-V1</code> → botón Fork</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Clona tu fork en tu Mac y conecta el upstream</div>
+        <div class="step-body"><code>git clone ...</code> + <code>git remote add upstream ...</code></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Personaliza CLAUDE.md con tu perfil</div>
+        <div class="step-body">Nombre, stack, proyectos, límites</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Borra los instintos de Nico y empieza los tuyos</div>
+        <div class="step-body"><code>rm -rf 01-MEMORIA/instincts/global/</code> + crear estructura vacía</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">8</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Instala Claude Code y abre el proyecto</div>
+        <div class="step-body"><code>npm install -g @anthropic-ai/claude-code</code> → <code>claude</code></div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">9</div>
+      <div class="step-line"></div>
+      <div class="step-content">
+        <div class="step-title">Completa el onboarding con tu asistente</div>
+        <div class="step-body">Responde sus preguntas en la primera sesión — configura tu perfil completo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Sistema base: Karen V1 — Nico Albarracín</span>
+  <span>Guía generada 2026-06-26</span>
+</footer>

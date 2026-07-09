@@ -125,3 +125,11 @@ profile.json actualizado.
 - Respuestas T2 (finanzas/salud/relaciones) van a `01-MEMORIA/<dominio>/` gitignored.
 - Respuestas generales van a `profile.json` local.
 - Nada al repo público.
+
+## Conexiones
+
+- [[Quién es Nico]]
+- [[PERFIL_NICO]]
+- [[Memoria por dominios]]
+- [[learn-tutor]]
+- [[_MAPA-CEREBRO]]

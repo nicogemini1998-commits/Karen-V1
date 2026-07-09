@@ -77,3 +77,11 @@ Si algo falla post-rotación:
 - **Trimestral:** rotar tokens largos (GitHub PAT, OAuth refresh).
 - **Inmediato:** si hay sospecha leak (`secrets-guard.sh` detected secret en log).
 - **Pre-release:** antes share repo público (audit secrets quedaron fuera).
+
+## Conexiones
+
+- [[THREAT-MODEL]]
+- [[Reglas operativas]]
+- [[COMPUTER-CONTROL]]
+- [[verify-creds]]
+- [[_MAPA-CEREBRO]]

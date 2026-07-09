@@ -103,3 +103,11 @@ Foco hoy: arreglar tests Y antes standup, deploy staging post-Toni.
 - Finanzas opt-in (`--finance`).
 - Salud nunca en morning-brief default (T2 privado).
 - Todo digest queda en `01-MEMORIA/productividad/AAAA-MM-DD_morning-brief.md` (gitignored).
+
+## Conexiones
+
+- [[Dominio — Productividad]]
+- [[agenda]]
+- [[research]]
+- [[Reglas operativas]]
+- [[_MAPA-CEREBRO]]

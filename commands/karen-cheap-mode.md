@@ -138,3 +138,10 @@ Auto-off para:
 - Security audit code.
 - Architecture decisions side projects.
 - Deep research multi-fuente verificada adversarial.
+
+## Conexiones
+
+- [[COST-OPTIMIZATION]]
+- [[Stack — MCP & Agentes]]
+- [[Reglas operativas]]
+- [[_MAPA-CEREBRO]]

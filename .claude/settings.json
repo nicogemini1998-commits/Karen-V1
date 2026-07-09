@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/nicoopenclow/Desktop/karen asistente/scripts/typecheck-karen-dashboard.sh'"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/nicoopenclow/Desktop/karen asistente/scripts/karen-arranque.sh'"
+          }
+        ]
+      }
+    ]
+  }
+}
