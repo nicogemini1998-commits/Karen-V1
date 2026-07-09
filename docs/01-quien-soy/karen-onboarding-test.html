@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karen — Conóceme</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface-2: #1c1c28;
+    --border: #2a2a3d;
+    --accent: #7c6af7;
+    --accent-dim: rgba(124,106,247,0.13);
+    --green: #4ade80;
+    --green-dim: rgba(74,222,128,0.11);
+    --text: #f0f0ff;
+    --text-dim: #8888aa;
+    --text-muted: #484860;
+    --r: 12px;
+    --rs: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; padding: 2.5rem 1rem 6rem;
+  }
+
+  /* Header */
+  .hd { text-align: center; margin-bottom: 3rem; max-width: 560px; }
+  .hd-title {
+    font-size: 2rem; font-weight: 800; letter-spacing: -0.05em;
+    background: linear-gradient(135deg, #7c6af7 30%, #c06af7);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 0.6rem;
+  }
+  .hd-sub { color: var(--text-dim); font-size: 0.92rem; line-height: 1.65; }
+
+  /* Progress */
+  .prog { width: 100%; max-width: 600px; margin-bottom: 2.5rem; }
+  .prog-meta { display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--text-muted); margin-bottom: 0.45rem; }
+  .prog-bar { height: 2px; background: var(--border); border-radius: 99px; }
+  .prog-fill { height: 100%; background: linear-gradient(90deg, #7c6af7, #c06af7); border-radius: 99px; transition: width 0.45s cubic-bezier(.4,0,.2,1); }
+
+  /* Section */
+  .sec { width: 100%; max-width: 600px; display: none; animation: up .3s cubic-bezier(.4,0,.2,1); }
+  .sec.on { display: block; }
+  @keyframes up { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+
+  .sec-num { font-size: 0.68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.3rem; }
+  .sec-title { font-size: 1.45rem; font-weight: 700; letter-spacing: -.025em; line-height: 1.25; margin-bottom: 0.35rem; }
+  .sec-desc { color: var(--text-dim); font-size: 0.86rem; line-height: 1.6; margin-bottom: 1.7rem; }
+
+  /* Question block */
+  .qb { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 1.1rem 1.25rem; margin-bottom: 0.85rem; }
+  .ql { font-size: 0.86rem; font-weight: 600; margin-bottom: 0.8rem; line-height: 1.45; }
+  .qh { font-size: 0.72rem; color: var(--text-muted); margin-top: -0.5rem; margin-bottom: 0.75rem; line-height: 1.5; }
+
+  /* Options */
+  .opts { display: flex; flex-wrap: wrap; gap: 0.42rem; }
+  .opts.col { flex-direction: column; gap: 0.32rem; }
+
+  .opt {
+    display: flex; align-items: center; gap: 0.48rem;
+    padding: 0.44rem 0.82rem; background: var(--surface-2);
+    border: 1.5px solid var(--border); border-radius: var(--rs);
+    cursor: pointer; transition: border-color .13s, background .13s, color .13s;
+    font-size: 0.82rem; color: var(--text-dim); user-select: none;
+    line-height: 1.35;
+  }
+  .opt:hover { border-color: rgba(124,106,247,.5); color: var(--text); }
+  .opt.sel { border-color: var(--accent); background: var(--accent-dim); color: var(--text); }
+  .opt.sel.radio { border-color: var(--green); background: var(--green-dim); }
+  .opt input { display: none; }
+  .oi { font-size: 0.92rem; flex-shrink: 0; }
+
+  /* Text */
+  .ti {
+    width: 100%; background: var(--surface-2); border: 1.5px solid var(--border);
+    border-radius: var(--rs); padding: 0.58rem 0.85rem; color: var(--text);
+    font-size: 0.86rem; font-family: inherit; outline: none; resize: none;
+    transition: border-color .13s;
+  }
+  .ti::placeholder { color: var(--text-muted); }
+  .ti:focus { border-color: var(--accent); }
+
+  /* Nav */
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1.6rem; }
+  .btn { padding: .68rem 1.6rem; border-radius: var(--rs); font-size: .86rem; font-weight: 600; cursor: pointer; border: none; font-family: inherit; transition: all .13s; }
+  .btn-g { background: transparent; color: var(--text-muted); border: 1.5px solid var(--border); }
+  .btn-g:hover { color: var(--text); border-color: #555570; }
+  .btn-p { background: var(--accent); color: #fff; }
+  .btn-p:hover { filter: brightness(1.12); transform: translateY(-1px); }
+  .btn-s { background: var(--green); color: #060610; font-weight: 700; }
+  .btn-s:hover { filter: brightness(1.08); }
+
+  /* Result */
+  .res { width: 100%; max-width: 600px; display: none; animation: up .4s ease; }
+  .res.on { display: block; }
+  .res-hd { text-align: center; margin-bottom: 2rem; }
+  .res-hd .ck { font-size: 2.8rem; margin-bottom: .4rem; }
+  .res-hd h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: .35rem; }
+  .res-hd p { color: var(--text-dim); font-size: .86rem; line-height: 1.6; }
+  .res-hd code { background: var(--surface-2); padding: .1rem .38rem; border-radius: 4px; color: var(--accent); font-family: monospace; font-size: .82rem; }
+
+  .cw { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+  .ch { display: flex; justify-content: space-between; align-items: center; padding: .7rem 1.1rem; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+  .ch span { font-size: .74rem; color: var(--text-muted); font-family: monospace; }
+  .cp { padding: .3rem .78rem; background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent); border-radius: 6px; font-size: .73rem; font-weight: 700; cursor: pointer; transition: all .13s; font-family: inherit; }
+  .cp:hover { background: var(--accent); color: #fff; }
+  .co { padding: 1.1rem; font-family: 'SF Mono','Fira Code','Consolas',monospace; font-size: .76rem; line-height: 1.65; color: #a8b4ff; white-space: pre; overflow-x: auto; max-height: 500px; overflow-y: auto; }
+
+  .inst { margin-top: 1.3rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 1.1rem 1.25rem; }
+  .inst h4 { font-size: .83rem; font-weight: 700; margin-bottom: .7rem; }
+  .inst ol { padding-left: 1.1rem; color: var(--text-dim); font-size: .81rem; line-height: 1.85; }
+  .inst code { background: var(--surface-2); padding: .1rem .38rem; border-radius: 4px; color: var(--accent); font-family: monospace; font-size: .78rem; }
+</style>
+</head>
+<body>
+
+<div class="hd">
+  <div class="hd-title">Conóceme</div>
+  <div class="hd-sub">Un test rápido para que Karen sepa quién eres de verdad.<br>Solo seleccionar — 6 secciones.</div>
+</div>
+
+<div class="prog" id="prog">
+  <div class="prog-meta">
+    <span id="pl">Sección 1 de 6</span>
+    <span id="pp">0%</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="pf" style="width:0%"></div></div>
+</div>
+
+<!-- ══════════════════════════════════════
+  1 · CÓMO FUNCIONA TU CABEZA
+══════════════════════════════════════ -->
+<div class="sec on" id="s1">
+  <div class="sec-num">01 / 06</div>
+  <div class="sec-title">Cómo funciona tu cabeza</div>
+  <div class="sec-desc">Cómo procesas, cómo piensas, cómo eres por dentro.</div>
+
+  <div class="qb">
+    <div class="ql">¿Cómo eres mayormente? <em style="color:var(--text-muted)">(varios OK)</em></div>
+    <div class="opts col" data-k="tipo_mente" data-t="checkbox">
+      <label class="opt"><input type="checkbox" value="muy analítico — necesito datos y lógica antes de decidir"><span class="oi">🧮</span> Muy analítico — datos y lógica primero</label>
+      <label class="opt"><input type="checkbox" value="intuitivo — fío del instinto y la experiencia acumulada"><span class="oi">⚡</span> Intuitivo — fío del instinto y la experiencia</label>
+      <label class="opt"><input type="checkbox" value="creativo — genero muchas ideas, luego filtro"><span class="oi">🎨</span> Creativo — genero muchas ideas, luego filtro</label>
+      <label class="opt"><input type="checkbox" value="ejecutor — prefiero actuar y corregir sobre la marcha"><span class="oi">🔨</span> Ejecutor — actúo y corrijo sobre la marcha</label>
+      <label class="opt"><input type="checkbox" value="estratégico — veo el sistema completo antes de moverme"><span class="oi">♟️</span> Estratégico — veo el sistema antes de moverme</label>
+    </div>
+  </div>
+
+  <div class="qb">
+    <div class="ql">Cuando tienes un problema difícil, ¿qué haces? <em style="color:var(--text-muted)">(varios OK)</em></div>
+    <div class="opts col" data-k="ante_problema" data-t="checkbox">
+      <label class="opt"><input type="checkbox" value="me quedo solo a pensarlo — necesito silencio"><span class="oi">🧘</span> Me quedo solo a pensarlo en silencio</label>
+      <label class="opt"><input type="checkbox" value="hablo con alguien — pensar en voz alta me aclara"><span class="oi">🗣️</span> Hablo con alguien — pensar en voz alta me aclara</label>
+      <label class="opt"><input type="checkbox" value="lo escribo — si lo pongo en papel se ordena solo"><span class="oi">✍️</span> Lo escribo — si lo pongo en papel se ordena</label>
+      <label class="opt"><input type="checkbox" value="empiezo a hacer algo — la acción me desbloquea"><span class="oi">🚀</span> Empiezo a hacer algo — la acción me desbloquea</label>
+      <label class="opt"><input type="checkbox" value="duermo y al día siguiente está claro"><span class="oi">😴</span> Duermo — al día siguiente suele estar claro</label>
+    </div>
+  </div>
+
+  <div class="qb">
+    <div class="ql">¿Cómo sueles aprender algo nuevo? <em style="color:var(--text-muted)">(varios OK)</em></div>
+    <div class="opts col" data-k="como_aprendes" data-t="checkbox">
+      <label class="opt"><input type="checkbox" value="construyendo y rompiendo cosas — hands-on siempre"><span class="oi">🔧</span> Construyendo y rompiendo cosas — hands-on</label>
+      <label class="opt"><input type="checkbox" value="leyendo en profundidad hasta entender el porqué"><span class="oi">📖</span> Leyendo en profundidad hasta entender el porqué</label>
+      <label class="opt"><input type="checkbox" value="viendo a alguien hacerlo primero"><span class="oi">👀</span> Viendo a alguien hacerlo primero</label>
+      <label class="opt"><input type="checkbox" value="preguntando y debatiendo con quien ya sabe"><span class="oi">💬</span> Preguntando y debatiendo con quien ya sabe</label>
+    </div>
+  </div>
+
+  <div class="qb">
+    <div class="ql">¿Cómo eres con el orden y la organización?</div>
+    <div class="opts col" data-k="orden" data-t="radio">
+      <label class="opt radio"><input type="radio" value="muy ordenado — necesito tener todo en su sitio para funcionar bien"><span class="oi">📐</span> Muy ordenado — necesito tener todo en su sitio</label>
+      <label class="opt radio"><input type="radio" value="ordenado en lo importante, caótico en lo secundario"><span class="oi">⚖️</span> Ordenado en lo importante, caótico en lo secundario</label>
+      <label class="opt radio"><input type="radio" value="caótico por fuera, con sistema propio que nadie más entiende"><span class="oi">🌀</span> Caótico por fuera, sistema propio por dentro</label>
+      <label class="opt radio"><input type="radio" value="el orden me lo da el sistema — si no hay sistema, hay caos"><span class="oi">⚙️</span> El orden me lo da el sistema — sin sistema hay caos</label>
+    </div>
+  </div>
+
+  <div class="nav">
+    <div></div>
+    <button class="btn btn-p" onclick="nx()">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+  2 · CÓMO ERES CON LA GENTE
+══════════════════════════════════════ -->
+<div class="sec" id="s2">
+  <div class="sec-num">02 / 06</div>
+  <div class="sec-title">Cómo eres con la gente</div>
+  <div class="sec-desc">Tu forma de relacionarte, comunicarte y trabajar con otros.</div>
+
+  <div class="qb">
+    <div class="ql">¿Eres más introvertido o extrovertido?</div>
+    <div class="opts col" data-k="intro_extro" data-t="radio">
+      <label class="opt radio"><input type="radio" value="introvertido — las personas me cargan aunque me gusten"><span class="oi">🔋</span> Introvertido — las personas me cargan aunque me gusten</label>
+      <label class="opt radio"><input type="radio" value="extrovertido — la gente me da energía"><span class="oi">⚡</span> Extrovertido — la gente me da energía</label>
+      <label class="opt radio"><input type="radio" value="ambiverto — depende mucho de quién y de cuándo"><span class="oi">🔄</span> Ambiverto — depende de quién y cuándo</label>
+    </div>
+  </div>
+
+  <div class="qb">
+    <div class="ql">Cuando alguien te decepciona o falla, ¿cómo reaccionas? <em style="color:var(--text-muted)">(varios OK)</em></div>
+    <div class="opts col" data-k="ante_fallo_ajeno" data-t="checkbox">
+      <label class="opt"><input type="checkbox" value="lo digo directamente en el momento"><span class="oi">💥</span> Lo digo directamente en el momento</label>
+      <label class="opt"><input type="checkbox" value="lo proceso primero, luego hablo con calma"><span class="oi">🧊</span> Lo proceso primero, luego hablo con calma</label>
+      <label class="opt"><input type="checkbox" value="me lo callo pero lo recuerdo — la confianza cae"><span class="oi">📉</span> Me lo callo pero lo recuerdo — la confianza cae</label>
+      <label class="opt"><input type="checkbox" value="depende mucho de la persona y el contexto"><span class="oi">⚖️</span> Depende de la persona y el contexto</label>
+    </div>
+  </div>
+
+  <div class="qb">
+    <div class="ql">¿Cómo prefieres recibir feedback sobre algo que has hecho? <em style="color:var(--text-muted)">(varios OK)</em></div>
+    <div class="opts col" data-k="recibir_feedback" data-t="checkbox">
+      <label class="opt"><input type="checkbox" value="directo y sin rodeos — los filtros me molestan"><span class="oi">🎯</span> Directo y sin rodeos — los filtros me molestan</label>
+      <label class="opt"><input type="checkbox" value="con contexto — necesito entender el porqué"><span class="oi">🧩</span> Con contexto — necesito entender el porqué</label>
+      <label class="opt"><input type="checkbox" value="escrito — lo proceso mejor si puedo releerlo"><span class="oi">📝</span> Escrito — lo proceso mejor si puedo releerlo</label>
+      <label class="opt"><input type="checkbox" value="verbal y rápido — si tarda en llegar pierde valor"><span class="oi">⚡</span> Verbal y rápido — si tarda, pierde valor</label>
+    </div>
+  </div>
+
+  <div class="qb">
+    <div class="ql">¿Qué te hace confiar en alguien rápidamente? <em style="color:var(--text-muted)">(varios OK)</em></div>
+    <div class="opts" data-k="confianza_factores" data-t="checkbox">
+      <label class="opt"><input type="checkbox" value="que ejecute sin que tenga que repetirlo"><span class="oi">✅</span> Ejecuta sin que se lo repita</label>
+      <label class="opt"><input type="checkbox" value="que sea brutalmente honesto, aunque duela"><span class="oi">💯</span> Honestidad brutal</label>
+      <label class="opt"><input type="checkbox" value="que sepa más que yo en su área"><span class="oi">🎓</span> Domina su área</label>
+      <label class="opt"><input type="checkbox" value="que anticipe problemas antes de que ocurran"><span class="oi">🔮</span> Anticipa problemas</label>
+      <label class="opt"><input type="checkbox" value="que diga 'no sé' cuando no sabe"><span class="oi">🙋</span> Dice "no sé" cuando no sabe</label>
+      <label class="opt"><input type="checkbox" value="que cumpla lo que dice sin excusas"><span class="oi">🤝</span> Cumple lo que dice</label>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-g" onclick="pv()">← Anterior</button>
+    <button class="btn btn-p" onclick="nx()">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+  3 · QUÉ TE MUEVE Y QUÉ TE IRRITA
+══════════════════════════════════════ -->
+<div class="sec" id="s3">
+  <div class="sec-num">03 / 06</div>
+  <div class="sec-title">Lo que te mueve y lo que te irrita</div>
+  <div class="sec-desc">Karen necesita esto para no sacarte de quicio y saber cuándo darte energía.</div>
+
+  <div class="qb">
+    <div class="ql">¿Qué te da energía real? <em style="color:var(--text-muted)">(varios OK)</em></div>
+    <div class="opts" data-k="energia" data-t="checkbox">
+      <label class="opt"><input type="checkbox" value="crear algo desde cero que antes no existía"><span class="oi">🔨</span> Crear desde cero</label>
+      <label class="opt"><input type="checkbox" value="resolver un problema difícil que otros no pudieron"><span class="oi">🧩</span> Resolver lo difícil</label>
+      <label class="opt"><input type="checkbox" value="ver que algo que construí funciona de verdad"><span class="oi">🚀</span> Ver que funciona de verdad</label>
+      <label class="opt"><input type="checkbox" value="aprender algo que no sabía antes"><span class="oi">📚</span> Aprender algo nuevo</label>
+      <label class="opt"><input type="checkbox" value="tener tiempo libre sin agenda ni obligaciones"><span class="oi">🏖️</span> Tiempo libre sin agenda</label>
+      <label class="opt"><input type="checkbox" value="que el equipo ejecute bien y sin que tenga que estar encima"><span class="oi">👥</span> El equipo ejecutando solo</label>
+      <label class="opt"><input type="checkbox" value="ganar: cerrar un deal, lanzar algo, conseguir un objetivo"><span class="oi">🏆</span> Ganar — cerrar, lanzar, conseguir</label>
+      <label class="opt"><input type="checkbox" value="tener la mente en blanco después de un buen trabajo"><span class="oi">🧘</span> Mente en blanco post-trabajo bien hecho</label>
+    </div>
+  </div>
+
+  <div class="qb">
+    <div class="ql">¿Qué te irrita o quita energía? <em style="color:var(--text-muted)">(varios OK)</em></div>
+    <div class="opts" data-k="irrita" data-t="checkbox">
+      <label class="opt"><input type="checkbox" value="tener que repetir algo que ya dije o expliqué"><span class="oi">🔁</span> Repetir lo que ya dije</label>
+      <label class="opt"><input type="checkbox" value="reuniones largas sin resultado concreto"><span class="oi">😩</span> Reuniones sin resultado</label>
+      <label class="opt"><input type="checkbox" value="que me interrumpan cuando estoy concentrado"><span class="oi">⚡</span> Interrupciones en foco</label>
+      <label class="opt"><input type="checkbox" value="la gente que habla mucho pero no hace nada"><span class="oi">💨</span> Mucho hablar, poco hacer</label>
+      <label class="opt"><input type="checkbox" value="trabajar en algo que no importa o no lleva a nada"><span class="oi">🎯</span> Trabajo sin propósito real</label>
+      <label class="opt"><input type="checkbox" value="errores que ya pasaron antes y no se aprendió"><span class="oi">💣</span> Repetir los mismos errores</label>
+      <label class="opt"><input type="checkbox" value="la burocracia y los procesos lentos innecesarios"><span class="oi">🐢</span> Burocracia innecesaria</label>
+      <label class="opt"><input type="checkbox" value="las excusas — prefiero 'no pude' a 'es que..."><span class="oi">🙅</span> Las excusas</label>
+      <label class="opt"><input type="checkbox" value="cuando alguien me da vueltas sin decir lo que piensa"><span class="oi">🌀</span> Dar vueltas sin decir lo que piensa</label>
+    </div>
+  </div>
+
+  <div class="qb">
+    <div class="ql">¿Cómo eres bajo presión o cuando todo se complica? <em style="color:var(--text-muted)">(varios OK)</em></div>
+    <div class="opts col" data-k="bajo_presion" data-t="checkbox">
+      <label class="opt"><input type="checkbox" value="me activo — la presión me afila"><span class="oi">🔥</span> Me activo — la presión me afila</label>
+      <label class="opt"><input type="checkbox" value="me bloqueo si hay demasiadas cosas a la vez"><span class="oi">🧊</span> Me bloqueo si hay demasiadas cosas a la vez</label>
+      <label class="opt"><input type="checkbox" value="me aíslo a resolver — necesito espacio sin ruido"><span class="oi">🔕</span> Me aíslo a resolver — necesito espacio sin ruido</label>
+      <label class="opt"><input type="checkbox" value="me irritan las cosas que no puedo controlar pero ejecuto"><span class="oi">😤</span> Me irrita lo incontrolable pero ejecuto igual</label>
+      <label class="opt"><input type="checkbox" value="priorizo rápido y tiro lo que no importa"><span class="oi">🎯</span> Priorizo rápido y tiro lo que no importa</label>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-g" onclick="pv()">← Anterior</button>
+    <button class="btn btn-p" onclick="nx()">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+  4 · TU VIDA FUERA DEL TRABAJO
+══════════════════════════════════════ -->
+<div class="sec" id="s4">
+  <div class="sec-num">04 / 06</div>
+  <div class="sec-title">Fuera del trabajo</div>
+  <div class="sec-desc">Karen no solo está para el trabajo. Necesita saber quién eres cuando desconectas.</div>
+
+  <div class="qb">
+    <div class="ql">¿Qué haces para desconectar de verdad? <em style="color:var(--text-muted)">(varios OK)</em></div>
+    <div class="opts" data-k="desconectar" data-t="checkbox">
+      <label class="opt"><input type="checkbox" value="deporte o ejercicio físico"><span class="oi">🏃</span> Deporte / ejercicio</label>
+      <label class="opt"><input type="checkbox" value="juegos (videojuegos, juegos de mesa...)"><span class="oi">🎮</span> Juegos</label>
+      <label class="opt"><input type="checkbox" value="salir con amigos o familia"><span class="oi">👥</span> Amigos / familia</label>
+      <label class="opt"><input type="checkbox" value="música — escuchar o tocar"><span class="oi">🎵</span> Música</label>
+      <label class="opt"><input type="checkbox" value="series, cine o documentales"><span class="oi">🎬</span> Series / cine</label>
+      <label class="opt"><input type="checkbox" value="leer — novelas, ensayos, técnico"><span class="oi">📚</span> Leer</label>
+      <label class="opt"><input type="checkbox" value="estar en la naturaleza — pasear, montaña, playa"><span class="oi">🌲</span> Naturaleza</label>
+      <label class="opt"><input type="checkbox" value="cocinar o comer bien"><span class="oi">🍳</span> Cocinar / comer bien</label>
+      <label class="opt"><input type="checkbox" value="viajar"><span class="oi">✈️</span> Viajar</label>
+      <label class="opt"><input type="checkbox" value="proyectos propios que no son trabajo"><span class="oi">🔭</span> Proyectos propios</label>
+      <label class="opt"><input type="checkbox" value="no desconecto bien — sigo pensando en trabajo"><span class="oi">😅</span> Honestamente no desconecto bien</label>
+    </div>
+  </div>
+
+  <div class="qb">
+    <div class="ql">¿Qué parte de tu vida personal está más descuidada ahora mismo?</div>
+    <div class="opts col" data-k="descuidado" data-t="radio">
+      <label class="opt radio"><input type="radio" value="tiempo de calidad con familia o pareja"><span class="oi">❤️</span> Tiempo con familia o pareja</label>
+      <label class="opt radio"><input type="radio" value="salud — descanso, ejercicio, alimentación"><span class="oi">💪</span> Salud — descanso, ejercicio, alimentación</label>
+      <label class="opt radio"><input type="radio" value="amigos — hace tiempo que no quedo con nadie"><span class="oi">🤝</span> Amigos — hace tiempo que no quedo</label>
+      <label class="opt radio"><input type="radio" value="hobbies — cosas que me gustaban y ya no hago"><span class="oi">🎯</span> Hobbies — cosas que me gustaban y ya no hago</label>
+      <label class="opt radio"><input type="radio" value="nada — estoy bastante equilibrado ahora"><span class="oi">✅</span> Nada — estoy bastante equilibrado</label>
+    </div>
+  </div>
+
+  <div class="qb">
+    <div class="ql">¿Cómo es tu relación con el dinero personal?</div>
+    <div class="opts col" data-k="relacion_dinero" data-t="radio">
+      <label class="opt radio"><input type="radio" value="lo controlo — sé exactamente qué entra y qué sale"><span class="oi">📊</span> Lo controlo — sé qué entra y qué sale</label>
+      <label class="opt radio"><input type="radio" value="lo ignoro un poco — trabajo duro pero no llevo seguimiento"><span class="oi">🙈</span> Lo ignoro un poco — trabajo duro pero sin seguimiento</label>
+      <label class="opt radio"><input type="radio" value="quiero mejorarlo — no tengo sistema claro todavía"><span class="oi">📈</span> Quiero mejorarlo — no tengo sistema claro aún</label>
+      <label class="opt radio"><input type="radio" value="es privado — Karen no entra ahí"><span class="oi">🔒</span> Privado — Karen no entra ahí</label>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-g" onclick="pv()">← Anterior</button>
+    <button class="btn btn-p" onclick="nx()">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+  5 · TUS VALORES Y REGLAS DE ORO
+══════════════════════════════════════ -->
+<div class="sec" id="s5">
+  <div class="sec-num">05 / 06</div>
+  <div class="sec-title">Tus valores y reglas de oro</div>
+  <div class="sec-desc">Lo que nunca negocias. Karen debe respetarlos siempre.</div>
+
+  <div class="qb">
+    <div class="ql">¿Qué es lo más importante para ti? <em style="color:var(--text-muted)">(elige máx. 4)</em></div>
+    <div class="opts" data-k="valores" data-t="checkbox">
+      <label class="opt"><input type="checkbox" value="autonomía — nadie me dice cómo vivir ni cómo trabajar"><span class="oi">🦅</span> Autonomía</label>
+      <label class="opt"><input type="checkbox" value="honestidad — prefiero la verdad dura al consuelo fácil"><span class="oi">💯</span> Honestidad</label>
+      <label class="opt"><input type="checkbox" value="impacto real — que lo que hago importe de verdad"><span class="oi">🎯</span> Impacto real</label>
+      <label class="opt"><input type="checkbox" value="familia — lo personal está por encima de todo"><span class="oi">❤️</span> Familia</label>
+      <label class="opt"><input type="checkbox" value="excelencia — si hago algo, lo hago bien o no lo hago"><span class="oi">⭐</span> Excelencia</label>
+      <label class="opt"><input type="checkbox" value="libertad económica — el dinero como herramienta de libertad"><span class="oi">💰</span> Libertad económica</label>
+      <label class="opt"><input type="checkbox" value="aprendizaje continuo — siempre mejorar"><span class="oi">📚</span> Aprendizaje continuo</label>
+      <label class="opt"><input type="checkbox" value="lealtad — con los que me rodean y conmigo mismo"><span class="oi">🤝</span> Lealtad</label>
+    </div>
+  </div>
+
+  <div class="qb">
+    <div class="ql">¿Qué es algo que NUNCA harías aunque fuera rentable?</div>
+    <div class="opts col" data-k="nunca_haria" data-t="checkbox">
+      <label class="opt"><input type="checkbox" value="engañar a un cliente o socio"><span class="oi">🚫</span> Engañar a un cliente o socio</label>
+      <label class="opt"><input type="checkbox" value="sacrificar a alguien de mi equipo para quedar bien"><span class="oi">🚫</span> Sacrificar a alguien del equipo</label>
+      <label class="opt"><input type="checkbox" value="hacer algo que va contra mis valores aunque dé dinero"><span class="oi">🚫</span> Ir contra mis valores por dinero</label>
+      <label class="opt"><input type="checkbox" value="perder tiempo en algo que sé que no va a funcionar"><span class="oi">🚫</span> Seguir algo que sé que no funciona</label>
+      <label class="opt"><input type="checkbox" value="trabajar con gente que no respeto"><span class="oi">🚫</span> Trabajar con gente que no respeto</label>
+    </div>
+  </div>
+
+  <div class="qb">
+    <div class="ql">¿Cómo defines el éxito personal — no profesional? <em style="color:var(--text-muted)">(varios OK)</em></div>
+    <div class="opts col" data-k="exito_personal" data-t="checkbox">
+      <label class="opt"><input type="checkbox" value="libertad total sobre mi tiempo y decisiones"><span class="oi">🦅</span> Libertad total sobre mi tiempo y mis decisiones</label>
+      <label class="opt"><input type="checkbox" value="haber construido algo que importe y dure"><span class="oi">🏗️</span> Haber construido algo que importe y dure</label>
+      <label class="opt"><input type="checkbox" value="que mi familia esté bien y segura"><span class="oi">❤️</span> Que mi familia esté bien y segura</label>
+      <label class="opt"><input type="checkbox" value="no tener que pedir permiso a nadie para nada"><span class="oi">🔓</span> No tener que pedir permiso a nadie para nada</label>
+      <label class="opt"><input type="checkbox" value="haber sido honesto y leal con los que importan"><span class="oi">💯</span> Haber sido honesto y leal con los que importan</label>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-g" onclick="pv()">← Anterior</button>
+    <button class="btn btn-p" onclick="nx()">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+  6 · CÓMO QUIERES QUE SEA KAREN CONTIGO
+══════════════════════════════════════ -->
+<div class="sec" id="s6">
+  <div class="sec-num">06 / 06</div>
+  <div class="sec-title">Cómo quieres que sea Karen contigo</div>
+  <div class="sec-desc">Las reglas de la relación. Solo 3 preguntas y un texto libre.</div>
+
+  <div class="qb">
+    <div class="ql">Cuando Karen tiene algo que decirte que no te va a gustar, ¿qué prefieres? <em style="color:var(--text-muted)">(varios OK)</em></div>
+    <div class="opts col" data-k="verdades_duras" data-t="checkbox">
+      <label class="opt"><input type="checkbox" value="que lo diga directamente, sin preparación ni suavizantes"><span class="oi">💥</span> Que lo diga directamente — sin rodeos</label>
+      <label class="opt"><input type="checkbox" value="que lo plantee como pregunta para que yo llegue solo"><span class="oi">❓</span> Que lo plantee como pregunta</label>
+      <label class="opt"><input type="checkbox" value="que lo diga, pero con el contexto de por qué importa"><span class="oi">🧩</span> Que lo diga con el porqué</label>
+      <label class="opt"><input type="checkbox" value="que ejecute lo que le pido y ponga su opinión al final"><span class="oi">📝</span> Que ejecute y ponga su opinión al final</label>
+    </div>
+  </div>
+
+  <div class="qb">
+    <div class="ql">¿Qué errores de Karen te molestarían más? <em style="color:var(--text-muted)">(varios OK)</em></div>
+    <div class="opts" data-k="errores_karen" data-t="checkbox">
+      <label class="opt"><input type="checkbox" value="que me diga lo que quiero oír en vez de la verdad"><span class="oi">😤</span> Que me diga lo que quiero oír</label>
+      <label class="opt"><input type="checkbox" value="que actúe sin contexto suficiente y meta la pata"><span class="oi">💣</span> Que actúe sin contexto y meta la pata</label>
+      <label class="opt"><input type="checkbox" value="que me haga perder tiempo con respuestas largas innecesarias"><span class="oi">⏱️</span> Respuestas largas innecesarias</label>
+      <label class="opt"><input type="checkbox" value="que no recuerde cosas importantes que ya le dije"><span class="oi">🧠</span> Que no recuerde lo que ya le dije</label>
+      <label class="opt"><input type="checkbox" value="que sea demasiado cautelosa y no se moje"><span class="oi">🙄</span> Que sea demasiado cautelosa</label>
+      <label class="opt"><input type="checkbox" value="que mezcle mi vida personal con trabajo de empresa"><span class="oi">🚫</span> Que mezcle personal con empresa</label>
+      <label class="opt"><input type="checkbox" value="que opine sobre mi vida sin que se lo pida"><span class="oi">🙅</span> Que opine sin que se lo pida</label>
+    </div>
+  </div>
+
+  <div class="qb">
+    <div class="ql">¿Hay algo más que Karen deba saber sobre ti?</div>
+    <div class="qh">Una frase, una manía, algo que te define. Lo más personal que no entra en ninguna casilla.</div>
+    <textarea class="ti" id="ti-extra" rows="3" placeholder="Ej: Odio el lenguaje corporativo y las frases vacías. Cuando digo 'ok' en seco es que no estoy del todo de acuerdo pero voy a intentarlo. Necesito que Karen sepa cuándo estoy en modo foco y no interrumpa..."></textarea>
+  </div>
+
+  <div class="qb">
+    <div class="ql">¿Qué significaría que Karen sea un éxito para ti?</div>
+    <div class="qh">No laboral — personal. ¿Qué cambiaría en tu día a día?</div>
+    <textarea class="ti" id="ti-exito" rows="3" placeholder="Ej: Que pueda desconectar el fin de semana sabiendo que Karen tiene el control de lo que importa. Que no tenga que recordar cosas pequeñas. Que anticipe lo que necesito antes de pedírselo..."></textarea>
+  </div>
+
+  <div class="nav">
+    <button class="btn btn-g" onclick="pv()">← Anterior</button>
+    <button class="btn btn-s" onclick="gen()">Generar mi perfil →</button>
+  </div>
+</div>
+
+<!-- ══ RESULTADO ══ -->
+<div class="res" id="res">
+  <div class="res-hd">
+    <div class="ck">✅</div>
+    <h2>Karen ya te conoce</h2>
+    <p>Copia el JSON y pégalo en <code>~/.claude/karen/profile.json</code><br>
+    La próxima sesión lo carga automáticamente.</p>
+  </div>
+  <div class="cw">
+    <div class="ch">
+      <span>~/.claude/karen/profile.json</span>
+      <button class="cp" id="cbtn" onclick="cp()">Copiar JSON</button>
+    </div>
+    <div class="co" id="jout"></div>
+  </div>
+  <div class="inst">
+    <h4>Pasos para activarlo</h4>
+    <ol>
+      <li>Copia el JSON de arriba</li>
+      <li>Abre <code>~/.claude/karen/profile.json</code> en tu editor</li>
+      <li>Reemplaza el contenido completo y guarda</li>
+      <li>Próxima sesión: <code>load-rules.sh</code> lo inyecta en el contexto de Karen automáticamente</li>
+      <li>Para actualizar cualquier campo: <code>/karen-learn-me</code> o edita el JSON directamente</li>
+    </ol>
+  </div>
+  <div style="text-align:center;margin-top:1.4rem">
+    <button class="btn btn-g" onclick="restart()">Volver a empezar</button>
+  </div>
+</div>
+
+<script>
+const T = 6;
+let cur = 1;
+const A = {};
+
+function bar() {
+  const p = Math.round(((cur-1)/T)*100);
+  document.getElementById('pf').style.width = p+'%';
+  document.getElementById('pl').textContent = `Sección ${cur} de ${T}`;
+  document.getElementById('pp').textContent = p+'%';
+}
+
+function collect(n) {
+  const s = document.getElementById('s'+n);
+  if (!s) return;
+  s.querySelectorAll('[data-k]').forEach(g => {
+    const k = g.dataset.k, t = g.dataset.t;
+    if (t==='radio') {
+      const c = g.querySelector('.opt.sel input');
+      if (c) A[k] = c.value;
+    } else {
+      const v = Array.from(g.querySelectorAll('.opt.sel input')).map(i=>i.value);
+      if (v.length) A[k] = v;
+    }
+  });
+}
+
+function nx() {
+  collect(cur);
+  document.getElementById('s'+cur).classList.remove('on');
+  cur++;
+  const n = document.getElementById('s'+cur);
+  if (n) { n.classList.add('on'); bar(); window.scrollTo({top:0,behavior:'smooth'}); }
+}
+function pv() {
+  document.getElementById('s'+cur).classList.remove('on');
+  cur--;
+  document.getElementById('s'+cur).classList.add('on');
+  bar();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+document.addEventListener('click', e => {
+  const o = e.target.closest('.opt');
+  if (!o) return;
+  // El click en el label dispara también un click en el input — ignorar ese segundo disparo
+  if (e.target.tagName === 'INPUT') return;
+  e.preventDefault();
+  const i = o.querySelector('input');
+  if (!i) return;
+  const g = o.closest('[data-k]');
+  if (!g) return;
+  if (g.dataset.t === 'radio') {
+    g.querySelectorAll('.opt').forEach(x => x.classList.remove('sel'));
+    o.classList.add('sel');
+  } else {
+    o.classList.toggle('sel');
+  }
+});
+
+function gen() {
+  collect(6);
+  A.extra    = document.getElementById('ti-extra').value.trim();
+  A.exito    = document.getElementById('ti-exito').value.trim();
+
+  const p = {
+    "_generated": new Date().toISOString().slice(0,10),
+    "_version": "1.0",
+    "quien_eres": {
+      "tipo_mente": A.tipo_mente || "",
+      "ante_un_problema": A.ante_problema || "",
+      "como_aprendes": A.como_aprendes || "",
+      "relacion_con_el_orden": A.orden || ""
+    },
+    "con_la_gente": {
+      "energia_social": A.intro_extro || "",
+      "ante_fallo_ajeno": A.ante_fallo_ajeno || "",
+      "como_recibes_feedback": A.recibir_feedback || "",
+      "que_genera_confianza": A.confianza_factores || []
+    },
+    "que_te_mueve": {
+      "da_energia": A.energia || [],
+      "quita_energia": A.irrita || [],
+      "bajo_presion": A.bajo_presion || ""
+    },
+    "fuera_del_trabajo": {
+      "como_desconectas": A.desconectar || [],
+      "area_descuidada": A.descuidado || "",
+      "relacion_con_dinero": A.relacion_dinero || ""
+    },
+    "valores": {
+      "mas_importantes": A.valores || [],
+      "nunca_haria": A.nunca_haria || [],
+      "exito_personal": A.exito_personal || ""
+    },
+    "reglas_con_karen": {
+      "cuando_hay_verdades_duras": A.verdades_duras || "",
+      "errores_que_mas_molestan": A.errores_karen || [],
+      "extra_personal": A.extra || "",
+      "exito_de_karen_para_ti": A.exito || ""
+    },
+    "_meta": {
+      "cliender_account_separate": true,
+      "cliender_keywords_alert": ["Cliender","HBD Revolution","GHL"]
+    }
+  };
+
+  document.getElementById('jout').textContent = JSON.stringify(p,null,2);
+  document.getElementById('s6').classList.remove('on');
+  document.getElementById('prog').style.display = 'none';
+  document.getElementById('res').classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function cp() {
+  navigator.clipboard.writeText(document.getElementById('jout').textContent).then(()=>{
+    const b = document.getElementById('cbtn');
+    b.textContent='¡Copiado!';
+    b.style.cssText='background:var(--green);color:#060610;border-color:var(--green)';
+    setTimeout(()=>{ b.textContent='Copiar JSON'; b.style.cssText=''; },2000);
+  });
+}
+
+function restart() {
+  cur=1; Object.keys(A).forEach(k=>delete A[k]);
+  document.querySelectorAll('.opt.sel').forEach(o=>o.classList.remove('sel'));
+  document.querySelectorAll('.ti').forEach(i=>i.value='');
+  document.getElementById('res').classList.remove('on');
+  document.getElementById('prog').style.display='block';
+  document.getElementById('s1').classList.add('on');
+  bar(); window.scrollTo({top:0,behavior:'smooth'});
+}
+
+bar();
+</script>
+</body>
+</html>
